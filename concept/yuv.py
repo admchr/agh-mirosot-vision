@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 
 # Testuję, jak wyglądają te obrazki w palecie 
 # YCbCr, a konkretnie jaki ma komponent Cb = niebieskość
@@ -26,4 +27,4 @@ for fname in glob.glob('img/*.png'):
             pd[x,y]=(0, valb, 256-valy)
             
     img = img.convert('RGB')
-    img.save('out/'+os.path.basename(fname)+'.png')
+    img.save('out/'+os.path.basename(fname))
