@@ -1,10 +1,15 @@
 # -*- coding: utf-8 -*-
 
+# zamienia wskaźnik b* z L*a*b* na jasność; jedyny w miarę sensowny sposób
+# wizualizacji
+# L a b -> b 128 128
+
 
 # L ightness
 # a green-magenta
 # b blue-yellow
-
+# ( w praktyce to nie wygląda aż tak ładnie)
+# + Lab się potem może nie skonwertować na RGB! (inny gamut)
 import cv
 import PIL.Image
 import glob
@@ -17,23 +22,11 @@ for fname in glob.glob('img/*.png'):
     
     imgL, imgA, imgB = [cv.CreateMat(img.rows, img.cols, cv.CV_8UC1) for i in [1,2,3]]
     
-    """for x in range(img.cols):
-        for y in range(img.rows):
-            px=img[x,y]
-            
-            L2=abs(px[2]-128)*2
-            b2=255 if px[2]>128 else 0
-            img[x,y]=(L2, 128, b2)
-    """
-    
     cv.Split(img, imgL, imgA, imgB, None)
     cv.Set(imgL, 128)
     cv.Set(imgA, 128)
-    #greenyellow-bluemagenta
-    #red-blue
     
     cv.Merge(imgB, imgL, imgA, None, img)
-    
     cv.CvtColor(img, img, cv.CV_Lab2RGB)
     
     cv.SaveImage('out/'+os.path.basename(fname), img)

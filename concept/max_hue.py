@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+# H S V -> H 255 255
+
 import cv
 import PIL.Image
 import glob
@@ -14,6 +16,9 @@ for fname in glob.glob('img/*.png'):
     
     cv.Split(img, imgH, imgS, imgV, None)
     
+    # na razie wrzuca na max Sat i Val wszystkie kolory oprócz 
+    # zupełnie czarnych/niezsatorowanych; można patrzeć
+    # potem na jakieś obcinanie bieli/czerni
     cv.Threshold(imgS, imgS, 0, 255, cv.CV_THRESH_BINARY)
     cv.Threshold(imgV, imgV, 0, 255, cv.CV_THRESH_BINARY)
     
