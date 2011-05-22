@@ -1,0 +1,28 @@
+# -*- coding: utf-8 -*-
+
+# sprawdzam, ile pikseli boiska nadaje się do samplowania
+
+# H S V -> 0 0 V*value
+
+import cv
+import PIL.Image
+import glob
+import os.path
+
+for fname in glob.glob('img/*.png'):
+    img = cv.LoadImageM(fname)
+    
+    cv.CvtColor(img, img, cv.CV_RGB2HSV)
+    
+    imgH, imgS, imgV = [cv.CreateMat(img.rows, img.cols, cv.CV_8UC1) for i in [1,2,3]]
+    
+    cv.Split(img, imgH, imgS, imgV, None)
+    
+    cv.Set(imgH, 0)
+    cv.Set(imgS, 0)
+    cv.ConvertScale(imgV, imgV, 50.0)
+    cv.Merge(imgH, imgS, imgV, None, img)
+    
+    cv.CvtColor(img, img, cv.CV_HSV2RGB)
+    
+    cv.SaveImage('out/'+os.path.basename(fname), img)
