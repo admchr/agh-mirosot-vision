@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 #pokazuje płaszczyznę z YCbCr taką jaką ja tu teraz wykorzystuję 
 import PIL.Image
 
