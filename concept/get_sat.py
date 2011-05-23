@@ -7,6 +7,11 @@ import PIL.Image
 import glob
 import os.path
 
+try:
+    os.mkdir('out_s')
+except:
+    pass
+
 for fname in glob.glob('img/*.png'):
     img = cv.LoadImageM(fname)
     
@@ -21,4 +26,4 @@ for fname in glob.glob('img/*.png'):
     
     cv.CvtColor(img, img, cv.CV_HSV2RGB)
     
-    cv.SaveImage('out/'+os.path.basename(fname), img)
+    cv.SaveImage('out_s/'+os.path.basename(fname), img)

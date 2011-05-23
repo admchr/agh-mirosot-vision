@@ -8,23 +8,37 @@
 # wygląda jak brzydki zielony)
 
 
-import PIL.Image
+import cv
 import glob
 import os.path
 
-print PIL.Image.MODES
+try:
+    os.mkdir('out_ycrcb')
+except:
+    pass
+
+
 for fname in glob.glob('img/*.png'):
-    img = PIL.Image.open(fname)
-    img = img.convert('YCbCr')
-    w = img.getbbox()[2]
-    h = img.getbbox()[3]
-    pd = img.load()
-    for x in range(w):
-        for y in range(h):
-            px = pd[x, y]
-            valb = max(px[1], 128)
-            valy = min(px[1], 128)
-            pd[x,y]=(0, valb, 256-valy)
+    img = cv.LoadImageM(fname)
+    
+    cv.CvtColor(img, img, cv.CV_RGB2YCrCb)
+    h = img.rows
+    w = img.cols
+    
+    imgY, imgCB, imgCR = [cv.CreateMat(img.rows, img.cols, cv.CV_8UC1) for i in [1,2,3]]
+    cv.Split(img, imgY, imgCR, imgCB, None)
+    
+    for x in xrange(w):
+        for y in xrange(h):
+            px=cv.Get2D(img, y, x)[1]
+                
+            valb = max(px, 128)
+            valy = min(px, 128)
+            cv.Set2D(imgY, y, x, 0)
+            cv.Set2D(imgCR, y, x, valb)
+            cv.Set2D(imgCB, y, x, 256-valy)
             
-    img = img.convert('RGB')
-    img.save('out/'+os.path.basename(fname))
+    
+    cv.Merge(imgY, imgCR, imgCB, None, img)
+    cv.CvtColor(img, img, cv.CV_YCrCb2RGB)
+    cv.SaveImage('out_ycrcb/'+os.path.basename(fname), img)

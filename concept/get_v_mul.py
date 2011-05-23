@@ -8,6 +8,18 @@ import cv
 import PIL.Image
 import glob
 import os.path
+import sys
+
+try:
+    os.mkdir('out_v')
+except:
+    pass
+
+try:
+    mul = float(sys.argv[1])
+except:
+    raise Exception('usage: get_v_mul.py mnożnik')
+    
 
 for fname in glob.glob('img/*.png'):
     img = cv.LoadImageM(fname)
@@ -20,9 +32,9 @@ for fname in glob.glob('img/*.png'):
     
     cv.Set(imgH, 0)
     cv.Set(imgS, 0)
-    cv.ConvertScale(imgV, imgV, 50.0)
+    cv.ConvertScale(imgV, imgV, mul)
     cv.Merge(imgH, imgS, imgV, None, img)
     
     cv.CvtColor(img, img, cv.CV_HSV2RGB)
     
-    cv.SaveImage('out/'+os.path.basename(fname), img)
+    cv.SaveImage('out_v/'+os.path.basename(fname), img)
