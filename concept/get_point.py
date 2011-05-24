@@ -17,12 +17,15 @@ poss = (
 (436, 58, 'zielonkawy najwyższy '),
 (544, 347, 'żółty prawy dół'),
 (177, 364, 'żółty lewy dół'),
+(327, 116, 'środek góra żółty'),
 (184, 364, 'jasnożółty lewy dół'),
 (433, 50, 'jasnożłóty najwyższy '),
 (443, 55, 'jasnoniebieski najwyższy '),
 (508, 80, 'jasnoniebieski górny prawy'),
 (500, 82, 'niebieski górny prawy'),
 (533, 351, 'niebieski prawy dół'),
+(505, 72, 'niebieski góra prawy'),
+(317, 120, 'środek góra niebieski'),
 (184, 357, '(inny?) niebieski lewy dół'),
 )
 
