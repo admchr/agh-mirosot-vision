@@ -12,7 +12,7 @@ try:
 except:
     pass
 
-for fname in glob.glob('img/*.png'):
+for fname in glob.glob('out_wh/*.png'):
     img = cv.LoadImageM(fname)
     
     cv.CvtColor(img, img, cv.CV_RGB2HSV)

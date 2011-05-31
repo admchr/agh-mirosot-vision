@@ -49,7 +49,7 @@ poss_l = (
 ((184, 357), col_blue, 'lewy dół'),
 ((108,4), col_white, 'góra lewy'),
 ((306, 6), col_white, 'góra'),
-((607, 7), col_white, 'góra prawy'),
+((607, 12), col_white, 'góra prawy'),
 ((590, 411), col_white, 'dół prawy'),
 ((302, 408), col_white, 'dół'),
 ((111, 404), col_white, 'dół lewy')
