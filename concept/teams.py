@@ -14,11 +14,14 @@ files = glob.glob('out_wh/wc_robots*.png')
 
 bad = (255, 0, 0)
 
+skip = 1
+
 constr = [
-[{'h>':80, 'h<':110, 's>':200, 'v>':100}, bad],
-[{'h>':90, 'h<':100, 's>':250, 'v>':130}, (255, 255, 0)],
-[{'h>':1, 'h<':30, 's>':200, 'v>':50}, bad],
-[{'h>':8, 'h<':22, 's>':210, 'v>':60}, (0, 0, 255)]
+#[{'h>':80, 'h<':110, 's>':200, 'v>':80}, bad],
+[{'h>':90, 'h<':100, 's>':240, 'v>':100}, (255, 255, 0)],
+#[{'h>':1, 'h<':30, 's>':200, 'v>':50}, bad],
+[{'h>':8, 'h<':22, 's>':210, 'v>':60}, (0, 0, 255)],
+[{'h>':110, 'h<':120, 's>':240, 'v>':100}, (255, 128, 0)],
 ]
 for ctr in constr:
     ctr[0]=tuple(ctr[0].items())
@@ -30,8 +33,8 @@ for fname in files:
 
     cv.CvtColor(img0, img0, cv.CV_RGB2HSV)
     
-    for y in range(0, img.rows, 2):
-        for x in range(0, img.cols, 2):
+    for y in range(0, img.rows, skip):
+        for x in range(0, img.cols, skip):
             (h, s, v, tmp) = cv.Get2D(img0, y, x)
             for (c, color) in constr:
                 ok=True

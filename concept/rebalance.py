@@ -33,7 +33,8 @@ avg=False
 
 for fname in files:
     img = cv.LoadImageM(fname)
-    cv.Smooth(img, img, smoothtype=cv.CV_MEDIAN, param1=5, param2=5)
+    img0 = cv.LoadImageM(fname)
+    cv.Smooth(img0, img0, smoothtype=cv.CV_MEDIAN, param1=5, param2=5)
     
     imgA, imgB, imgC = [cv.CreateMat(img.rows, img.cols, cv.CV_8UC1) for i in [1,2,3]]
     cv.Split(img, imgA, imgB, imgC, None)
@@ -43,9 +44,9 @@ for fname in files:
     vals={}
     sr=sg=sb=0
     for (posx, posy) in pts:
-        b=cv.Get2D(imgA, posy, posx)[0]
-        g=cv.Get2D(imgB, posy, posx)[0]
-        r=cv.Get2D(imgC, posy, posx)[0]
+        b=cv.Get2D(img0, posy, posx)[0]
+        g=cv.Get2D(img0, posy, posx)[1]
+        r=cv.Get2D(img0, posy, posx)[2]
         vals[(posx, posy)]=(r,g,b)
         sr+=r
         sg+=g
