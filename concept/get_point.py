@@ -19,6 +19,7 @@ col_lyellow = 'lyellow'
 col_red = 'red?'
 col_green = 'green'
 col_white = 'white'
+col_orange = 'orange'
 col_unknown = '?'
 
 color_mapping = {
@@ -28,7 +29,8 @@ color_mapping = {
     col_lblue : (128, 128, 255),
     col_yellow : (255, 255, 0),
     col_lyellow : (255, 255, 128),
-    col_white : (255, 255, 255)
+    col_white : (255, 255, 255),
+    col_orange : (255, 128, 0),
 }
 
 
@@ -49,10 +51,11 @@ poss_l = (
 ((184, 357), col_blue, 'lewy dół'),
 ((108,4), col_white, 'góra lewy'),
 ((306, 6), col_white, 'góra'),
-((607, 7), col_white, 'góra prawy'),
+((607, 12), col_white, 'góra prawy'),
 ((590, 411), col_white, 'dół prawy'),
 ((302, 408), col_white, 'dół'),
-((111, 404), col_white, 'dół lewy')
+((111, 404), col_white, 'dół lewy'),
+((117, 134), col_orange, 'piłka')
 )
 samples = {
     i: {'pos':poss_l[i][0], 'col':poss_l[i][1], 'desc':poss_l[i][2]} 
