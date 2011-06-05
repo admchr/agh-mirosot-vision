@@ -15,7 +15,7 @@ try:
     os.mkdir('out')
 except:
     pass
-for fpath in glob.glob(fl[0]+'/*.png'):
+for fpath in glob.glob(fl[0]+'/*.*'):
     fname = os.path.basename(fpath)
     img = PIL.Image.open(fpath)
     w = img.getbbox()[2]
