@@ -21,7 +21,7 @@ except:
     raise Exception('usage: get_v_mul.py mnożnik')
     
 
-for fname in glob.glob('img/*.png'):
+for fname in glob.glob('img/*.*'):
     img = cv.LoadImageM(fname)
     
     cv.CvtColor(img, img, cv.CV_RGB2HSV)
