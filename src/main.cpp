@@ -10,7 +10,7 @@ using namespace std;
 using namespace cv;
 
 bool is_in_patch(int r, int g, int b){
-    return r>128;
+    return r>150;
 }
 
 // SLOOOOOOOOOOOOOW & BUGGY
@@ -59,6 +59,7 @@ int absz(int i, int j){ return absi(i-j);}
 
 int main(int argc, char**argv){
     cv::Mat img = cv::imread(std::string(argv[1]));
+    cv::Mat_<Vec3b> img_out = (Mat_<Vec3b>)img.clone();
     std::vector<cv::Mat> planes;
     split(img, planes);
     cv::Point start(33, 33);

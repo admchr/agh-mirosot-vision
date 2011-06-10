@@ -9,12 +9,20 @@ try:
     os.mkdir('out_med')
 except:
     pass
+try:
+    os.mkdir('out_sub')
+except:
+    pass
 
 files = glob.glob('img/*.*')
 
 med=16*5+1
 
 for fname in files:
-    img0 = cv.LoadImageM(fname)
-    cv.Smooth(img0, img0, smoothtype=cv.CV_MEDIAN, param1=med, param2=med)
-    cv.SaveImage('out_med/'+os.path.basename(fname), img0)
+    img = cv.LoadImageM(fname)
+    img_med = cv.LoadImageM(fname)
+    cv.Smooth(img_med, img_med, smoothtype=cv.CV_MEDIAN, param1=med, param2=med)
+    cv.SaveImage('out_med/'+os.path.basename(fname), img_med)
+    
+    cv.Sub(img, img_med, img)
+    cv.SaveImage('out_sub/'+os.path.basename(fname), img)
