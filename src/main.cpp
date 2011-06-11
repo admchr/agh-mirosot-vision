@@ -11,8 +11,15 @@ using namespace cv;
 
 cv::Mat_<Vec3b> img;
 
+const int min_pixels = 200;
+
+const int max_x = 1000;
+const int max_y = 1000;
+bool visited[max_x][max_y];
+
+
 bool is_black(Vec3b c){
-    return c[2]<100;
+    return c[2]<150;
 }
 bool is_lil_blue(Vec3b c){
     return !is_black(c) && c[0]>75 && c[0]<105;
@@ -65,20 +72,31 @@ struct Deming {
 };
 
 
+void draw_line(Mat_<Vec3b>& im, Vec3b color, Point where, double regression){
+    
+    
+    for (double i=0;true;i+=0.01){
+        Point p(where.x+i, where.y+i*regression);
+        Point d=where-p;
+        if (d.x*d.x+d.y*d.y > 1600)
+            return;
+        if (p.x<0 || p.y<0 || p.x>=im.cols || p.y>=im.rows)
+            return;
+        im(p) = color;
+    }
+
+}
+
 int absi(int i){
     if (i<0) return -i;
     return i;
 }
 int absz(int i, int j){ return absi(i-j);}
 
-const int max_x = 1000;
-const int max_y = 1000;
 
-bool visited[max_x][max_y];
 
-Deming getRobot(Point p0, bool yellow, bool &ok) {
+Deming getRobot(Point p0, bool yellow, int& pixels) {
     int i=0;
-    ok=false;
     vector<Point> v;
     v.push_back(p0);
     Deming m;
@@ -109,7 +127,7 @@ Deming getRobot(Point p0, bool yellow, bool &ok) {
             v.push_back(cv::Point(p.x+1, p.y+1));
         }
     }
-    if (i>100) ok=true;
+    pixels=i;
     return m;
 }
 
@@ -144,30 +162,36 @@ int main(int argc, char**argv){
         else 
             v=blue;
         for (int i=0;i<v.size();i++){
-            bool ok;
-            Deming m = getRobot(v[i], yell, ok);
-            if (!ok) continue;
-            double angle = m.get();
+            int pixels;
+            Deming m = getRobot(v[i], yell, pixels);
+            if (pixels < min_pixels) continue;
+            double b = m.get();
             Point c = m.getMean();
-            
-            for (int i=0;i<20 && abs(i/angle) < 20;i++){
-                Point p(c.x+i, c.y-i/angle);
-                img_out(p) = Vec3b(0, 0, 255);
-            }
+            draw_line(img_out, Vec3b(0, 0, 255), c, b);
         }
     }
     
     
     for (int y=0;y<img.rows;y++) {
         for (int x=0;x<img.cols;x++) {
+            Vec3b& c = img_out(y, x);
             if (!visited[x][y])
                 continue;
-            if (img_out(y, x)==Vec3b(0, 0, 255))
+            if (c==Vec3b(0, 0, 255))
                 continue;
-            img_out(y, x)=Vec3b(0, 0, 0);
+            
+            c = Vec3b(0, 0, 0);
         }
         
     }
-    cv::imwrite(std::string("tri-out.png"), img_out);
+    
+    for (int i=0;i<yellow.size();i++){
+        img_out(yellow[i])=Vec3b(0, 255, 255);
+    }
+    for (int i=0;i<blue.size();i++){
+        img_out(blue[i])=Vec3b(255, 0, 0);
+    }
+
+    cv::imwrite(std::string(argv[2]), img_out);
     
 }
