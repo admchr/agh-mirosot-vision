@@ -78,7 +78,7 @@ for fname in files:
     # print fname
     
     imgA, imgB, imgC = [cv.CreateMat(img.rows, img.cols, cv.CV_8UC1) for i in [1,2,3]]
-    cv.CvtColor(img, img, cv.CV_RGB2HSV)
+    cv.CvtColor(img, img, cv.CV_BGR2HSV)
     
     cv.Split(img, imgA, imgB, imgC, None)
     
@@ -91,7 +91,7 @@ for fname in files:
     
     cv.Merge(imgA, imgB, imgC, None, img)
     
-    cv.CvtColor(img, img, cv.CV_HSV2RGB)
+    cv.CvtColor(img, img, cv.CV_HSVBGR)
     
     cv.Split(img, imgA, imgB, imgC, None)
     
