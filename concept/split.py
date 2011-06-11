@@ -22,7 +22,7 @@ for chan in ('mh', 'h', 's', 'v', 'r', 'g', 'b'):
         img = cv.LoadImageM(fname)
         
         if hsv:
-            cv.CvtColor(img, img, cv.CV_RGB2HSV)
+            cv.CvtColor(img, img, cv.CV_BGR2HSV)
         
         imgH, imgS, imgV = [cv.CreateMat(img.rows, img.cols, cv.CV_8UC1) for i in [1,2,3]]
         
@@ -50,7 +50,7 @@ for chan in ('mh', 'h', 's', 'v', 'r', 'g', 'b'):
         
         cv.Merge(imgH, imgS, imgV, None, img)
         
-        cv.CvtColor(img, img, cv.CV_HSV2RGB)
+        cv.CvtColor(img, img, cv.CV_HSV2BGR)
         
         cv.SaveImage(dname+os.path.basename(fname), img)
      

@@ -1,3 +1,3 @@
 
 main: main.cpp
-	g++ -o main main.cpp -lcv -lhighgui
+	g++ -g -o main main.cpp -lcv -lhighgui
