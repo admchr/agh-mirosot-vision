@@ -1,8 +1,12 @@
 import subprocess, os.path, glob, sys
 
-fin = sys.argv[1]
-fout = sys.argv[2]
-ttype = sys.argv[3]
+try:
+    fin = sys.argv[1]
+    fout = sys.argv[2]
+    ttype = sys.argv[3]
+except:
+    print 'usage: dir_in dir_out lin|delin'
+    sys.exit(0)
 
 try:
     os.mkdir(fout)

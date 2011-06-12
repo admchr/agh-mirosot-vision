@@ -6,6 +6,8 @@
 
 #include <iostream>
 
+#include "tools.h"
+
 using namespace std;
 using namespace cv;
 
@@ -19,13 +21,13 @@ bool visited[max_x][max_y];
 
 
 bool is_black(Vec3b c){
-    return c[2]<150;
+    return c[2]<120;
 }
 bool is_lil_blue(Vec3b c){
     return !is_black(c) && c[0]>75 && c[0]<105;
 }
 bool is_blue(Vec3b c){
-    return c[0]>85 && c[0]<95;
+    return c[0]>80 && c[0]<100;
 }
 bool is_lil_yellow(Vec3b c){
     return !is_black(c) && c[0]>15 && c[0]<40;
@@ -70,7 +72,6 @@ struct Deming {
         return beta1;
     }
 };
-
 
 void draw_line(Mat_<Vec3b>& im, Vec3b color, Point where, double regression){
     
@@ -132,10 +133,18 @@ Deming getRobot(Point p0, bool yellow, int& pixels) {
 }
 
 int main(int argc, char**argv){
-    cv::Mat img0 = cv::imread(std::string(argv[1]));
+    if (argc<6){
+        cout<<"usage: in_file out_file white_x white_y white_radius"<<endl;
+        return 1;
+    }
+    cv::Mat_<Vec3b> img0 = cv::imread(std::string(argv[1]));
+    Point white_point = Point(atoi(argv[3]), atoi(argv[4]));
+    white_correct(img0, white_point, atoi(argv[5]));
+    
     img = (Mat_<Vec3b>)img0.clone();
     cv::Mat_<Vec3b> img_out = (Mat_<Vec3b>)img0.clone();
     std::vector<cv::Point> yellow, blue;
+    
     
     cvtColor(img, img, CV_BGR2HSV);
     
@@ -192,6 +201,8 @@ int main(int argc, char**argv){
         img_out(blue[i])=Vec3b(255, 0, 0);
     }
 
+    img_out(white_point)=Vec3b(0, 0, 255);
+    
     cv::imwrite(std::string(argv[2]), img_out);
     
 }
