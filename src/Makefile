@@ -1,3 +1,3 @@
+CXXFLAGS= -g -lcv -lhighgui
 
-main: main.cpp
-	g++ -g -o main main.cpp -lcv -lhighgui
+linearize: linearize.cpp tools.h
