@@ -4,6 +4,7 @@
 #include <string>
 #include <cmath>
 
+
 #include <iostream>
 
 #include "tools.h"
@@ -24,16 +25,22 @@ bool is_black(Vec3b c){
     return c[2]<120;
 }
 bool is_lil_blue(Vec3b c){
-    return !is_black(c) && c[0]>75 && c[0]<105;
+    return !is_black(c) && c[0]>90 && c[0]<120 && c[1]*c[2]>128*128;
 }
 bool is_blue(Vec3b c){
-    return c[0]>80 && c[0]<100;
+    if (!is_lil_blue(c)) return false;
+    return c[0]>100 && c[0]<120 && c[1]*c[2]>128*128;
 }
 bool is_lil_yellow(Vec3b c){
-    return !is_black(c) && c[0]>15 && c[0]<40;
+    return !is_black(c) && c[0]>15 && c[0]<40;// && c[1]*c[2]>128*128/2;
 }
 bool is_yellow(Vec3b c){
+    if (!is_lil_yellow(c)) return false;
     return c[0]>25 && c[0]<35;
+}
+
+bool is_orange(Vec3b c){
+    return c[0]>5 && c[0]<15 && c[1]*c[2]>128*128;
 }
 
 // SLOOOOOOOOOOOOOW & BUGGY
@@ -143,7 +150,7 @@ int main(int argc, char**argv){
     
     img = (Mat_<Vec3b>)img0.clone();
     cv::Mat_<Vec3b> img_out = (Mat_<Vec3b>)img0.clone();
-    std::vector<cv::Point> yellow, blue;
+    std::vector<cv::Point> yellow, blue, orange;
     
     
     cvtColor(img, img, CV_BGR2HSV);
@@ -158,6 +165,9 @@ int main(int argc, char**argv){
             }
             if (is_blue(px)){
                 blue.push_back(Point(x, y));
+            }
+            if (is_orange(px)){
+                orange.push_back(Point(x, y));
             }
         }
         
@@ -199,6 +209,10 @@ int main(int argc, char**argv){
     }
     for (int i=0;i<blue.size();i++){
         img_out(blue[i])=Vec3b(255, 0, 0);
+    }
+
+    for (int i=0;i<orange.size();i++){
+        img_out(orange[i])=Vec3b(255, 255, 255);
     }
 
     img_out(white_point)=Vec3b(0, 0, 255);
