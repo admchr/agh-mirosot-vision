@@ -2,12 +2,13 @@
 
 # zeruje wartości na wszystkich kanałach przekraczających pewną wartość
 
-cutoff = 250
 
 import cv
 import glob
 import os.path
+import sys
 
+cutoff = int(sys.argv[1])
 
 try:
     os.mkdir('out_cut')
