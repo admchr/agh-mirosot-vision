@@ -7,9 +7,9 @@ import glob
 import os.path
 import sys
 
-for chan in ('mh', 'h', 's', 'v', 'r', 'g', 'b'):
+for chan in ('mh', 'h', 's', 'v', 'r', 'g', 'b', 'ch'):
     
-    hsv = chan in ('mh', 'h', 's', 'v')
+    hsv = chan in ('mh', 'h', 's', 'v', 'ch')
     dname = 'out_'+chan+'/'
     
     
@@ -40,6 +40,9 @@ for chan in ('mh', 'h', 's', 'v', 'r', 'g', 'b'):
             (imgV, imgS, imgH) = (imgS, imgH, imgV)
         elif chan == 'b':
             (imgV, imgS, imgH) = (imgH, imgS, imgV)
+        elif chan == 'ch':
+            cv.Mul(imgS, imgV, imgV, 1/256.0)
+            (imgH, imgS, imgV) = (imgH, imgS, imgV)
         
         if chan != 'mh':
             cv.Set(imgH, 0)
