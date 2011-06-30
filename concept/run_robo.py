@@ -1,9 +1,10 @@
 import subprocess, os.path, glob, sys
 
 patterns = (
+((33, 167), 9, 'img/[a-z]*'),
 ((108, 4), 3, 'img/wc*'),
 ((39, 9), 3, 'img/si*'),
-((30, 165), 7, 'img/[a-rt-vx-z0-9]*'),
+((59, 177), 9, 'img/patches*')
 )
 
 try:
