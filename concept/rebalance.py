@@ -11,7 +11,7 @@ except:
     pass
 
 files = glob.glob('img/*.png')
-
+files.sort()
 
 pts_wc = (
     (108,4),
