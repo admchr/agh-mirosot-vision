@@ -9,13 +9,16 @@ import os.path
 import sys
 
 cutoff = int(sys.argv[1])
+dir = sys.argv[2] or 'img'
+
+thr = cv.CV_THRESH_TOZERO_INV # if cutoff>129 else cv.CV_THRESH_BINARY
 
 try:
     os.mkdir('out_cut')
 except:
     pass
 
-for fname in glob.glob('img/*.*'):
+for fname in glob.glob('%s/*.*'%dir):
     img = cv.LoadImageM(fname)
     
     
@@ -24,7 +27,7 @@ for fname in glob.glob('img/*.*'):
     cv.Split(img, imgB, imgG, imgR, None)
     
     for imgs in [imgR, imgG, imgB]:
-        cv.Threshold(imgs, imgs, cutoff, 255, cv.CV_THRESH_TOZERO_INV)
+        cv.Threshold(imgs, imgs, cutoff, 255, thr)
     
     cv.Merge(imgB, imgG, imgR, None, img)
     

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import glob, os.path
+import glob, os.path, sys
 
 import cv
 
@@ -16,7 +16,7 @@ except:
 
 files = glob.glob('img/*.*')
 
-med=16*5+1
+med=int(sys.argv[1])
 
 for fname in files:
     img = cv.LoadImageM(fname)
