@@ -37,7 +37,7 @@ for i in range(0, 1000):
     
 
 imgn = numpy.asarray(img)
-plt.imshow(imgn)
+plt.imshow(imgn, interpolation='nearest')
 fig = plt.figure()
 ax = fig.add_subplot(2,1,1)
 bx = fig.add_subplot(2,1,2)
@@ -49,6 +49,17 @@ ax.plot(k, vb, color='b')
 
 for (i, r, g, b) in zip(k, vr, vg, vb):
     ax.add_artist(patch.Rectangle((i, 0), 1, 10, color='#%.2x%.2x%.2x'%(r,g,b)))
+
+
+for h in range(6):
+    for step in range(60):
+        dh = step/60.0
+        col = {
+            'r':[1, 1-dh, 0, 0, dh, 1],
+            'g':[dh, 1, 1, 1-dh, 0, 0],
+            'b':[0, 0, dh, 1, 1, 1-dh]
+        }
+        bx.add_artist(patch.Rectangle((0, (h*60+step)/2), 1, 1, color='#%.2x%.2x%.2x'%tuple(col[c][h]*255 for c in 'rgb')))
 
 bx.plot(k, vh, color='#000000')
 bx.plot(k, vch, color='r')

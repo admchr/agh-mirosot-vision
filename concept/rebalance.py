@@ -10,7 +10,7 @@ try:
 except:
     pass
 
-files = glob.glob('img/*.png')
+files = glob.glob('img/*.*')
 files.sort()
 
 pts_wc = (
@@ -29,6 +29,10 @@ pts_si = (
 (36, 370)
 )
 
+pts_um = (
+(32, 166)
+,)
+
 avg=False
 
 for fname in files:
@@ -39,7 +43,12 @@ for fname in files:
     imgA, imgB, imgC = [cv.CreateMat(img.rows, img.cols, cv.CV_8UC1) for i in [1,2,3]]
     cv.Split(img, imgA, imgB, imgC, None)
     
-    pts = pts_wc if 'wc' in fname else pts_si
+    if fname.startswith('wc'):
+        pts = pts_wc
+    elif fname.startswith('si'):
+        pts = pts_si
+    else:
+        pts = pts_um
     
     vals={}
     sr=sg=sb=0
@@ -70,7 +79,7 @@ for fname in files:
         for y in range(0, img.rows-tile, tile):
             for x in range(0, img.cols-tile, tile):
                 wsum=0
-                r=g=b=0
+                r=g=b=10**-10
                 for p in pts:
                     val=vals[p]
                     weight=1.0/(d(p, (x+tile/2, y+tile/2))**2+1)
