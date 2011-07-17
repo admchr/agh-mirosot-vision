@@ -43,12 +43,16 @@ for fname in files:
     imgA, imgB, imgC = [cv.CreateMat(img.rows, img.cols, cv.CV_8UC1) for i in [1,2,3]]
     cv.Split(img, imgA, imgB, imgC, None)
     
-    if fname.startswith('wc'):
+    fbase = os.path.basename(fname)
+    
+    if fbase.startswith('wc'):
         pts = pts_wc
-    elif fname.startswith('si'):
+    elif fbase.startswith('si'):
         pts = pts_si
-    else:
+    elif fbase.startswith('um'):
         pts = pts_um
+    else:
+        continue
     
     vals={}
     sr=sg=sb=0
@@ -99,6 +103,8 @@ for fname in files:
                 
     cv.Merge(imgA, imgB, imgC, None, img)
     
+    for (posx, posy) in pts:
+        cv.Set2D(img, posy, posx, (0, 0, 255))
     print ('%4d %4d %4d %s' % (r, g, b, fname))
     
     
