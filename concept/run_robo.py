@@ -1,10 +1,12 @@
 import subprocess, os.path, glob, sys
 
+di = 'out_meanshift'
+
 patterns = (
-((33, 167), 9, 'img/[a-z]*'),
-((108, 4), 3, 'img/wc*'),
-((39, 9), 3, 'img/si*'),
-((59, 177), 9, 'img/patches*')
+((33, 167), 9, di+'/[a-z]*'),
+((108, 4), 3, di+'/wc*'),
+((39, 9), 3, di+'/si*'),
+((59, 177), 9, di+'/patches*')
 )
 
 try:
