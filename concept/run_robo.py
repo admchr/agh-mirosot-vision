@@ -1,6 +1,6 @@
 import subprocess, os.path, glob, sys
 
-di = 'out_meanshift'
+di = 'out_wh'
 
 patterns = (
 ((33, 167), 9, di+'/[a-z]*'),

@@ -19,7 +19,7 @@ def f(fn, to):
     # psuje okoliczną pamięć (taki bug) i wywala interpreter przy zamknięciu
     img = cv.LoadImageM(fname)
     img2 = cv.LoadImageM(fname)
-    cv.PyrMeanShiftFiltering(img2, img, 10, 20, termcrit=(cv.CV_TERMCRIT_ITER+cv.CV_TERMCRIT_EPS, 10, 1))
+    cv.PyrMeanShiftFiltering(img2, img, 5, 20, termcrit=(cv.CV_TERMCRIT_ITER+cv.CV_TERMCRIT_EPS, 10, 1))
     cv.SaveImage(to, img)
     os.kill(os.getpid(), 9)
 

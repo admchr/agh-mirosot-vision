@@ -25,11 +25,11 @@ bool is_black(Vec3b c){
     return c[2]<120;
 }
 bool is_lil_blue(Vec3b c){
-    return !is_black(c) && c[0]>90 && c[0]<120 && c[1]*c[2]>128*128;
+    return !is_black(c) && c[0]>90 && c[0]<110 && c[1]*c[2]>128*128;
 }
 bool is_blue(Vec3b c){
     if (!is_lil_blue(c)) return false;
-    return c[0]>100 && c[0]<120 && c[1]*c[2]>128*128;
+    return c[0]>90 && c[0]<110 && c[1]*c[2]>128*128;
 }
 bool is_lil_yellow(Vec3b c){
     return !is_black(c) && c[0]>15 && c[0]<40;// && c[1]*c[2]>128*128/2;
