@@ -23,12 +23,16 @@ for fpath in glob.glob(fl[0]+'/*.*'):
     
     tw = int(len(fl)**0.5+0.999)
     th = int(len(fl)*1.0/tw+0.999)
-    try:
-        imgt = PIL.Image.new('RGB', (tw*w, th*h))
-        for i in range(len(fl)):
-            img2 = PIL.Image.open(fl[i]+'/'+fname)
-            imgt.paste(img2, (w*(i%tw), h*(i//tw)))
-        imgt.save('out/'+fname)
-    except IOError:
-        # brak obrazka oznacza, że niwe ma z czym sklejać
-        pass
+    imgt = PIL.Image.new('RGB', (tw*w, th*h))
+    fname_png = os.path.splitext(fname)[0]+'.png'
+    for i in range(len(fl)):
+        for fn in [fname, fname_png]:
+            try:
+                img2 = PIL.Image.open(fl[i]+'/'+fn)
+                imgt.paste(img2, (w*(i%tw), h*(i//tw)))
+                break
+            except IOError:
+                # brak obrazka oznacza, że nie ma z czym sklejać
+                pass
+
+    imgt.save('out/'+fname_png)
