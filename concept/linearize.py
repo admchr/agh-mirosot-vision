@@ -13,7 +13,7 @@ try:
 except:
     pass
 
-subprocess.check_call(['make', 'linearize'], cwd='../src/')
+subprocess.check_call(['make', 'linearize'])
 
 for fname in glob.glob(fin+'/*.*'):
-    subprocess.Popen(['../src/linearize', fname, fout+'/'+os.path.basename(fname), ttype])
+    subprocess.Popen(['./linearize', fname, fout+'/'+os.path.basename(fname), ttype])

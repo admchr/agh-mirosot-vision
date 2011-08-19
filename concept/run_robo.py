@@ -14,9 +14,9 @@ try:
 except:
     pass
 
-subprocess.check_call(['make', 'main'], cwd='../src/')
+subprocess.check_call(['make', 'find_teams'])
 
 for (center, radius, pattern) in patterns:
     for fname in glob.glob(pattern):
-        args = ['../src/main', fname, 'out_robo/'+os.path.basename(fname), str(center[0]), str(center[1]), str(radius)]
+        args = ['./find_teams', fname, 'out_robo/'+os.path.basename(fname), str(center[0]), str(center[1]), str(radius)]
         subprocess.Popen(args)
