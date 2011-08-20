@@ -7,6 +7,8 @@
 #include <string>
 #include <cmath>
 
+const int RUNS = 10; // TODO: this is all too slow!!!
+
 int main(int argc, char**argv) {
     cv::Mat_<cv::Vec3b> img0 = cv::imread(std::string(argv[1]));
     
@@ -14,9 +16,10 @@ int main(int argc, char**argv) {
     init_config(&conf);
     conf.width = img0.size().width;
     conf.height = img0.size().height;
-    conf.image = img0.ptr();
-    find_teams(&conf);
     
-    cv::imwrite(std::string(argv[2]), img0);
-    
+    for (int i=0;i<RUNS;i++) {
+        cv::Mat_<cv::Vec3b> img_tmp(img0);
+        conf.image = img_tmp.ptr();
+        find_teams(&conf);
+    }
 }

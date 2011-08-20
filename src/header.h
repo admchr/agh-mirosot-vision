@@ -7,7 +7,8 @@ struct mirosot_vision_conf {
     unsigned char *image;
     int height, width;
     
-    int meanshift_something;
+    int meanshift_radius;
+    int meanshift_threshold;
     
 };
 
@@ -27,5 +28,5 @@ struct robot_data {
 };
 
 robot_data find_teams(mirosot_vision_conf*cnf);
-
+void init_config(mirosot_vision_conf*cnf);
 #endif
