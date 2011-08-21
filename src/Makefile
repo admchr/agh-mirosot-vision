@@ -2,7 +2,9 @@
 CXXFLAGS= -g
 LIBS= -lcv -lhighgui -lm
 
-all: perf perf_gprof driver
+PROGRAMS= perf perf_gprof driver
+
+all: $(PROGRAMS)
 
 driver: driver.o impl.o mshift.o
 	g++ $(LIBS) $^ -o $@
@@ -20,7 +22,7 @@ perf.o: driver.cpp header.h
 
 .PHONY: clean
 clean:
-	rm -f *.o driver perf
+	rm -f *.o $(PROGRAMS)
 
 test:
 	echo tbc
