@@ -10,21 +10,23 @@ struct mirosot_vision_conf {
     int meanshift_radius;
     int meanshift_threshold;
     
+    unsigned char *debug_balance;
+    unsigned char *debug_meanshift;
 };
 
-struct robot_pos {
+struct image_pos {
     int x;
     int y;
 };
 
 struct robot_data {
     int team1_len;
-    robot_pos team1[MAX_ROBOTS];
+    image_pos team1[MAX_ROBOTS];
     
     int team2_len;
-    robot_pos team2[MAX_ROBOTS];
+    image_pos team2[MAX_ROBOTS];
     
-    robot_pos ball_pos;
+    image_pos ball_pos;
 };
 
 robot_data find_teams(mirosot_vision_conf*cnf);
