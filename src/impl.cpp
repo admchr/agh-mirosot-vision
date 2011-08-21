@@ -2,7 +2,11 @@
 
 #include <opencv/cv.h>
 
-#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace cv;
+using namespace std;
 
 typedef cv::Mat_<cv::Vec3b> Image;
 
@@ -28,6 +32,26 @@ void init_config(mirosot_vision_config* config) {
     config->debug_meanshift = NULL;
 }
 
+cv::Vec3b median(const Image& img, image_pos pos, int radius) {
+    std::vector<int> channel[3];
+    for (int dx = -radius; dx<=radius; dx++)
+        for (int dy = -radius; dy<=radius; dy++) {
+            int x = pos.y+dy, y = pos.x+dx;
+            if (x<0 || y<0 || x>=img.size().width || y>=img.size().height)
+                continue;
+            cv::Vec3b color = img(pos.y+dy, pos.x+dx);
+            
+            for (int i=0;i<3;i++)
+                channel[i].push_back(color[i]);
+        }
+    
+    for (int i=0;i<3;i++)
+        std::sort(channel[i].begin(), channel[i].end());
+    
+    int median = channel[0].size()/2;
+    
+    return cv::Vec3b(channel[0][median], channel[1][median], channel[2][median]);
+}
 
 void white_balance(Image* img, mirosot_vision_config* config) {
     const int TILE=16;
