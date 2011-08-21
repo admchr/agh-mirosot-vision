@@ -4,12 +4,14 @@
 
 #include <iostream>
 
-static void get_matrix(cv::Mat_<cv::Vec3b> & mat, unsigned char* buf, mirosot_vision_config* config) {
+typedef cv::Mat_<cv::Vec3b> Image;
+
+static void get_matrix(Image & mat, unsigned char* buf, mirosot_vision_config* config) {
     cv::Mat img_tmp(cv::Size(config->width, config->height), CV_8UC3, buf);
-    cv::Mat_<cv::Vec3b> img(img_tmp);
+    Image img(img_tmp);
     mat = img;
 }
-static void copy_to(const cv::Mat_<cv::Vec3b> & mat, unsigned char* buf) {
+static void copy_to(const Image& mat, unsigned char* buf) {
     if (buf) {
         memcpy(buf, mat.ptr(), 3 * mat.size().width * mat.size().height);
     }
@@ -26,6 +28,16 @@ void init_config(mirosot_vision_config* config) {
     config->debug_meanshift = NULL;
 }
 
+
+void white_balance(Image* img, mirosot_vision_config* config) {
+    const int TILE=16;
+    for (int i=0;i<img->size().width-TILE; i+=TILE)
+        for (int j=0;j < img->size().height-TILE; j+=TILE) {
+            Image buf=(*img)(cv::Rect(i,j,TILE,TILE));
+            buf*=0.5;
+        }
+}
+
 CV_IMPL void
 meanShiftFiltering( const CvArr* srcarr, CvArr* dstarr, 
     double sp0, double sr, int max_level,
@@ -36,21 +48,20 @@ robot_data find_teams(mirosot_vision_config* config) {
     get_matrix(img, config->image, config);
     CvMat img_mat = (CvMat)img;
     
+    white_balance(&img, config);
+    copy_to(img, config->debug_balance);
+    
     // in place meanshift - gives different results
     // than normal procedure
-    meanShiftFiltering(
+    /*meanShiftFiltering(
         &img_mat,
         &img_mat,
         config->meanshift_radius, // position radius
         config->meanshift_threshold, // value radius
         0,
         cv::TermCriteria(CV_TERMCRIT_ITER, 5, 1.0)
-    );
+    );*/
     img = cv::Mat(&img_mat);
     
     copy_to(img, config->debug_meanshift);
-}
-
-void white_balance() {
-    
 }

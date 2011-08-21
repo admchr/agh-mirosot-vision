@@ -1,5 +1,6 @@
 
 #include "header.h"
+#include "common.hpp"
 
 #include <opencv/cv.h>
 #include <vector>
@@ -7,9 +8,10 @@
 #include <string>
 #include <cmath>
 
+
 int main(int argc, char**argv) {
     cv::Mat_<cv::Vec3b> img0 = cv::imread(std::string(argv[1]));
-    std::string out_fname = std::string(argv[2]);
+    std::string out_fname = std::string(argv[3]);
     
     mirosot_vision_config config;
     init_config(&config);
@@ -17,6 +19,8 @@ int main(int argc, char**argv) {
     config.height = img0.size().height;
     
     config.image = img0.ptr();
+    
+    load_config(&config, argv[2]);
     
     cv::Mat_<cv::Vec3b> img_white(img0.clone()), img_mshift(img0.clone());
     config.debug_balance = img_white.ptr();
