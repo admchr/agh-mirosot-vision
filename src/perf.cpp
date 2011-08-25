@@ -7,7 +7,7 @@
 #include <opencv/highgui.h>
 #include <string>
 #include <cmath>
-
+#include <iostream>
 const int RUNS = 10; // TODO: this is all too slow!!!
 
 int main(int argc, char**argv) {
@@ -19,6 +19,8 @@ int main(int argc, char**argv) {
     config.height = img0.size().height;
     load_config(&config, argv[2]);
     
+    
+    std::cout<<RUNS<<" iterations "<<std::endl;
     for (int i=0;i<RUNS;i++) {
         cv::Mat_<cv::Vec3b> img_tmp(img0);
         config.image = img_tmp.ptr();

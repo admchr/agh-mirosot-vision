@@ -6,7 +6,7 @@
 #include "impl.cpp"
 
 BOOST_AUTO_TEST_CASE(median_test) {
-    Image img(cv::Size(40, 40));
+    Image img = Image::zeros(cv::Size(50, 40));
     
     img(10, 21) = Vec3b(6, 12, 3);
     img(11, 21) = Vec3b(4, 12, 3);
@@ -14,7 +14,7 @@ BOOST_AUTO_TEST_CASE(median_test) {
     
     img(10, 22) = Vec3b(9, 12, 3);
     img(11, 22) = Vec3b(2, 12, 3);
-    img(12, 22) = Vec3b(5, 12, 3);
+    img(12, 22) = Vec3b(5, 12, 4);
     
     img(10, 23) = Vec3b(8, 12, 3);
     img(11, 23) = Vec3b(7, 12, 3);
@@ -28,8 +28,9 @@ BOOST_AUTO_TEST_CASE(median_test) {
     pos.x=0;
     pos.y=0;
     BOOST_CHECK(median(img, pos, 1) == Vec3b(0, 0, 0));
-    pos.x=39;
+    pos.x=49;
     pos.y=39;
     BOOST_CHECK(median(img, pos, 1) == Vec3b(0, 0, 0));
+    BOOST_CHECK(median(img, pos, 100) == Vec3b(0, 0, 0));
     
 }

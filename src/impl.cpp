@@ -36,7 +36,7 @@ cv::Vec3b median(const Image& img, image_pos pos, int radius) {
     std::vector<int> channel[3];
     for (int dx = -radius; dx<=radius; dx++)
         for (int dy = -radius; dy<=radius; dy++) {
-            int x = pos.y+dy, y = pos.x+dx;
+            int x = pos.x+dx, y = pos.y+dy;
             if (x<0 || y<0 || x>=img.size().width || y>=img.size().height)
                 continue;
             cv::Vec3b color = img(pos.y+dy, pos.x+dx);
