@@ -3,7 +3,9 @@
 #include <boost/test/unit_test.hpp>
 #include <boost/test/floating_point_comparison.hpp>
 
-#include "impl.cpp"
+#include "balance.h"
+
+using namespace cv;
 
 BOOST_AUTO_TEST_CASE(median_test) {
     Image img = Image::zeros(cv::Size(50, 40));
