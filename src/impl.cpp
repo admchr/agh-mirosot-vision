@@ -1,5 +1,5 @@
 #include "header.h"
-
+#include "balance.h"
 #include <opencv/cv.h>
 
 #include <vector>
@@ -32,35 +32,6 @@ void init_config(mirosot_vision_config* config) {
     config->debug_meanshift = NULL;
 }
 
-cv::Vec3b median(const Image& img, image_pos pos, int radius) {
-    std::vector<int> channel[3];
-    for (int dx = -radius; dx<=radius; dx++)
-        for (int dy = -radius; dy<=radius; dy++) {
-            int x = pos.x+dx, y = pos.y+dy;
-            if (x<0 || y<0 || x>=img.size().width || y>=img.size().height)
-                continue;
-            cv::Vec3b color = img(pos.y+dy, pos.x+dx);
-            
-            for (int i=0;i<3;i++)
-                channel[i].push_back(color[i]);
-        }
-    
-    for (int i=0;i<3;i++)
-        std::sort(channel[i].begin(), channel[i].end());
-    
-    int median = channel[0].size()/2;
-    
-    return cv::Vec3b(channel[0][median], channel[1][median], channel[2][median]);
-}
-
-void white_balance(Image* img, mirosot_vision_config* config) {
-    const int TILE=16;
-    for (int i=0;i<img->size().width-TILE; i+=TILE)
-        for (int j=0;j < img->size().height-TILE; j+=TILE) {
-            Image buf=(*img)(cv::Rect(i,j,TILE,TILE));
-            buf*=0.5;
-        }
-}
 
 CV_IMPL void
 meanShiftFiltering( const CvArr* srcarr, CvArr* dstarr, 
@@ -88,4 +59,6 @@ robot_data find_teams(mirosot_vision_config* config) {
     img = cv::Mat(&img_mat);
     
     copy_to(img, config->debug_meanshift);
+    
+    return robot_data();
 }
