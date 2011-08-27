@@ -21,6 +21,7 @@ struct mirosot_vision_config {
     int meanshift_threshold;
     
     unsigned char *debug_balance;
+    unsigned char *debug_prescreen;
     unsigned char *debug_meanshift;
 
 };

@@ -1,5 +1,7 @@
 #include "header.h"
 #include "balance.hpp"
+#include "area.hpp"
+
 #include <opencv/cv.h>
 
 #include <vector>
@@ -32,20 +34,44 @@ void init_config(mirosot_vision_config* config) {
     config->debug_meanshift = NULL;
 }
 
+bool is_black(Vec3b c){
+    return c[2]<120;
+}
+bool is_blue(Vec3b c){
+    return !is_black(c) && c[0]>90 && c[0]<110 && c[1]*c[2]>128*128;
+}
 
 CV_IMPL void
 meanShiftFiltering( const CvArr* srcarr, CvArr* dstarr, 
     double sp0, double sr, int max_level,
     CvTermCriteria termcrit );
 
+Image img_hsv;// TODO: make this reentrant
 robot_data find_teams(mirosot_vision_config* config) {
     cv::Mat_<cv::Vec3b> img;
     get_matrix(img, config->image, config);
-    CvMat img_mat = (CvMat)img;
     
     white_balance(&img, config);
     copy_to(img, config->debug_balance);
     
+    cvtColor(img, img_hsv, CV_BGR2HSV);// SLOW!
+    
+    Area area;
+    
+    area.setImage(img_hsv);
+    area.precompute(is_blue);
+    
+    Image img_prescreen(img.clone());
+    img_prescreen*=0.5;
+    for (int x=0;x<img.size().width;x++)
+        for (int y=0;y<img.size().height;y++) {
+            if (area.isIn(x, y))
+                img_prescreen(y, x) = Vec3b(255, 0, 0);
+        }
+    
+    copy_to(img_prescreen, config->debug_prescreen);
+    
+    CvMat img_mat = (CvMat)img;
     // in place meanshift - gives different results
     // than normal procedure
     /*meanShiftFiltering(
