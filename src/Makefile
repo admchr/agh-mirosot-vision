@@ -1,5 +1,5 @@
 
-CXXFLAGS= -g -Wall -Wextra -pg -O2
+CXXFLAGS= -g -Wall -Wextra -O2
 LIBS= -lcv -lhighgui -lm
 TEST_LIBS= -lboost_unit_test_framework $(LIBS)
 
@@ -16,15 +16,19 @@ perf: perf.o  $(OBJS)
 perf_gprof: perf.o $(OBJS)
 	g++ -pg $(LIBS) $^ -o $@
 
-test_impl: test_impl.o $(OBJS)
-	g++ $(TEST_LIBS) $^ -o $@ 
+test_impl: test_impl.o test_set2d.o $(OBJS)
+	g++ $(TEST_LIBS)  $^ -o $@
 
-area.o: area.hpp area.cpp
+area.o:area.cpp area.hpp 
 impl.o: impl.cpp header.h balance.hpp area.hpp
 balance.o: balance.cpp balance.hpp
 driver.o: driver.cpp header.h
 perf.o: driver.cpp header.h
-test_impl.o: impl.cpp test_impl.cpp header.h
+
+test_impl.o: test_impl.cpp header.h
+test_set2d.o: test_set2d.cpp header.h
+
+
 
 .PHONY: clean
 clean:

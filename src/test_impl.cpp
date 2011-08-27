@@ -1,5 +1,6 @@
 #define BOOST_TEST_DYN_LINK
-#define BOOST_TEST_MODULE basic_tests
+#define BOOST_TEST_MAIN
+//#define BOOST_TEST_MODULE basic_tests
 #include <boost/test/unit_test.hpp>
 #include <boost/test/floating_point_comparison.hpp>
 
