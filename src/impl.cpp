@@ -31,6 +31,7 @@ void init_config(mirosot_vision_config* config) {
     config->white_points_len = 0;
     
     config->debug_balance = NULL;
+    config->debug_prescreen = NULL;
     config->debug_meanshift = NULL;
 }
 
@@ -60,16 +61,17 @@ robot_data find_teams(mirosot_vision_config* config) {
     
     area.setImage(img_hsv);
     area.precompute(is_blue);
+    if (config->debug_prescreen) {
+        Image img_prescreen(img.clone());
+        img_prescreen*=0.5;
+        for (int x=0;x<img.size().width;x++)
+            for (int y=0;y<img.size().height;y++) {
+                if (area.isIn(x, y))
+                    img_prescreen(y, x) = Vec3b(255, 0, 0);
+            }
+            copy_to(img_prescreen, config->debug_prescreen);
     
-    Image img_prescreen(img.clone());
-    img_prescreen*=0.5;
-    for (int x=0;x<img.size().width;x++)
-        for (int y=0;y<img.size().height;y++) {
-            if (area.isIn(x, y))
-                img_prescreen(y, x) = Vec3b(255, 0, 0);
-        }
-    
-    copy_to(img_prescreen, config->debug_prescreen);
+    }
     
     CvMat img_mat = (CvMat)img;
     // in place meanshift - gives different results
