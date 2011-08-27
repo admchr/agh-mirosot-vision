@@ -3,9 +3,10 @@
 #include <boost/test/unit_test.hpp>
 #include <boost/test/floating_point_comparison.hpp>
 
-#include "balance.h"
+#include "balance.hpp"
 
 using namespace cv;
+using namespace std;
 
 BOOST_AUTO_TEST_CASE(median_test) {
     Image img = Image::zeros(cv::Size(50, 40));
@@ -35,4 +36,35 @@ BOOST_AUTO_TEST_CASE(median_test) {
     BOOST_CHECK(median(img, pos, 1) == Vec3b(0, 0, 0));
     BOOST_CHECK(median(img, pos, 100) == Vec3b(0, 0, 0));
     
+}
+
+BOOST_AUTO_TEST_CASE(get_white_test) {
+    vector<pair<image_pos, Vec3b> > data;
+    image_pos pos;
+    pos.x = 0;
+    pos.y = 0;
+    data.push_back(make_pair(pos, Vec3b(255, 0, 0)));
+    pos.x = 100;
+    pos.y = 0;
+    data.push_back(make_pair(pos, Vec3b(0, 99, 0)));
+    pos.x = 0;
+    pos.y = 100;
+    data.push_back(make_pair(pos, Vec3b(0, 0, 33)));
+    
+    pos.x = 50;
+    pos.y = 50;
+    BOOST_CHECK(get_white(data, pos) == Vec3b(255/3, 99/3, 33/3));
+    
+    pos.x = 0;
+    pos.y = 0;
+    BOOST_CHECK(get_white(data, pos) == Vec3b(255, 0, 0));
+    
+    
+    pos.x = 100;
+    pos.y = 0;
+    BOOST_CHECK(get_white(data, pos) == Vec3b(0, 99, 0));
+    
+    pos.x = 0;
+    pos.y = 100;
+    BOOST_CHECK(get_white(data, pos) == Vec3b(0, 0, 33));
 }

@@ -3,7 +3,7 @@ CXXFLAGS= -g -Wall -Wextra
 LIBS= -lcv -lhighgui -lm
 TEST_LIBS= -lboost_unit_test_framework $(LIBS)
 
-PROGRAMS= perf perf_gprof driver
+PROGRAMS= perf perf_gprof driver test_impl
 OBJS= impl.o mshift.o balance.o
 all: $(PROGRAMS)
 
@@ -19,8 +19,8 @@ perf_gprof: perf.o $(OBJS)
 test_impl: test_impl.o $(OBJS)
 	g++ -pg $(TEST_LIBS) $^ -o $@ 
 
-impl.o: impl.cpp header.h balance.h
-balance.o: balance.cpp balance.h
+impl.o: impl.cpp header.h balance.hpp
+balance.o: balance.cpp balance.hpp
 driver.o: driver.cpp header.h
 perf.o: driver.cpp header.h
 test_impl.o: impl.cpp test_impl.cpp header.h
