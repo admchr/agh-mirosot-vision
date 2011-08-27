@@ -1,6 +1,7 @@
 
 #include "balance.hpp"
 
+#include <cassert>
 using namespace cv;
 using namespace std;
 
@@ -50,10 +51,31 @@ Vec3b get_white(vector<pair<image_pos, Vec3b> > white_points, image_pos pos) {
 }
 
 void white_balance(Image* img, mirosot_vision_config* config) {
-    const int TILE=16;
+    
+    vector<pair<image_pos, Vec3b> > white_points;
+    for (int i=0; i< config->white_points_len; i++) {
+        image_pos pos = config->white_points[i];
+        white_points.push_back(make_pair(pos, median(*img, pos, 1)));
+    }
+    
+    const int TILE=32;
+    const double SHRINK_FACTOR = 0.7;
+    Mat mats[3];
+    Mat buf;
+    split(*img, mats);
     for (int i=0;i<img->size().width-TILE; i+=TILE)
         for (int j=0;j < img->size().height-TILE; j+=TILE) {
-            Image buf=(*img)(cv::Rect(i,j,TILE,TILE));
-            buf*=0.5;
+            
+            image_pos pos;
+            pos.x = i;
+            pos.y = j;
+            Vec3b color = get_white(white_points, pos);
+            for (int k=0;k<3;k++){   
+                buf=mats[k](cv::Rect(i,j,TILE,TILE));
+                //mats[k].mul(mats[k],);
+                buf*=255.0/color[k]*SHRINK_FACTOR;
+            }
         }
+        
+    merge(mats, 3, *img);
 } 
