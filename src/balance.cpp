@@ -58,7 +58,7 @@ void white_balance(Image* img, mirosot_vision_config* config) {
         white_points.push_back(make_pair(pos, median(*img, pos, 1)));
     }
     
-    const int TILE=32;
+    const int TILE=16;
     const double SHRINK_FACTOR = 0.7;
     Mat mats[3];
     Mat buf;
