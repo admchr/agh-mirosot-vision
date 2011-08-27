@@ -1,5 +1,5 @@
 
-CXXFLAGS= -g -Wall -Wextra
+CXXFLAGS= -g -Wall -Wextra -pg -O2
 LIBS= -lcv -lhighgui -lm
 TEST_LIBS= -lboost_unit_test_framework $(LIBS)
 
@@ -17,7 +17,7 @@ perf_gprof: perf.o $(OBJS)
 	g++ -pg $(LIBS) $^ -o $@
 
 test_impl: test_impl.o $(OBJS)
-	g++ -pg $(TEST_LIBS) $^ -o $@ 
+	g++ $(TEST_LIBS) $^ -o $@ 
 
 impl.o: impl.cpp header.h balance.hpp
 balance.o: balance.cpp balance.hpp

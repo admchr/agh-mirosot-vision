@@ -8,8 +8,7 @@
 #include <string>
 #include <cmath>
 #include <iostream>
-const int RUNS = 10; // TODO: this is all too slow!!!
-
+const int RUNS = 1000; 
 int main(int argc, char**argv) {
     cv::Mat_<cv::Vec3b> img0 = cv::imread(std::string(argv[1]));
     
