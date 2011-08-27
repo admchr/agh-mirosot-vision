@@ -1,5 +1,5 @@
 #include "header.h"
-#include "balance.h"
+#include "balance.hpp"
 #include <opencv/cv.h>
 
 #include <vector>
