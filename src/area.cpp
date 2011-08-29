@@ -2,12 +2,11 @@
 #include "area.hpp"
 
 void Area::setImage(Image img) {
-    int size = (img.size().height+1)*(img.size().width+1);
     this->img = img;
-    set.resize(size);
-    tile_set.resize(size/(TILE_SIZE*TILE_SIZE));
+    set.resize(img.size());
+    tile_set.resize(img.size());//TODO
 }
 
 bool Area::isIn(int x, int y) {
-    return set[img.size().width*y+x];
+    return set.get(x, y);
 }
