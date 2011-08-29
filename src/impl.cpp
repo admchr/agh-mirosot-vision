@@ -68,6 +68,8 @@ robot_data find_teams(mirosot_vision_config* config) {
             for (int y=0;y<img.size().height;y++) {
                 if (area.isIn(x, y))
                     img_prescreen(y, x) = Vec3b(255, 0, 0);
+                else if (area.tile_set.get(x/16, y/16)) 
+                    img_prescreen(y, x) = Vec3b(255, 127, 127);
             }
             copy_to(img_prescreen, config->debug_prescreen);
     

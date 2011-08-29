@@ -26,7 +26,7 @@ driver.o: driver.cpp header.h
 perf.o: driver.cpp header.h
 
 test_impl.o: test_impl.cpp header.h
-test_set2d.o: test_set2d.cpp header.h
+test_set2d.o: test_set2d.cpp set2d.hpp
 
 
 

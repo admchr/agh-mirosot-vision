@@ -1,6 +1,5 @@
 #define BOOST_TEST_DYN_LINK
-#define BOOST_TEST_MAIN
-//#define BOOST_TEST_MODULE basic_tests
+#define BOOST_TEST_MODULE basic_tests
 #include <boost/test/unit_test.hpp>
 #include <boost/test/floating_point_comparison.hpp>
 
@@ -27,6 +26,7 @@ BOOST_AUTO_TEST_CASE(median_test) {
     image_pos pos;
     pos.x=22;
     pos.y=11;
+    BOOST_CHECK(median(img, pos, 0) == Vec3b(2, 12, 3));
     BOOST_CHECK(median(img, pos, 1) == Vec3b(5, 12, 3));
     
     pos.x=0;
@@ -34,6 +34,7 @@ BOOST_AUTO_TEST_CASE(median_test) {
     BOOST_CHECK(median(img, pos, 1) == Vec3b(0, 0, 0));
     pos.x=49;
     pos.y=39;
+    BOOST_CHECK(median(img, pos, 0) == Vec3b(0, 0, 0));
     BOOST_CHECK(median(img, pos, 1) == Vec3b(0, 0, 0));
     BOOST_CHECK(median(img, pos, 100) == Vec3b(0, 0, 0));
     
