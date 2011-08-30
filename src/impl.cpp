@@ -57,7 +57,7 @@ robot_data find_teams(mirosot_vision_config* config) {
     
     cvtColor(img, img_hsv, CV_BGR2HSV);// SLOW!
     
-    Area area;
+    Area area(*config);
     
     area.setImage(img_hsv);
     area.precompute(is_blue);
@@ -68,25 +68,14 @@ robot_data find_teams(mirosot_vision_config* config) {
             for (int y=0;y<img.size().height;y++) {
                 if (area.isIn(x, y))
                     img_prescreen(y, x) = Vec3b(255, 0, 0);
-                else if (area.tile_set.get(x/16, y/16)) 
-                    img_prescreen(y, x) = Vec3b(255, 127, 127);
+               // else if (area.tile_set.get(x/16, y/16)) 
+                 //   img_prescreen(y, x) = Vec3b(255, 127, 127);
             }
             copy_to(img_prescreen, config->debug_prescreen);
     
     }
     
-    CvMat img_mat = (CvMat)img;
-    // in place meanshift - gives different results
-    // than normal procedure
-    /*meanShiftFiltering(
-        &img_mat,
-        &img_mat,
-        config->meanshift_radius, // position radius
-        config->meanshift_threshold, // value radius
-        0,
-        cv::TermCriteria(CV_TERMCRIT_ITER, 5, 1.0)
-    );*/
-    img = cv::Mat(&img_mat);
+    area.meanShift();
     
     copy_to(img, config->debug_meanshift);
     

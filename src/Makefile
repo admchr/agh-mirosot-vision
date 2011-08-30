@@ -19,11 +19,12 @@ perf_gprof: perf.o $(OBJS)
 test_impl: test_impl.o test_array2d.o $(OBJS)
 	g++ $(TEST_LIBS)  $^ -o $@
 
-area.o:area.cpp area.hpp 
+area.o:area.cpp area.hpp mshift.hpp
 impl.o: impl.cpp header.h balance.hpp area.hpp
 balance.o: balance.cpp balance.hpp
 driver.o: driver.cpp header.h
 perf.o: driver.cpp header.h
+mshift.o: mshift.cpp mshift.hpp
 
 test_impl.o: test_impl.cpp header.h
 test_array2d.o: test_array2d.cpp array2d.hpp

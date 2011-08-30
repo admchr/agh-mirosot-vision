@@ -76,6 +76,6 @@ void white_balance(Image* img, mirosot_vision_config* config) {
                 buf*=255.0/color[k]*SHRINK_FACTOR;
             }
         }
-        
+    
     merge(mats, 3, *img);
 } 
