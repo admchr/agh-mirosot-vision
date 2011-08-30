@@ -2,10 +2,10 @@
 #include <boost/test/unit_test.hpp>
 #include <boost/test/floating_point_comparison.hpp>
 
-#include "set2d.hpp"
+#include "array2d.hpp"
 
-BOOST_AUTO_TEST_CASE(set2d_test){
-    Set2d<bool> set(3, 5);
+BOOST_AUTO_TEST_CASE(array2d_test) {
+    Array2d<bool> set(3, 5);
     
     BOOST_CHECK(!set.get(1, 2));
     
@@ -15,8 +15,8 @@ BOOST_AUTO_TEST_CASE(set2d_test){
     BOOST_CHECK(!set.get(2, 1));
 }
 
-BOOST_AUTO_TEST_CASE(set2d_test_outofrange) {
-    Set2d<bool> set(3, 5);
+BOOST_AUTO_TEST_CASE(array2d_test_outofrange) {
+    Array2d<bool> set(3, 5);
     set.set(19, 2, true);
     
 }
@@ -39,8 +39,8 @@ struct Fun {
     }
 };
 
-BOOST_AUTO_TEST_CASE(set2d_test_foreach) {
-    Set2d<int> set;
+BOOST_AUTO_TEST_CASE(array2d_test_foreach) {
+    Array2d<int> set;
     set.resize(cv::Size(3, 5));
     Fun fun;
     

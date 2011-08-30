@@ -3,8 +3,12 @@
 
 void Area::setImage(Image img) {
     this->img = img;
-    set.resize(img.size());
-    tile_set.resize(img.size());//TODO
+    cv::Size size = img.size();
+    set.resize(size);
+    size.width = size.width/TILE_SIZE + 1;
+    size.height = size.height/TILE_SIZE + 1;
+    tile_set.resize(size);
+    
 }
 
 bool Area::isIn(int x, int y) {

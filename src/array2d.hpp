@@ -5,10 +5,10 @@
 #include <opencv/cv.h>
 
 template <typename T>
-class Set2d {
+class Array2d {
 public:
-    Set2d();
-    Set2d(int width, int height);
+    Array2d();
+    Array2d(int width, int height);
     
     void resize(int x, int y);
     void resize(cv::Size size);
@@ -31,7 +31,7 @@ private:
 
 
 template <typename T>
-int Set2d<T>::getPos(int x, int y) {
+int Array2d<T>::getPos(int x, int y) {
     if (x<0 || y<0)
         return -1;
     if (x>=width || y>= height)
@@ -40,32 +40,32 @@ int Set2d<T>::getPos(int x, int y) {
 }
 
 template <typename T>
-Set2d<T>::Set2d(int width, int height) {
+Array2d<T>::Array2d(int width, int height) {
     resize(width, height);
 }
 template <typename T>
-Set2d<T>::Set2d() {
+Array2d<T>::Array2d() {
 }
 template <typename T>
-void Set2d<T>::resize(int width, int height) {
+void Array2d<T>::resize(int width, int height) {
     vec.resize(width*height);
     this->width = width;
     this->height = height;
 }
 
 template <typename T>
-void Set2d<T>::resize(cv::Size size) {
+void Array2d<T>::resize(cv::Size size) {
     resize(size.width, size.height);
 }
 
 template <typename T>
-void Set2d<T>::set(int x, int y, T t) {
+void Array2d<T>::set(int x, int y, T t) {
     int pos = getPos(x, y);
     if (pos == -1) return;
     vec[pos]=t;
 }
 template <typename T>
-T Set2d<T>::get(int x, int y) {
+T Array2d<T>::get(int x, int y) {
     int pos = getPos(x, y);
     return vec[pos];
 }

@@ -16,7 +16,7 @@ perf: perf.o  $(OBJS)
 perf_gprof: perf.o $(OBJS)
 	g++ -pg $(LIBS) $^ -o $@
 
-test_impl: test_impl.o test_set2d.o $(OBJS)
+test_impl: test_impl.o test_array2d.o $(OBJS)
 	g++ $(TEST_LIBS)  $^ -o $@
 
 area.o:area.cpp area.hpp 
@@ -26,15 +26,11 @@ driver.o: driver.cpp header.h
 perf.o: driver.cpp header.h
 
 test_impl.o: test_impl.cpp header.h
-test_set2d.o: test_set2d.cpp set2d.hpp
-
-
+test_array2d.o: test_array2d.cpp array2d.hpp
 
 .PHONY: clean
 clean:
 	rm -f *.o $(PROGRAMS)
-
-
 
 test: test_impl
 	./test_impl
