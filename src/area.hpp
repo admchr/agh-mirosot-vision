@@ -2,7 +2,7 @@
 #define AREA_H
 
 #include "header.h"
-#include "set2d.hpp"
+#include "array2d.hpp"
 
 #include <vector>
 #include <opencv/cv.h>
@@ -10,12 +10,11 @@
 typedef cv::Mat_<cv::Vec3b> Image;
 
 
-
 class Area {
     
 template <typename F>
 class PrecomputeFun {
-public:
+public://TODO make private
     Area *a;
     F f;
     bool operator()(int x, int y, bool b) {
@@ -33,8 +32,8 @@ public:
     }
 };
 public:
-    Set2d<bool> set;
-    Set2d<bool> tile_set;
+    Array2d<bool> set;
+    Array2d<bool> tile_set;
     Image img;
     static const int TILE_SIZE = 16;
     void setImage(Image img);
@@ -48,6 +47,7 @@ public:
     }
     
     bool isIn(int x, int y);
+    void meanShift();
 };
 
 
