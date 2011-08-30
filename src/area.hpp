@@ -5,16 +5,16 @@
 #include "array2d.hpp"
 
 #include <vector>
-#include <opencv/cv.h>
 
 typedef cv::Mat_<cv::Vec3b> Image;
 
 
 class Area {
-    
+public://TODO make some private
+
 template <typename F>
 class PrecomputeFun {
-public://TODO make private
+public:
     Area *a;
     F f;
     bool operator()(int x, int y, bool b) {
@@ -31,11 +31,14 @@ public://TODO make private
         return ret;
     }
 };
-public:
     Array2d<bool> set;
     Array2d<bool> tile_set;
     Image img;
     static const int TILE_SIZE = 16;
+    mirosot_vision_config config;
+    Area(mirosot_vision_config config){
+        this->config = config;
+    }
     void setImage(Image img);
     
     template <typename F>
@@ -49,7 +52,5 @@ public:
     bool isIn(int x, int y);
     void meanShift();
 };
-
-
 
 #endif
