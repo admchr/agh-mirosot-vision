@@ -35,6 +35,7 @@ public:
     Array2d<bool> tile_set;
     Image img;
     static const int TILE_SIZE = 16;
+    static const int OVERLAP = 3;
     mirosot_vision_config config;
     Area(mirosot_vision_config config){
         this->config = config;
@@ -50,7 +51,7 @@ public:
     }
     
     bool isIn(int x, int y);
-    void meanShift();
+    void meanShift(Image img);
 };
 
 #endif

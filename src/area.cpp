@@ -23,27 +23,29 @@ bool Area::isIn(int x, int y) {
 
 class ShiftMeanInTile {
 public:
+	Image img;
     Area* a;
     bool operator()(int x, int y, bool on) {
         int ts = a->TILE_SIZE;
+        int ov = a->OVERLAP;
         if (on) {
-            Image tmp = (a->img)(Rect(x*ts, y*ts, ts, ts));
-            CvMat mat = tmp;
+        	Rect roi = Rect(x*ts-ov, y*ts-ov, ts+2*ov, ts+2*ov) & Rect(0, 0, img.cols, img.rows);
+            Image tmp = img(roi);
             meanShiftFiltering(
-                &mat,
-                &mat,
+                tmp,
+                tmp,
                 a->config.meanshift_radius, // position radius
                 a->config.meanshift_threshold, // value radius
                 0,
                 cv::TermCriteria(CV_TERMCRIT_ITER, 5, 1.0)
             );
-            tmp = Mat(&mat);
         }
         return on;
     }
 };
-void Area::meanShift(){
+void Area::meanShift(Image img){
     ShiftMeanInTile sh;
+    sh.img = img;
     sh.a = this;
     tile_set.forEach(sh);
 }
