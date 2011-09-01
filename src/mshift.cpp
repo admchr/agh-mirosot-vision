@@ -42,7 +42,7 @@
 #include <opencv/cv.h>
 
 CV_IMPL void
-meanShiftFiltering( const CvArr* srcarr, CvArr* dstarr, 
+meanShiftFiltering( const cv::Mat src0, cv::Mat dst0,
                          double sp0, double sr, int max_level,
                          CvTermCriteria termcrit )
 {
@@ -60,8 +60,6 @@ meanShiftFiltering( const CvArr* srcarr, CvArr* dstarr,
     double sr2 = sr * sr;
     int isr2 = cvRound(sr2), isr22 = MAX(isr2,16);
     int tab[768];
-    cv::Mat src0 = cv::cvarrToMat(srcarr);
-    cv::Mat dst0 = cv::cvarrToMat(dstarr);
 
     if( src0.type() != CV_8UC3 )
         CV_Error( CV_StsUnsupportedFormat, "Only 8-bit, 3-channel images are supported" );

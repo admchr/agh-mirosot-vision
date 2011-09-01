@@ -25,7 +25,7 @@ static void copy_to(const Image& mat, unsigned char* buf) {
 
 void init_config(mirosot_vision_config* config) {
     config->meanshift_radius = 5;
-    config->meanshift_threshold = 20;
+    config->meanshift_threshold = 40;
     
     config->white_points = NULL;
     config->white_points_len = 0;
@@ -42,10 +42,6 @@ bool is_blue(Vec3b c){
     return !is_black(c) && c[0]>90 && c[0]<110 && c[1]*c[2]>128*128;
 }
 
-CV_IMPL void
-meanShiftFiltering( const CvArr* srcarr, CvArr* dstarr, 
-    double sp0, double sr, int max_level,
-    CvTermCriteria termcrit );
 
 Image img_hsv;// TODO: make this reentrant
 robot_data find_teams(mirosot_vision_config* config) {
@@ -61,6 +57,9 @@ robot_data find_teams(mirosot_vision_config* config) {
     
     area.setImage(img_hsv);
     area.precompute(is_blue);
+
+    area.meanShift(img);
+
     if (config->debug_prescreen) {
         Image img_prescreen(img.clone());
         img_prescreen*=0.5;
@@ -75,7 +74,6 @@ robot_data find_teams(mirosot_vision_config* config) {
     
     }
     
-    area.meanShift();
     
     copy_to(img, config->debug_meanshift);
     
