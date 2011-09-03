@@ -83,7 +83,7 @@ public:
                     int ny = p.y+dy;
                     if (nx<0 || ny<0 || nx>=a->img.cols || ny>= a->img.rows)
                         continue;
-                    if (Area::colorDistance(color, a->img(ny, nx))>10*10)
+                    if (Area::colorDistance(color, a->img(ny, nx))>3*10*10)
                         continue;
                     Q.push(Point(nx, ny));
                 }
