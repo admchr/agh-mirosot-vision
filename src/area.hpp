@@ -1,13 +1,13 @@
 #ifndef AREA_H
 #define AREA_H
 
+#include "defs.hpp"
 #include "header.h"
 #include "array2d.hpp"
 #include "pixelset.hpp"
 
 #include <vector>
 
-typedef cv::Mat_<cv::Vec3b> Image;
 
 
 class Area {

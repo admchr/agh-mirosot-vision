@@ -1,3 +1,45 @@
+#include "mshift.hpp"
+
+using namespace std;
+using namespace cv;
+
+
+std::pair<cv::Point, cv::Vec3b> meanShiftStep(cv::Point p, cv::Vec3b color, const Image& img, int width, int height) {
+    int res_color[3] = {0, 0, 0};
+    int res_pos[2] = {0, 0};
+    int weight_sum = 0;
+    for (int dx = -width; dx <= width; dx++)
+        for (int dy = -width; dy <= width; dy++) {
+            Point q = Point(p.x+dx, p.y+dy);
+            if (q.x < 0 || q.y < 0 || q.x >= img.cols || q.y >= img.rows)
+                continue;
+            Vec3b acolor = img(q);
+
+            int rldiff = 0;
+            for (int i=0; i<3; i++)
+                rldiff += abs(acolor[i] - color[i]);
+
+            int weight = max(height - rldiff, 0);
+            weight *= max(2*width - abs(dx) - abs(dy), 0);
+            weight = max(weight, 0);
+            weight_sum+=weight;
+
+            for (int i=0; i<3; i++)
+                res_color[i] += weight*acolor[i];
+            res_pos[0]+=weight*q.x;
+            res_pos[1]+=weight*q.y;
+        }
+    if (weight_sum==0)
+        return make_pair(p, color);
+    for (int i=0; i<3; i++)
+        res_color[i] /= weight_sum;
+    return make_pair(
+            Point(res_pos[0]/weight_sum, res_pos[1]/weight_sum),
+            Vec3b(res_color[0], res_color[1], res_color[2])
+        );
+}
+
+
 /*M///////////////////////////////////////////////////////////////////////////////////////
 //
 //  IMPORTANT: READ BEFORE DOWNLOADING, COPYING, INSTALLING OR USING.
@@ -42,10 +84,20 @@
 #include <opencv/cv.h>
 
 CV_IMPL void
-meanShiftFiltering( const cv::Mat src0, cv::Mat dst0,
+meanShiftFiltering( const Image src0, Image dst0,
                          double sp0, double sr, int max_level,
                          CvTermCriteria termcrit )
-{
+{   if (false) {
+        for (int x=0;x<src0.cols;x++)
+            for (int y=0;y<src0.rows;y++) {
+                pair<Point, Vec3b> val(Point(y, x), src0(y, x));
+
+                for (int i=0;i<5;i++)
+                    val = meanShiftStep(val.first, val.second, src0, sp0, sr*3);
+                dst0(y, x) = val.second;
+            }
+        return;
+    }
     const int cn = 3;
     const int MAX_LEVELS = 8;
     cv::Mat* src_pyramid = new cv::Mat[MAX_LEVELS+1];
