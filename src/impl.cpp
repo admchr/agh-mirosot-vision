@@ -6,6 +6,7 @@
 
 #include <vector>
 #include <algorithm>
+#include <iostream>
 
 using namespace cv;
 using namespace std;
@@ -55,20 +56,23 @@ robot_data find_teams(mirosot_vision_config* config) {
     
     Area area(*config);
     
-    area.setImage(img_hsv);
-    area.precompute(is_blue);
+    area.setImage(img);
+    area.precompute(is_blue, img_hsv);
 
-    area.meanShift(img);
+    area.meanShift();
+    vector<PixelSet> areas = area.getSets();
+    cvtColor(img, img_hsv, CV_BGR2HSV);// SLOW!!!
 
     if (config->debug_prescreen) {
+        cout<<"areas: "<<areas.size()<<endl;
         Image img_prescreen(img.clone());
         img_prescreen*=0.5;
         for (int x=0;x<img.size().width;x++)
             for (int y=0;y<img.size().height;y++) {
-                if (area.isIn(x, y))
+                if (area.area_map.get(x, y))
+                    img_prescreen(y, x) = Vec3b(255, 127, 127);
+                else if (area.isIn(x, y))
                     img_prescreen(y, x) = Vec3b(255, 0, 0);
-               // else if (area.tile_set.get(x/16, y/16)) 
-                 //   img_prescreen(y, x) = Vec3b(255, 127, 127);
             }
             copy_to(img_prescreen, config->debug_prescreen);
     
