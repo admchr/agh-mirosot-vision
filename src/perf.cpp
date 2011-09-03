@@ -27,4 +27,6 @@ int main(int argc, char**argv) {
         config.image = img_tmp.ptr();
         find_teams(&config);
     }
+
+    return 0;
 }

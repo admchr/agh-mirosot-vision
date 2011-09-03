@@ -101,6 +101,7 @@ std::vector<PixelSet> Area::getSets() {
     AreaFinder f;
     f.a = this;
     set.forEach(f);
+
     return area_vec;
 }
 
@@ -112,4 +113,3 @@ int Area::colorDistance(Vec3b a, Vec3b b) {
     }
     return res;
 }
-

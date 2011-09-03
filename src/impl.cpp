@@ -25,8 +25,10 @@ static void copy_to(const Image& mat, unsigned char* buf) {
 }
 
 void init_config(mirosot_vision_config* config) {
+    config->px_per_cm = 16/7.5;
+
     config->meanshift_radius = 5;
-    config->meanshift_threshold = 40;
+    config->meanshift_threshold = 30;
     
     config->white_points = NULL;
     config->white_points_len = 0;
@@ -34,6 +36,7 @@ void init_config(mirosot_vision_config* config) {
     config->debug_balance = NULL;
     config->debug_prescreen = NULL;
     config->debug_meanshift = NULL;
+    config->debug_patches = NULL;
 }
 
 bool is_black(Vec3b c){
@@ -44,8 +47,38 @@ bool is_blue(Vec3b c){
 }
 
 
-Image img_hsv;// TODO: make this reentrant
+static void debugPatches(cv::Mat_<cv::Vec3b> & img, Area & area, mirosot_vision_config *config)
+{
+    Image img_patches(img.clone());
+    img_patches *= 0.3;
+    for(int x = 0;x < img.size().width;x++)
+        for(int y = 0;y < img.size().height;y++){
+            int area_ind = area.area_map.get(x, y);
+            if(area.area_vec[area_ind].meetsRobotCriteria(config))
+                img_patches(y, x) = Vec3b((area_ind % 3) * 255 / 2, ((area_ind / 3) % 3) * 255 / 2, 255);
+
+        }
+
+    copy_to(img_patches, config->debug_patches);
+}
+
+static void debugPrescreen(cv::Mat_<cv::Vec3b> & img, Area & area, mirosot_vision_config *config)
+{
+    Image img_prescreen(img.clone());
+    img_prescreen *= 0.3;
+    for(int x = 0;x < img.size().width;x++)
+        for(int y = 0;y < img.size().height;y++){
+            int area_ind = area.area_map.get(x, y);
+            if(area.isIn(x, y))
+                img_prescreen(y, x) = Vec3b(255, 0, 0);
+
+        }
+
+    copy_to(img_prescreen, config->debug_prescreen);
+}
+
 robot_data find_teams(mirosot_vision_config* config) {
+    Image img_hsv;
     cv::Mat_<cv::Vec3b> img;
     get_matrix(img, config->image, config);
     
@@ -58,27 +91,17 @@ robot_data find_teams(mirosot_vision_config* config) {
     
     area.setImage(img);
     area.precompute(is_blue, img_hsv);
-
     area.meanShift();
+    if (config->debug_prescreen) {
+        debugPrescreen(img, area, config);
+    }
+
     vector<PixelSet> areas = area.getSets();
     cvtColor(img, img_hsv, CV_BGR2HSV);// SLOW!!!
 
-    if (config->debug_prescreen) {
-        cout<<"areas: "<<areas.size()<<endl;
-        Image img_prescreen(img.clone());
-        img_prescreen*=0.5;
-        for (int x=0;x<img.size().width;x++)
-            for (int y=0;y<img.size().height;y++) {
-            	int area_ind = area.area_map.get(x, y);
-                if (area_ind)
-                    img_prescreen(y, x) = Vec3b((area_ind%3)*255/2, ((area_ind/3)%3)*255/2, 255);
-                else if (area.isIn(x, y))
-                    img_prescreen(y, x) = Vec3b(255, 0, 0);
-            }
-            copy_to(img_prescreen, config->debug_prescreen);
-    
+    if (config->debug_patches) {
+        debugPatches(img, area, config);
     }
-    
     
     copy_to(img, config->debug_meanshift);
     
