@@ -22,15 +22,18 @@ int main(int argc, char**argv) {
     
     load_config(&config, argv[2]);
     
-    cv::Mat_<cv::Vec3b> img_white(img0.clone()), img_prescreen(img0.clone()), img_mshift(img0.clone());
+    cv::Mat_<cv::Vec3b> img_white(img0.clone()), img_prescreen(img0.clone()), img_mshift(img0.clone()), img_patches(img0.clone());
     config.debug_balance = img_white.ptr();
     config.debug_meanshift = img_mshift.ptr();
     config.debug_prescreen = img_prescreen.ptr();
+    config.debug_patches = img_patches.ptr();
     
     find_teams(&config);
     
     cv::imwrite(out_fname+"_white.png", img_white);
     cv::imwrite(out_fname+"_prescreen.png", img_prescreen);
     cv::imwrite(out_fname+"_mshift.png", img_mshift);
+    cv::imwrite(out_fname+"_patches.png", img_patches);
     
+    return 0;
 }

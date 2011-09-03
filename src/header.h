@@ -16,6 +16,8 @@ struct mirosot_vision_config {
     image_pos* white_points;
     int white_points_len;
     
+    double px_per_cm;
+    double robot_size;
     
     int meanshift_radius;
     int meanshift_threshold;
@@ -23,6 +25,7 @@ struct mirosot_vision_config {
     unsigned char *debug_balance;
     unsigned char *debug_prescreen;
     unsigned char *debug_meanshift;
+    unsigned char *debug_patches;
 
 };
 
