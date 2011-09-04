@@ -1,6 +1,7 @@
 #include "header.h"
 #include "balance.hpp"
 #include "area.hpp"
+#include "defs.hpp"
 
 #include <opencv/cv.h>
 
@@ -11,7 +12,6 @@
 using namespace cv;
 using namespace std;
 
-typedef cv::Mat_<cv::Vec3b> Image;
 
 static void get_matrix(Image & mat, unsigned char* buf, mirosot_vision_config* config) {
     cv::Mat img_tmp(cv::Size(config->width, config->height), CV_8UC3, buf);
@@ -28,7 +28,7 @@ void init_config(mirosot_vision_config* config) {
     config->px_per_cm = 16/7.5;
 
     config->meanshift_radius = 5;
-    config->meanshift_threshold = 30;
+    config->meanshift_threshold = 50;
     
     config->white_points = NULL;
     config->white_points_len = 0;
@@ -68,7 +68,6 @@ static void debugPrescreen(cv::Mat_<cv::Vec3b> & img, Area & area, mirosot_visio
     img_prescreen *= 0.3;
     for(int x = 0;x < img.size().width;x++)
         for(int y = 0;y < img.size().height;y++){
-            int area_ind = area.area_map.get(x, y);
             if(area.isIn(x, y))
                 img_prescreen(y, x) = Vec3b(255, 0, 0);
 

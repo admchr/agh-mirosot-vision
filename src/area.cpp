@@ -26,19 +26,17 @@ class ShiftMeanInTile {
 public:
     Area* a;
     bool operator()(int x, int y, bool on) {
-    	Image tmp;
         int ts = a->TILE_SIZE;
-        int ov = a->OVERLAP;
         if (on) {
-        	Rect roi = Rect(x*ts-ov, y*ts-ov, ts+2*ov, ts+2*ov) & Rect(0, 0, a->img.cols, a->img.rows);
-            tmp = a->img(roi);
-            meanShiftFiltering(
-                tmp,
-                tmp,
+        	Rect roi = Rect(x*ts, y*ts, ts, ts) & Rect(0, 0, a->img.cols, a->img.rows);
+            for (int tx = roi.tl().x; tx<roi.br().x; tx++)
+                for (int ty = roi.tl().y; ty<roi.br().y; ty++)
+            meanShiftPoint(
+                a->img,
+                tx,
+                ty,
                 a->config.meanshift_radius, // position radius
-                a->config.meanshift_threshold, // value radius
-                0,
-                cv::TermCriteria(CV_TERMCRIT_ITER, 5, 1.0)
+                a->config.meanshift_threshold // value radius
             );
         }
         return on;
