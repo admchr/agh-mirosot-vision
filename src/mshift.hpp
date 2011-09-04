@@ -9,8 +9,9 @@
 
 std::pair<cv::Point, cv::Vec3b> meanShiftStep(cv::Point p, cv::Vec3b color, const Image& img, int width, int height);
 
-CV_IMPL void
-meanShiftFiltering( Image src0, Image dst0,
-    double sp0, double sr, int max_level,
+void
+meanShiftFiltering( Image src0,
+    double sp0, double sr,
     CvTermCriteria termcrit );
+void meanShiftPoint(Image& src0, int x, int y, double sp0, double sr);
 #endif
