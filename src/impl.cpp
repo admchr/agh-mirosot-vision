@@ -8,6 +8,7 @@
 #include <vector>
 #include <algorithm>
 #include <iostream>
+#include <stdint.h>
 
 using namespace cv;
 using namespace std;
@@ -27,7 +28,7 @@ static void copy_to(const Image& mat, unsigned char* buf) {
 void init_config(mirosot_vision_config* config) {
     config->px_per_cm = 16/7.5;
 
-    config->meanshift_radius = 5;
+    config->meanshift_radius = 4;
     config->meanshift_threshold = 50;
     
     config->white_points = NULL;
@@ -47,28 +48,30 @@ bool is_blue(Vec3b c){
 }
 
 
-static void debugPatches(cv::Mat_<cv::Vec3b> & img, Area & area, mirosot_vision_config *config)
+static void debugPatches(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, mirosot_vision_config *config)
 {
     Image img_patches(img.clone());
     img_patches *= 0.3;
     for(int x = 0;x < img.size().width;x++)
         for(int y = 0;y < img.size().height;y++){
-            int area_ind = area.area_map.get(x, y);
-            if(area.area_vec[area_ind].meetsRobotCriteria(config))
-                img_patches(y, x) = Vec3b((area_ind % 3) * 255 / 2, ((area_ind / 3) % 3) * 255 / 2, 255);
+            Patch* area_ind = area.area_map.get(x, y);
+            if (area_ind && area_ind->isLegal()) {
+            	int n = (intptr_t)area_ind;
+                img_patches(y, x) = Vec3b((n%3)*255/3, (n/3%3)*255/3, 255);
+            }
 
         }
 
     copy_to(img_patches, config->debug_patches);
 }
 
-static void debugPrescreen(cv::Mat_<cv::Vec3b> & img, Area & area, mirosot_vision_config *config)
+static void debugPrescreen(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, mirosot_vision_config *config)
 {
     Image img_prescreen(img.clone());
     img_prescreen *= 0.3;
     for(int x = 0;x < img.size().width;x++)
         for(int y = 0;y < img.size().height;y++){
-            if(area.isIn(x, y))
+            if(area.precompute_map.get(x, y))
                 img_prescreen(y, x) = Vec3b(255, 0, 0);
 
         }
@@ -86,17 +89,16 @@ robot_data find_teams(mirosot_vision_config* config) {
     
     cvtColor(img, img_hsv, CV_BGR2HSV);// SLOW!
     
-    Area area(*config);
+    PatchFinder area(*config);
     
     area.setImage(img);
-    area.precompute(is_blue, img_hsv);
-    area.meanShift();
+    PatchType type(&area);
+    type.precompute(is_blue, img_hsv);
     if (config->debug_prescreen) {
         debugPrescreen(img, area, config);
     }
 
-    vector<PixelSet> areas = area.getSets();
-    cvtColor(img, img_hsv, CV_BGR2HSV);// SLOW!!!
+    area.getSets();
 
     if (config->debug_patches) {
         debugPatches(img, area, config);
