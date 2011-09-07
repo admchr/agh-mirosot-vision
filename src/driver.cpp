@@ -11,6 +11,7 @@
 
 int main(int argc, char**argv) {
     cv::Mat_<cv::Vec3b> img0 = cv::imread(std::string(argv[1]));
+    cv::Mat_<cv::Vec3b> img_copy = img0.clone();
     std::string out_fname = std::string(argv[3]);
     
     mirosot_vision_config config;
@@ -30,10 +31,11 @@ int main(int argc, char**argv) {
     
     find_teams(&config);
     
-    cv::imwrite(out_fname+"_white.png", img_white);
-    cv::imwrite(out_fname+"_prescreen.png", img_prescreen);
-    cv::imwrite(out_fname+"_mshift.png", img_mshift);
-    cv::imwrite(out_fname+"_patches.png", img_patches);
+    cv::imwrite(out_fname+"_0orig.png", img_copy);
+    cv::imwrite(out_fname+"_1white.png", img_white);
+    cv::imwrite(out_fname+"_2prescreen.png", img_prescreen);
+    cv::imwrite(out_fname+"_3mshift.png", img_mshift);
+    cv::imwrite(out_fname+"_4patches.png", img_patches);
     
     return 0;
 }
