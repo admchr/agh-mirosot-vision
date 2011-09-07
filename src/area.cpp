@@ -40,9 +40,9 @@ public:
                 for (int dy = -1; dy <= 1; dy++) {
                     int nx = p.x+dx;
                     int ny = p.y+dy;
-                    a->preparePixel(Point(nx, ny));
                     if (nx<0 || ny<0 || nx>=a->img.cols || ny>= a->img.rows)
                         continue;
+                    a->preparePixel(Point(nx, ny));
                     if (a->area_map.get(nx, ny))
                     	continue;
                     if (!pt->add(Point(nx, ny), p)) continue;

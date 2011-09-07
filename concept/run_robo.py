@@ -26,6 +26,7 @@ for (pattern, config) in patterns:
         w, h = img.getbbox()[2:4]
         
         files = glob.glob('tmp_*.png')
+        files.sort()
         imgt = PIL.Image.new('RGB', (w, len(files)*h))
         for (i, outfile) in enumerate(files):
             try:
