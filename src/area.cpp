@@ -7,9 +7,10 @@
 
 using namespace cv;
 
-void PatchFinder::setImage(Image img) {
-    this->img = img;
-    cv::Size size = img.size();
+void PatchFinder::setImages(Image img, Image img_hsv) {
+	this->img = img;
+	this->img_hsv = img_hsv;
+	cv::Size size = img.size();
     precompute_map.resize(size);
     meanshifted.resize(size);
     area_map.resize(size);
@@ -85,9 +86,19 @@ Patch* PatchType::newPatch()
 	return patches.back();
 }
 
+bool is_lil_blue(Vec3b c){
+    return c[2]>120 && c[0]>85 && c[0]<115 && c[1]*c[2]>128*128/4;
+}
 bool Patch::add(cv::Point p, cv::Point neighbour){
+
 	Image img = this->type->map->img;
-    if (count < type->getMaxPatchSize() && PatchFinder::colorDistance(img(p), img(neighbour)) < 3*10*10) {
+	Image hsv = this->type->map->img_hsv;
+    if (count < type->getMaxPatchSize()) {
+    	if (count == 0) origin = img(neighbour);
+    	if (2*PatchFinder::colorDistance(img(p), origin) > 240*100 || PatchFinder::colorDistance(img(p), img(neighbour)) > 4*100)
+    		return false;
+    	if (!is_lil_blue(hsv(p)))
+    		return false;
     	count++;
     	return true;
     }
