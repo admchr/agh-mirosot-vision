@@ -91,7 +91,7 @@ robot_data find_teams(mirosot_vision_config* config) {
     
     PatchFinder area(*config);
     
-    area.setImage(img);
+    area.setImages(img, img_hsv);
     PatchType type(&area);
     type.precompute(is_blue, img_hsv);
     if (config->debug_prescreen) {

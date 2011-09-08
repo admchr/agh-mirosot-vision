@@ -33,11 +33,12 @@ public://TODO make some private
     Array2d<PatchType*> precompute_map;
     Array2d<Patch*> area_map;
     Image img;
+    Image img_hsv;
     mirosot_vision_config config;
     PatchFinder(mirosot_vision_config config){
         this->config = config;
     }
-    void setImage(Image img);
+    void setImages(Image img, Image img_hsv);
     
     
     bool isIn(int x, int y);
@@ -96,6 +97,7 @@ public:
 class Patch {
 	PatchType* type;
 	int count;
+	cv::Vec3b origin;
 public:
 	Patch(PatchType*t) {
 	    count = 0;
