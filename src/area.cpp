@@ -17,39 +17,50 @@ void PatchFinder::setImages(Image img, Image img_hsv) {
     
 }
 
+void PatchFinder::preparePixel(cv::Point p) {
+    if (meanshifted.get(p.x, p.y))
+        return;
+    meanShiftPoint(
+                img,
+                p.x,
+                p.y,
+                config.meanshift_radius, // position radius
+                config.meanshift_threshold // value radius
+            );
+    meanshifted.set(p.x, p.y, true);
+}
 
 class AreaFinder {
 public:
     PatchFinder *a;
+    std::queue<Point> Q;
     PatchType* operator()(int orig_x, int orig_y, PatchType* b) {
         if (!b) return false;
 
         if (a->area_map.get(orig_x, orig_y) != 0)
             return 0;
         Patch* pt = b->newPatch();
-
-        std::queue<Point> Q;
         Q.push(Point(orig_x, orig_y));
         while (!Q.empty()) {
             Point p = Q.front();
             Q.pop();
 
-
-
             Vec3b color = a->img(p);
-            for (int dx = -1; dx <= 1; dx++)
-                for (int dy = -1; dy <= 1; dy++) {
-                    int nx = p.x+dx;
-                    int ny = p.y+dy;
-                    if (nx<0 || ny<0 || nx>=a->img.cols || ny>= a->img.rows)
-                        continue;
-                    a->preparePixel(Point(nx, ny));
+            int minx = max(p.x - 1, 0);
+            int miny = max(p.y - 1, 0);
+            int maxx = min(p.x + 1, a->img.cols);
+            int maxy = min(p.y + 1, a->img.rows);
+
+            for (int nx = minx; nx <= maxx; nx++)
+                for (int ny = miny; ny <= maxy; ny++) {
+                    Point np = Point(nx, ny);
+                    a->preparePixel(np);
                     if (a->area_map.get(nx, ny))
                     	continue;
-                    if (!pt->add(Point(nx, ny), p)) continue;
+                    if (!pt->add(np, p)) continue;
                     a->area_map.set(nx, ny, pt);
 
-                    Q.push(Point(nx, ny));
+                    Q.push(np);
                 }
 
         }
@@ -86,25 +97,38 @@ Patch* PatchType::newPatch()
 	return patches.back();
 }
 
-bool is_lil_blue(Vec3b c){
-    return c[2]>120 && c[0]>85 && c[0]<115 && c[1]*c[2]>128*128/4;
-}
-bool Patch::add(cv::Point p, cv::Point neighbour){
+int PatchType::getMinPatchSize() {
+    double min_size = map->config.px_per_cm * 3.5 * 0.75;
+    int min_area = min_size*min_size;
 
+    return min_area;
+}
+int PatchType::getMaxPatchSize() {
+    double max_size = map->config.px_per_cm * 7.5 * 1.25;
+    int max_area = max_size*max_size;
+
+    return max_area;
+}
+
+bool Patch::add(cv::Point p, cv::Point neighbour) {
 	Image img = this->type->map->img;
 	Image hsv = this->type->map->img_hsv;
     if (count < type->getMaxPatchSize()) {
     	if (count == 0) origin = img(neighbour);
-    	if (2*PatchFinder::colorDistance(img(p), origin) > 240*100 || PatchFinder::colorDistance(img(p), img(neighbour)) > 4*100)
+    	if (PatchFinder::colorDistance(img(p), img(neighbour)) > 4*100)
     		return false;
-    	if (!is_lil_blue(hsv(p)))
+    	if (!type->fun(hsv(p)))
     		return false;
     	count++;
     	return true;
     }
     return false;
 }
+
 int Patch::getCount() {
     return count;
 }
 
+bool Patch::isLegal() {
+    return count > type->getMinPatchSize() && count < type->getMaxPatchSize();
+}
