@@ -12,7 +12,7 @@ HSVConverter::HSVConverter() {
                 cv::Vec3b c(b, g, r);
                 tmp(0, 0) = c;
                 cv::cvtColor(tmp, tmp, CV_BGR2HSV);
-                table[(c[0]<<16)|(c[1]<<8)|(c[2])] = tmp(0, 0);
+                table[(b<<16)|(g<<8)|(r)] = tmp(0, 0);
             }
 }
 
