@@ -17,8 +17,8 @@ public:
     
     template <typename F>
     void forEach(F& f)  {
-        for (int x=0;x<width;x++)
-            for (int y=0;y<height;y++)
+        for (int y=0;y<height;y++)
+            for (int x=0;x<width;x++)
                 vec[getPos(x, y)] = f(x, y, vec[getPos(x, y)]);
     }
 

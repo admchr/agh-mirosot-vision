@@ -14,19 +14,24 @@ class PatchType;
 
 
 class PatchFinder {
+    template <typename F>
+    class PrecomputeFun {
+    public:
+        Image img;
+        F f;
+        PatchType* operator()(int x, int y, PatchType* b) {
+            return f(img(y, x));
+        }
+    };
 public://TODO make some private
-	void preparePixel(cv::Point p) {
-		if (meanshifted.get(p.x, p.y))
-			return;
-		meanShiftPoint(
-					img,
-					p.x,
-					p.y,
-					config.meanshift_radius, // position radius
-					config.meanshift_threshold // value radius
-				);
-		meanshifted.set(p.x, p.y, true);
-	}
+    template <typename F>
+    void precompute(F f) {
+        PrecomputeFun<F> pf;
+        pf.f = f;
+        pf.img = img_hsv;
+        precompute_map.forEach(pf);
+    }
+	void preparePixel(cv::Point p);
 
     Array2d<bool> meanshifted;
 
@@ -40,7 +45,6 @@ public://TODO make some private
     }
     void setImages(Image img, Image img_hsv);
     
-    
     bool isIn(int x, int y);
     void meanShift();
     void getSets();
@@ -49,49 +53,21 @@ public://TODO make some private
 };
 
 class PatchType {
-
-	template <typename F>
-	class PrecomputeFun {
-	public:
-	    Image img;
-	    PatchType *a;
-	    F f;
-	    PatchType* operator()(int x, int y, PatchType* b) {
-	        if (f(img(y, x))) return a;
-
-	        return b;
-	    }
-	};
 public:
-	PatchType(PatchFinder* pf) {
+    typedef bool(*Fun)(cv::Vec3b);
+    Fun fun;
+	PatchType(PatchFinder* pf, Fun fun) {
 		this->map = pf;
+	    this->fun = fun;
 	}
 	~PatchType();
-    template <typename F>
-    void precompute(F f, Image img) {
-        PrecomputeFun<F> pf;
-        pf.f = f;
-        pf.a = this;
-        pf.img = img;
-        map->precompute_map.forEach(pf);
-    }
 
 	PatchFinder* map;
 	std::vector<Patch*> patches;
 	Patch* newPatch();
 
-	int getMinPatchSize() {
-	    double min_size = map->config.px_per_cm * 3.5 * 0.75;
-	    int min_area = min_size*min_size;
-
-	    return min_area;
-	}
-	int getMaxPatchSize() {
-	    double max_size = map->config.px_per_cm * 7.5 * 1.25;
-	    int max_area = max_size*max_size;
-
-	    return max_area;
-	}
+	int getMinPatchSize();
+	int getMaxPatchSize();
 };
 
 class Patch {
@@ -105,6 +81,6 @@ public:
 	}
 	bool add(cv::Point p, cv::Point neighbour);
 	int getCount();
-	bool isLegal() {return count > type->getMinPatchSize() && count < type->getMaxPatchSize();}
+	bool isLegal();
 };
 #endif

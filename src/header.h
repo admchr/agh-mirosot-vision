@@ -3,6 +3,7 @@
 
 #define MAX_ROBOTS 256
 
+extern "C" {
 
 struct image_pos {
     int x;
@@ -26,7 +27,7 @@ struct mirosot_vision_config {
     unsigned char *debug_prescreen;
     unsigned char *debug_meanshift;
     unsigned char *debug_patches;
-
+    void* state;
 };
 
 struct robot_data {
@@ -41,5 +42,6 @@ struct robot_data {
 
 robot_data find_teams(mirosot_vision_config* config);
 void init_config(mirosot_vision_config* config);
-
+void free_config(mirosot_vision_config* config);
+}
 #endif

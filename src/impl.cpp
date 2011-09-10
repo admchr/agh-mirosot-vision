@@ -2,6 +2,7 @@
 #include "balance.hpp"
 #include "area.hpp"
 #include "defs.hpp"
+#include "visionstate.hpp"
 
 #include <opencv/cv.h>
 
@@ -38,13 +39,12 @@ void init_config(mirosot_vision_config* config) {
     config->debug_prescreen = NULL;
     config->debug_meanshift = NULL;
     config->debug_patches = NULL;
+
+    config->state = new VisionState();
 }
 
-bool is_black(Vec3b c){
-    return c[2]<120;
-}
-bool is_blue(Vec3b c){
-    return !is_black(c) && c[0]>90 && c[0]<110 && c[1]*c[2]>128*128;
+void free_config(mirosot_vision_config* config) {
+    delete static_cast<VisionState*>(config->state);
 }
 
 
@@ -79,26 +79,58 @@ static void debugPrescreen(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, miroso
     copy_to(img_prescreen, config->debug_prescreen);
 }
 
+static bool is_black(Vec3b c){
+    return c[2]<120;
+}
+
+struct Precompute {
+    PatchType* blue;
+    PatchType* yellow;
+    PatchType* orange;
+
+    PatchType* operator()(Vec3b c){
+        if(!is_black(c) && c[0]>90 && c[0]<110 && c[1]*c[2]>128*128)
+            return blue;
+        if(!is_black(c) && c[0]>15 && c[0]<40)
+            return yellow;
+        return 0;
+    }
+};
+
+bool is_lil_blue(Vec3b c){
+    return c[2]>120 && c[0]>85 && c[0]<115 && c[1]*c[2]>128*128/4;
+}
+bool is_lil_yellow(Vec3b c){
+    return c[2]>120 && c[0]>15 && c[0]<40;// && c[1]*c[2]>128*128/2;
+}
+
 robot_data find_teams(mirosot_vision_config* config) {
-    Image img_hsv;
-    cv::Mat_<cv::Vec3b> img;
+    Image img;
     get_matrix(img, config->image, config);
+    Image img_hsv(img.clone());
     
     white_balance(&img, config);
     copy_to(img, config->debug_balance);
     
-    cvtColor(img, img_hsv, CV_BGR2HSV);// SLOW!
-    
+    //cvtColor(img, img_hsv, CV_BGR2HSV);// SLOW!
+    VisionState* state = static_cast<VisionState*>(config->state);
+    state->converter.convert(img, img_hsv);//!
     PatchFinder area(*config);
     
     area.setImages(img, img_hsv);
-    PatchType type(&area);
-    type.precompute(is_blue, img_hsv);
+    PatchType blue(&area, is_lil_blue);
+    PatchType yellow(&area, is_lil_yellow);
+    PatchType orange(&area, is_lil_blue);
+    Precompute precompute;
+    precompute.blue = &blue;
+    precompute.yellow = &yellow;
+    precompute.orange = &orange;
+    area.precompute(precompute);//12s
     if (config->debug_prescreen) {
         debugPrescreen(img, area, config);
     }
 
-    area.getSets();
+    area.getSets();//5s
 
     if (config->debug_patches) {
         debugPatches(img, area, config);
