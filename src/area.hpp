@@ -6,6 +6,7 @@
 #include "array2d.hpp"
 #include "pixelset.hpp"
 #include "mshift.hpp"
+#include "moments.hpp"
 
 #include <vector>
 
@@ -56,9 +57,11 @@ class PatchType {
 public:
     typedef bool(*Fun)(cv::Vec3b);
     Fun fun;
-	PatchType(PatchFinder* pf, Fun fun) {
+    cv::Vec3b color;
+	PatchType(PatchFinder* pf, Fun fun, cv::Vec3b color) {
 		this->map = pf;
 	    this->fun = fun;
+	    this->color = color;
 	}
 	~PatchType();
 
@@ -71,16 +74,16 @@ public:
 };
 
 class Patch {
-	PatchType* type;
-	int count;
-	cv::Vec3b origin;
+    cv::Vec3b origin;
+	PatchMoments moments;
 public:
+	PatchType* type;
 	Patch(PatchType*t) {
-	    count = 0;
 	    type = t;
 	}
 	bool add(cv::Point p, cv::Point neighbour);
 	int getCount();
 	bool isLegal();
+	cv::Point getMean();
 };
 #endif

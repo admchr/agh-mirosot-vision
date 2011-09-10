@@ -1,11 +1,11 @@
 
-CXXFLAGS= -g -Wall -Wextra -O2 -pg
+CXXFLAGS= -g -Wall -Wextra -O2
 LIBS= -lcv -lhighgui -lm
 TEST_LIBS= -lboost_unit_test_framework $(LIBS)
 
 PROGRAMS= perf perf_gprof driver test_impl
-OBJS= impl.o mshift.o balance.o area.o pixelset.o hsvconverter.o
-IMPL_HEADERS= area.hpp array2d.hpp balance.hpp defs.hpp mshift.hpp pixelset.hpp hsvconverter.hpp visionstate.hpp
+OBJS= impl.o mshift.o balance.o area.o pixelset.o hsvconverter.o moments.o
+IMPL_HEADERS= area.hpp array2d.hpp balance.hpp defs.hpp moments.hpp mshift.hpp pixelset.hpp hsvconverter.hpp visionstate.hpp
 all: $(PROGRAMS)
 
 driver: driver.o $(OBJS)

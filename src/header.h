@@ -27,6 +27,7 @@ struct mirosot_vision_config {
     unsigned char *debug_prescreen;
     unsigned char *debug_meanshift;
     unsigned char *debug_patches;
+    unsigned char *debug_robots;
     void* state;
 };
 

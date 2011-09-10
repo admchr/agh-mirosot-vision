@@ -48,11 +48,11 @@ public:
             Vec3b color = a->img(p);
             int minx = max(p.x - 1, 0);
             int miny = max(p.y - 1, 0);
-            int maxx = min(p.x + 1, a->img.cols);
-            int maxy = min(p.y + 1, a->img.rows);
+            int maxx = min(p.x + 2, a->img.cols);
+            int maxy = min(p.y + 2, a->img.rows);
 
-            for (int nx = minx; nx <= maxx; nx++)
-                for (int ny = miny; ny <= maxy; ny++) {
+            for (int nx = minx; nx < maxx; nx++)
+                for (int ny = miny; ny < maxy; ny++) {
                     Point np = Point(nx, ny);
                     a->preparePixel(np);
                     if (a->area_map.get(nx, ny))
@@ -113,22 +113,26 @@ int PatchType::getMaxPatchSize() {
 bool Patch::add(cv::Point p, cv::Point neighbour) {
 	Image img = this->type->map->img;
 	Image hsv = this->type->map->img_hsv;
-    if (count < type->getMaxPatchSize()) {
-    	if (count == 0) origin = img(neighbour);
-    	if (PatchFinder::colorDistance(img(p), img(neighbour)) > 4*100)
+    if (moments.getCount() < type->getMaxPatchSize()) {
+    	if (moments.getCount() == 0) origin = img(p);
+    	if (PatchFinder::colorDistance(img(p), origin) > 4000 || PatchFinder::colorDistance(img(p), img(neighbour)) > 4*100)
     		return false;
     	if (!type->fun(hsv(p)))
     		return false;
-    	count++;
+    	moments.add(p);
     	return true;
     }
     return false;
 }
 
 int Patch::getCount() {
-    return count;
+    return moments.getCount();
 }
 
 bool Patch::isLegal() {
-    return count > type->getMinPatchSize() && count < type->getMaxPatchSize();
+    return moments.getCount() > type->getMinPatchSize() && moments.getCount() < type->getMaxPatchSize();
+}
+
+Point Patch::getMean() {
+    return moments.getMean();
 }

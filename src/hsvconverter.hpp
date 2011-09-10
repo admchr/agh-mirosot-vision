@@ -11,7 +11,7 @@ public:
     cv::Vec3b table[256*256*256];
 
     cv::Vec3b get(cv::Vec3b c) {
-        return table[((c[0]&0xf0)<<16)|(c[1]<<8)|(c[2]&0xf0)];
+        return table[((c[0])<<16)|(c[1]<<8)|(c[2])];
     }
 
     void convert(Image from, Image to);
