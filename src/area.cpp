@@ -98,7 +98,7 @@ Patch* PatchType::newPatch()
 }
 
 int PatchType::getMinPatchSize() {
-    double min_size = map->config.px_per_cm * 3.5 * 0.75;
+    double min_size = map->config.px_per_cm * 3.5 * 0.85;
     int min_area = min_size*min_size;
 
     return min_area;

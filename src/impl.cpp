@@ -136,7 +136,7 @@ bool is_lil_blue(Vec3b c){
     return c[2]>120 && c[0]>85 && c[0]<115 && c[1]*c[2]>128*128/4;
 }
 bool is_lil_yellow(Vec3b c){
-    return c[2]>120 && c[0]>15 && c[0]<40;// && c[1]*c[2]>128*128/2;
+    return c[2]>120; // && c[0]>15 && c[0]<40;// && c[1]*c[2]>128*128/2;
 }
 
 robot_data find_teams(mirosot_vision_config* config) {
