@@ -32,15 +32,15 @@ int PatchMoments::getCount() {
 }
 
 double PatchMoments::getXVariance() {
-    return (sum_x*sum_x - sum_xx)/(count - 1.0);
+    return (sum_xx - sum_x*sum_x/count)/(count - 1.0);
 }
 
 double PatchMoments::getYVariance() {
-    return (sum_y*sum_y - sum_yy)/(count - 1.0);
+    return (sum_yy - sum_y*sum_y/count)/(count - 1.0);
 }
 
 double PatchMoments::getCovariance() {
-    return (sum_x*sum_y - sum_xy)/(count - 1.0);
+    return (sum_xy - sum_x*sum_y/count)/(count - 1.0);
 }
 
 double PatchMoments::getAngle() {
