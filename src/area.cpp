@@ -136,3 +136,6 @@ bool Patch::isLegal() {
 Point Patch::getMean() {
     return moments.getMean();
 }
+double Patch::getAngle() {
+    return moments.getAngle();
+}

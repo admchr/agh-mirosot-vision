@@ -99,6 +99,15 @@ static void debugRobots(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, mirosot_v
     for (set<Patch*>::iterator it = patches.begin(); it!=patches.end(); it++){
         Patch* pa = *it;
         Point p = pa->getMean();
+        double angle = pa->getAngle();
+        cout<<angle<<" "<<sqrt(pa->moments.getXVariance())<<" "<<sqrt(pa->moments.getYVariance())<<" "<<sqrt(pa->moments.getCovariance())<<endl;
+        for (int i=0;i<20;i++) {
+            int x = p.x + cos(angle)*i;
+            int y = p.y + sin(angle)*i;
+            if (x < 0 || y < 0 || x >= img.cols || y >= img.rows)
+                break;
+            img_robots(y, x) = Vec3b(0, 0, 255);
+        }
         img_robots(p) = Vec3b(0, 0, 255);
     }
     copy_to(img_robots, config->debug_robots);
