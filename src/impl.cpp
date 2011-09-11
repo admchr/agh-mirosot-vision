@@ -100,7 +100,8 @@ static void debugRobots(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, mirosot_v
         Patch* pa = *it;
         Point p = pa->getMean();
         double angle = pa->getAngle();
-        cout<<angle<<" "<<sqrt(pa->moments.getXVariance())<<" "<<sqrt(pa->moments.getYVariance())<<" "<<sqrt(pa->moments.getCovariance())<<endl;
+        //cout<<angle<<" "<<sqrt(pa->moments.getXVariance())<<" "<<sqrt(pa->moments.getYVariance())<<" "<<pa->moments.getCovariance()<<endl;
+        angle+=M_PI*0.25;
         for (int i=0;i<20;i++) {
             int x = p.x + cos(angle)*i;
             int y = p.y + sin(angle)*i;
