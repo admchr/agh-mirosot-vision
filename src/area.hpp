@@ -75,8 +75,8 @@ public:
 
 class Patch {
     cv::Vec3b origin;
-	PatchMoments moments;
 public:
+    PatchMoments moments;
 	PatchType* type;
 	Patch(PatchType*t) {
 	    type = t;
@@ -85,5 +85,6 @@ public:
 	int getCount();
 	bool isLegal();
 	cv::Point getMean();
+	double getAngle();
 };
 #endif
