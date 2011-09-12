@@ -3,6 +3,7 @@
 #include "area.hpp"
 #include "defs.hpp"
 #include "visionstate.hpp"
+#include "linearize.hpp"
 
 #include <opencv/cv.h>
 
@@ -12,6 +13,7 @@
 #include <iostream>
 #include <stdint.h>
 
+
 using namespace cv;
 using namespace std;
 
@@ -19,12 +21,15 @@ using namespace std;
 static void get_matrix(Image & mat, unsigned char* buf, mirosot_vision_config* config) {
     cv::Mat img_tmp(cv::Size(config->width, config->height), CV_8UC3, buf);
     Image img(img_tmp);
+    linearize(img);
     mat = img;
 }
 
 static void copy_to(const Image& mat, unsigned char* buf) {
     if (buf) {
-        memcpy(buf, mat.ptr(), 3 * mat.size().width * mat.size().height);
+    	Image mat2(mat.clone());
+    	delinearize(mat2);
+        memcpy(buf, mat2.ptr(), 3 * mat2.size().width * mat2.size().height);
     }
 }
 
@@ -54,11 +59,12 @@ void free_config(mirosot_vision_config* config) {
 static void debugPrescreen(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, mirosot_vision_config *config)
 {
     Image img_prescreen(img.clone());
-    img_prescreen *= 0.3;
+    img_prescreen *= 0.1;
     for(int x = 0;x < img.size().width;x++)
         for(int y = 0;y < img.size().height;y++){
-            if(area.precompute_map.get(x, y))
-                img_prescreen(y, x) = Vec3b(255, 0, 0);
+            PatchType *patch = area.precompute_map.get(x, y);
+        	if(patch)
+                img_prescreen(y, x) = patch->color;
 
         }
 
@@ -68,7 +74,7 @@ static void debugPrescreen(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, miroso
 static void debugPatches(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, mirosot_vision_config *config)
 {
     Image img_patches(img.clone());
-    img_patches *= 0.3;
+    img_patches *= 0.1;
     for(int x = 0;x < img.size().width;x++)
         for(int y = 0;y < img.size().height;y++){
             Patch* area_ind = area.area_map.get(x, y);
@@ -85,7 +91,7 @@ static void debugPatches(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, mirosot_
 static void debugRobots(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, mirosot_vision_config *config)
 {
     Image img_robots(img.clone());
-    img_robots *= 0.3;
+    img_robots *= 0.1;
     set<Patch*> patches;
     for(int x = 0;x < img.size().width;x++)
         for(int y = 0;y < img.size().height;y++){
@@ -115,7 +121,7 @@ static void debugRobots(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, mirosot_v
 }
 
 static bool is_black(Vec3b c){
-    return c[2]<120;
+    return c[2]<40;
 }
 
 struct Precompute {
@@ -124,7 +130,7 @@ struct Precompute {
     PatchType* orange;
 
     PatchType* operator()(Vec3b c){
-        if(!is_black(c) && c[0]>90 && c[0]<110 && c[1]*c[2]>128*128)
+        if(!is_black(c) && c[0]>85 && c[0]<115 && c[1]*c[2]>128*128/4)
             return blue;
         if(!is_black(c) && c[0]>15 && c[0]<40)
             return yellow;
@@ -133,10 +139,10 @@ struct Precompute {
 };
 
 bool is_lil_blue(Vec3b c){
-    return c[2]>120 && c[0]>85 && c[0]<115 && c[1]*c[2]>128*128/4;
+    return c[2]>70 && c[0]>85 && c[0]<115 && c[1]*c[2]>128*128/8;
 }
 bool is_lil_yellow(Vec3b c){
-    return c[2]>120; // && c[0]>15 && c[0]<40;// && c[1]*c[2]>128*128/2;
+    return (c[2]>70 && c[0]>15 && c[0]<40) || c[2]>100;// && c[1]*c[2]>128*128/2;
 }
 
 robot_data find_teams(mirosot_vision_config* config) {
