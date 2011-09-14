@@ -150,7 +150,7 @@ struct Precompute {
 };
 
 bool is_lil_blue(Vec3b c){
-    return c[2]>70 && c[0]>85 && c[0]<115 && c[1]*c[2]>128*128/8;
+    return c[2]>70 && c[0]>85 && c[0]<115 && c[1]*c[2]>128*128/8 && c[1]>55;
 }
 bool is_lil_yellow(Vec3b c){
     return (c[2]>70 && c[0]>15 && c[0]<40) || c[2]>120;// && c[1]*c[2]>128*128/2;
