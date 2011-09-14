@@ -55,7 +55,7 @@ void white_balance(Image* img, mirosot_vision_config* config) {
     vector<pair<image_pos, Vec3b> > white_points;
     for (int i=0; i< config->white_points_len; i++) {
         image_pos pos = config->white_points[i];
-        white_points.push_back(make_pair(pos, median(*img, pos, 2)));
+        white_points.push_back(make_pair(pos, median(*img, pos, 1)));
     }
     
     const int TILE=16;
