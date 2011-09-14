@@ -6,9 +6,9 @@ di = 'img'
 
 patterns = (
 (di+'/um*', 'config_um.txt'),
-(di+'/wc*', 'config_wc.txt')
-#(di+'/si*', 'config_si.txt'),
-#(di+'/patches*')
+(di+'/wc*', 'config_wc.txt'),
+(di+'/si*', 'config_si.txt'),
+(di+'/patches*', 'config_pa.txt')
 )
 
 try:
