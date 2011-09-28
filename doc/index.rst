@@ -136,3 +136,35 @@ Wtedy w każdym punkcie obrazu (tak naprawdę na każdym małym kafelku obrazu)
 wyznaczamy punkt bieli jako średnią ważoną wagą :math:`\frac{1}{r^2}`, 
 gdzie :math:`r` to odległość punktu z bielą do badanego punktu.
 
+3. Transformacja do HSV
+-----------------------
+
+Obok obrazka w formacie RGB tworzony jest jego odpowiednik HSV.
+
+4. Wstępne zaznaczanie kandydatów
+---------------------------------
+
+Piksele, które wpadają w odpowiedni przedział barwy (H) i nasycenia (S) są 
+oznaczane jako kandydaci do dalszego przetwarzania w zbiorach pikseli żółtych i 
+niebieskich. 
+
+5. Meanshift
+------------
+
+Algorytm segmentacji meanshift posiada wstępną fazę filtrowania, która wygładza
+jednolite obszary, tak że po filtrowaniu stanowią jeden jednolity kolor. 
+Istotę tego filtrowania można stosować do każdego piksela z osobna. Dzięki temu,
+że po filtrowaniu jednokolorowe obszary są bardzo jednolite, można je wyodrębnić
+za pomocą zwykłego algorytmu flood-fill.
+
+6. Obszary
+----------
+
+Następnie obszary są segregowane na podstawie ich rozmiaru. Za duże lub za małe
+obszary są odrzucane.
+
+7. Regresja
+-----------
+Na wyodrębnionych obszarach wyznaczana jest linia minimalizująca
+sumę kwadratów odległości pikseli od linii (regresja Deminga). Za jej pomocą
+wyznaczamy kąt obrotu robota.
