@@ -69,6 +69,8 @@ public:
 	std::vector<Patch*> patches;
 	Patch* newPatch();
 
+	void fillLegal(image_pos* pos, int* len);
+
 	int getMinPatchSize();
 	int getMaxPatchSize();
 };
