@@ -185,6 +185,12 @@ robot_data find_teams(mirosot_vision_config* config) {
 
     area.getSets();//10ms
 
+    robot_data robots;
+
+    blue.fillLegal(robots.team1, &robots.team1_len);
+    yellow.fillLegal(robots.team2, &robots.team2_len);
+
+
     if (config->debug_patches) {
         debugPatches(img, area, config);
     }
@@ -194,5 +200,5 @@ robot_data find_teams(mirosot_vision_config* config) {
     
     copy_to(img, config->debug_meanshift);
     
-    return robot_data();
+    return robots;
 }

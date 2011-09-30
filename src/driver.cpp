@@ -25,7 +25,19 @@ void process(string in_fname, mirosot_vision_config & config, string config_name
     config.debug_prescreen = img_prescreen.ptr();
     config.debug_patches = img_patches.ptr();
     config.debug_robots = img_robots.ptr();
-    find_teams(&config);
+
+
+    robot_data data = find_teams(&config);
+    for (int i=0; i<data.team1_len; i++) {
+        image_pos p = data.team1[i];
+        cout<<"("<<p.x<<", "<<p.y<<")"<<endl;
+    }
+    cout<<"---"<<endl;
+    for (int i=0; i<data.team2_len; i++) {
+        image_pos p = data.team2[i];
+        cout<<"("<<p.x<<", "<<p.y<<")"<<endl;
+    }
+
     cv::imwrite(out_fname + "_0orig.png", img_copy);
     cv::imwrite(out_fname + "_1white.png", img_white);
     cv::imwrite(out_fname + "_2prescreen.png", img_prescreen);

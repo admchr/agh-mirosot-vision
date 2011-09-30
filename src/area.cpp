@@ -34,6 +34,7 @@ class AreaFinder {
 public:
     PatchFinder *a;
     std::queue<Point> Q;
+
     PatchType* operator()(int orig_x, int orig_y, PatchType* b) {
         if (!b) return false;
 
@@ -65,6 +66,7 @@ public:
 
         }
 
+
         return b;
     }
 };
@@ -73,7 +75,6 @@ void PatchFinder::getSets() {
     AreaFinder f;
     f.a = this;
     precompute_map.forEach(f);
-
 }
 
 int PatchFinder::colorDistance(Vec3b a, Vec3b b) {
@@ -95,6 +96,20 @@ Patch* PatchType::newPatch()
 {
 	patches.push_back(new Patch(this));
 	return patches.back();
+}
+
+void PatchType::fillLegal(image_pos* pos, int* len) {
+    *len = 0;
+    for (int i=0; i<patches.size(); i++) {
+        Patch* patch = patches[i];
+        if (patch->isLegal()) {
+            cv::Point p = patch->getMean();
+            pos->x = p.x;
+            pos->y = p.y;
+            pos++;
+            (*len)++;
+        }
+    }
 }
 
 int PatchType::getMinPatchSize() {
