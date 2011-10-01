@@ -10,6 +10,15 @@
 #include <iostream>
 
 using namespace std;
+void teamOutput(team_data* team) {
+    cout<<team->team_len<<endl;
+    for (int i=0; i<team->team_len; i++) {
+        robot_data robot = team->team[i];
+        image_pos p = robot.position;
+        cout<<p.x<<" "<<p.y<<" "<<robot.angle<<endl;
+    }
+}
+
 
 void process(string in_fname, mirosot_vision_config & config, string config_name, string out_fname)
 {
@@ -27,16 +36,11 @@ void process(string in_fname, mirosot_vision_config & config, string config_name
     config.debug_robots = img_robots.ptr();
 
 
-    robot_data data = find_teams(&config);
-    for (int i=0; i<data.team1_len; i++) {
-        image_pos p = data.team1[i];
-        cout<<"("<<p.x<<", "<<p.y<<")"<<endl;
-    }
-    cout<<"---"<<endl;
-    for (int i=0; i<data.team2_len; i++) {
-        image_pos p = data.team2[i];
-        cout<<"("<<p.x<<", "<<p.y<<")"<<endl;
-    }
+    vision_data data = find_teams(&config);
+
+    cout<<data.ball_pos.x<<" "<<data.ball_pos.y<<endl;
+    teamOutput(&data.blue_team);
+    teamOutput(&data.yellow_team);
 
     cv::imwrite(out_fname + "_0orig.png", img_copy);
     cv::imwrite(out_fname + "_1white.png", img_white);

@@ -69,7 +69,7 @@ public:
 	std::vector<Patch*> patches;
 	Patch* newPatch();
 
-	void fillLegal(image_pos* pos, int* len);
+	void fillTeam(team_data* data);
 
 	int getMinPatchSize();
 	int getMaxPatchSize();
