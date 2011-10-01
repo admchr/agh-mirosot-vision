@@ -77,10 +77,12 @@ public:
 
 class Patch {
     cv::Vec3b origin;
+    cv::Rect aabbox;
 public:
     PatchMoments moments;
 	PatchType* type;
 	Patch(PatchType*t) {
+	    assert(t);
 	    type = t;
 	}
 	bool add(cv::Point p, cv::Point neighbour);
@@ -88,5 +90,6 @@ public:
 	bool isLegal();
 	cv::Point getMean();
 	double getAngle();
+	cv::Rect getBoundingBox();
 };
 #endif

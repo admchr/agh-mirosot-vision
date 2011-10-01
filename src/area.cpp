@@ -131,12 +131,16 @@ bool Patch::add(cv::Point p, cv::Point neighbour) {
 	Image img = this->type->map->img;
 	Image hsv = this->type->map->img_hsv;
     if (moments.getCount() < type->getMaxPatchSize()) {
-    	if (moments.getCount() == 0) origin = img(p);
+    	if (moments.getCount() == 0) {
+    	    origin = img(p);
+    	    aabbox = Rect(p, p);
+    	}
     	if (PatchFinder::colorDistance(img(p), origin) > 4000 || PatchFinder::colorDistance(img(p), img(neighbour)) > 4*100)
     		return false;
     	if (!type->fun(hsv(p)))
     		return false;
     	moments.add(p);
+    	aabbox = aabbox & Rect(p, p);
     	return true;
     }
     return false;
@@ -144,6 +148,9 @@ bool Patch::add(cv::Point p, cv::Point neighbour) {
 
 int Patch::getCount() {
     return moments.getCount();
+}
+Rect Patch::getBoundingBox() {
+    return aabbox;
 }
 
 bool Patch::isLegal() {

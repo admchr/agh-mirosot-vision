@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
-import PIL.Image
+import cv
 import glob
 import os.path
 import sys
@@ -17,22 +17,25 @@ except:
     pass
 for fpath in glob.glob(fl[0]+'/*.*'):
     fname = os.path.basename(fpath)
-    img = PIL.Image.open(fpath)
-    w = img.getbbox()[2]
-    h = img.getbbox()[3]
+    img = cv.LoadImageM(fpath)
+    sz = cv.GetSize(img)
+    w = sz[0]
+    h = sz[1]
     
     tw = int(len(fl)**0.5+0.999)
     th = int(len(fl)*1.0/tw+0.999)
-    imgt = PIL.Image.new('RGB', (tw*w, th*h))
+    imgt = cv.CreateMat(th*h, tw*w, cv.CV_8UC3)
+    cv.SetZero(imgt)
     fname_png = os.path.splitext(fname)[0]+'.png'
     for i in range(len(fl)):
         for fn in [fname, fname_png]:
             try:
-                img2 = PIL.Image.open(fl[i]+'/'+fn)
-                imgt.paste(img2, (w*(i%tw), h*(i//tw)))
+                img2 = cv.LoadImageM(fl[i]+'/'+fn)
+                imgt_s = cv.GetSubRect(imgt, (w*(i%tw), h*(i//tw), w, h))
+                cv.Copy(img2, imgt_s)
                 break
             except IOError:
                 # brak obrazka oznacza, że nie ma z czym sklejać
                 pass
 
-    imgt.save('out/'+fname_png)
+    cv.SaveImage('out/'+fname_png, imgt)

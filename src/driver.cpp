@@ -10,6 +10,8 @@
 #include <iostream>
 
 using namespace std;
+
+
 void teamOutput(team_data* team) {
     cout<<team->team_len<<endl;
     for (int i=0; i<team->team_len; i++) {
@@ -18,7 +20,6 @@ void teamOutput(team_data* team) {
         cout<<p.x<<" "<<p.y<<" "<<robot.angle<<endl;
     }
 }
-
 
 void process(string in_fname, mirosot_vision_config & config, string config_name, string out_fname)
 {
