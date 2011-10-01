@@ -30,8 +30,8 @@ def run_for_type(pattern, config):
         fname_noext = os.path.splitext(fname)[0]
         fname_out = 'out_robo_split/' + fname_noext
         stdin.append([fpath, config, fname_out])
-    
-    proc = subprocess.Popen(['../src/driver'], stdin=subprocess.PIPE)
+    f = open('/dev/null', 'r')
+    proc = subprocess.Popen(['../src/driver'], stdin=subprocess.PIPE, stdout=f, stderr=f)
     stdin_str = ('%d\n'%len(stdin))+'\n'.join([' '.join(line) for line in stdin])
     
     proc.communicate(stdin_str)

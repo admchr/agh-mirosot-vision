@@ -63,15 +63,14 @@ void white_balance(Image* img, mirosot_vision_config* config) {
     Mat mats[3];
     Mat buf;
     split(*img, mats);
-    for (int i=0;i<img->size().width-TILE; i+=TILE)
-        for (int j=0;j < img->size().height-TILE; j+=TILE) {
-            
+    for (int i=0;i<img->size().width; i+=TILE)
+        for (int j=0;j < img->size().height; j+=TILE) {
             image_pos pos;
             pos.x = i;
             pos.y = j;
             Vec3b color = get_white(white_points, pos);
             for (int k=0;k<3;k++){   
-                buf=mats[k](cv::Rect(i,j,TILE,TILE));
+                buf=mats[k](cv::Rect(i,j,TILE,TILE) & cv::Rect(0, 0, img->size().width, img->size().height));
                 //mats[k].mul(mats[k],);
                 buf*=255.0/color[k]*SHRINK_FACTOR;
             }

@@ -13,7 +13,6 @@
 #include <iostream>
 #include <stdint.h>
 
-
 using namespace cv;
 using namespace std;
 
