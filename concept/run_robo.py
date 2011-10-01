@@ -1,4 +1,4 @@
-import subprocess, os.path, glob, sys, PIL.Image, threading
+import subprocess, os.path, glob, sys, cv, threading
 
 
 
@@ -37,16 +37,17 @@ def run_for_type(pattern, config):
     proc.communicate(stdin_str)
     
     for (fpath, config, fname_out) in stdin:
-        img = PIL.Image.open(fpath)
-        w, h = img.getbbox()[2:4]
+        img = cv.LoadImageM(fpath)
+        w, h = cv.GetSize(img)
         
         files = glob.glob('%s_*.png'%fname_out)
         files.sort()
-        imgt = PIL.Image.new('RGB', (w, len(files)*h))
+        imgt = cv.CreateMat(len(files)*h, w, cv.CV_8UC3)
         for (i, outfile) in enumerate(files):
             try:
-                imgo = PIL.Image.open(outfile)
-                imgt.paste(imgo, (0, h*i))
+                imgo = cv.LoadImageM(outfile)
+                imgt_frag = cv.GetSubRect(imgt, (0, h*i, w, h))
+                cv.Copy(imgo, imgt_frag)
             except IOError:
                 raise Exception('could not open %s in %s'%(outfile, fpath))
             except IndexError:
@@ -54,7 +55,7 @@ def run_for_type(pattern, config):
         
         fname = os.path.basename(fpath)
         fname_noext = os.path.splitext(fname)[0]
-        imgt.save('out_robo/%s.png' % fname_noext)
+        cv.SaveImage('out_robo/%s.png' % fname_noext, imgt)
         
 for (pattern, config) in patterns:
     t = threading.Thread(target=run_for_type, args=(pattern, config))
