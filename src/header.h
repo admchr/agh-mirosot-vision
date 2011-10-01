@@ -32,16 +32,22 @@ struct mirosot_vision_config {
 };
 
 struct robot_data {
-    int team1_len;
-    image_pos team1[MAX_ROBOTS];
-    
-    int team2_len;
-    image_pos team2[MAX_ROBOTS];
-    
+    image_pos position;
+    double angle;
+};
+
+struct team_data {
+    int team_len;
+    robot_data team[MAX_ROBOTS];
+};
+
+struct vision_data {
+    team_data blue_team;
+    team_data yellow_team;
     image_pos ball_pos;
 };
 
-robot_data find_teams(mirosot_vision_config* config);
+vision_data find_teams(mirosot_vision_config* config);
 void init_config(mirosot_vision_config* config);
 void free_config(mirosot_vision_config* config);
 }

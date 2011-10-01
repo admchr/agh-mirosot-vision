@@ -99,35 +99,35 @@ static void debugPatches(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, mirosot_
     copy_to(img_patches, config->debug_patches);
 }
 
-static void debugRobots(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, mirosot_vision_config *config)
-{
-    Image img_robots(img.clone());
-    img_robots *= 0.1;
-    set<Patch*> patches;
-    for(int x = 0;x < img.size().width;x++)
-        for(int y = 0;y < img.size().height;y++){
-            Patch* area_ind = area.area_map.get(x, y);
-            if (area_ind && area_ind->isLegal()) {
-                img_robots(y, x) = area_ind->type->color;
-                patches.insert(area_ind);
-            }
-        }
+static void debugTeam(Image& img, const team_data& team) {
 
-    for (set<Patch*>::iterator it = patches.begin(); it!=patches.end(); it++){
-        Patch* pa = *it;
-        Point p = pa->getMean();
-        double angle = pa->getAngle();
-        //cout<<angle<<" "<<sqrt(pa->moments.getXVariance())<<" "<<sqrt(pa->moments.getYVariance())<<" "<<pa->moments.getCovariance()<<endl;
-        angle+=M_PI*0.25;
+    for (int i=0; i<team.team_len; i++) {
+        robot_data robot = team.team[i];
+        image_pos p = robot.position;
+        double angle = robot.angle;
         for (int i=0;i<20;i++) {
             int x = p.x + cos(angle)*i;
             int y = p.y + sin(angle)*i;
             if (x < 0 || y < 0 || x >= img.cols || y >= img.rows)
                 break;
-            img_robots(y, x) = Vec3b(0, 0, 255);
+            img(y, x) = Vec3b(0, 0, 255);
         }
-        img_robots(p) = Vec3b(0, 0, 255);
     }
+}
+
+static void debugRobots(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, const vision_data& robots, mirosot_vision_config *config)
+{
+    Image img_robots(img.clone());
+    img_robots *= 0.1;
+    for(int x = 0;x < img.size().width;x++)
+        for(int y = 0;y < img.size().height;y++){
+            Patch* area_ind = area.area_map.get(x, y);
+            if (area_ind && area_ind->isLegal()) {
+                img_robots(y, x) = area_ind->type->color;
+            }
+        }
+    debugTeam(img_robots, robots.blue_team);
+    debugTeam(img_robots, robots.yellow_team);
     copy_to(img_robots, config->debug_robots);
 }
 
@@ -156,7 +156,7 @@ bool is_lil_yellow(Vec3b c){
     return (c[2]>70 && c[0]>15 && c[0]<40) || c[2]>120;// && c[1]*c[2]>128*128/2;
 }
 
-robot_data find_teams(mirosot_vision_config* config) {
+vision_data find_teams(mirosot_vision_config* config) {
     Image img;
     get_matrix(img, config->image, config);//9ms!!!
     Image img_hsv(img.clone());//1ms
@@ -185,17 +185,17 @@ robot_data find_teams(mirosot_vision_config* config) {
 
     area.getSets();//10ms
 
-    robot_data robots;
+    vision_data robots;
 
-    blue.fillLegal(robots.team1, &robots.team1_len);
-    yellow.fillLegal(robots.team2, &robots.team2_len);
+    blue.fillTeam(&robots.blue_team);
+    yellow.fillTeam(&robots.yellow_team);
 
 
     if (config->debug_patches) {
         debugPatches(img, area, config);
     }
     if (config->debug_robots) {
-        debugRobots(img, area, config);
+        debugRobots(img, area, robots, config);
     }
     
     copy_to(img, config->debug_meanshift);

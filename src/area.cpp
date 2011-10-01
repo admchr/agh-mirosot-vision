@@ -98,16 +98,18 @@ Patch* PatchType::newPatch()
 	return patches.back();
 }
 
-void PatchType::fillLegal(image_pos* pos, int* len) {
-    *len = 0;
-    for (int i=0; i<patches.size(); i++) {
+void PatchType::fillTeam(team_data* data) {
+    data->team_len = 0;
+    robot_data* robot = data->team;
+    for (unsigned int i=0; i<patches.size(); i++) {
         Patch* patch = patches[i];
         if (patch->isLegal()) {
             cv::Point p = patch->getMean();
-            pos->x = p.x;
-            pos->y = p.y;
-            pos++;
-            (*len)++;
+            robot->position.x = p.x;
+            robot->position.y = p.y;
+            robot->angle = patch->getAngle()+M_PI*0.25;
+            robot++;
+            data->team_len++;
         }
     }
 }
