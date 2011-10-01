@@ -72,7 +72,8 @@ public:
 	void fillTeam(team_data* data);
 
 	int getMinPatchSize();
-	int getMaxPatchSize();
+    int getMaxPatchSize();
+    int getMaxPatchWidth();
 };
 
 class Patch {

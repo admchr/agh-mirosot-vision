@@ -90,7 +90,7 @@ void meanShiftPoint(Image& src0, int x, int y, double sp0, double sr)
 {
     pair<Point,Vec3b> val(Point(x, y), src0(y, x));
     // TODO: there can be faster stop criterion
-    for(int i = 0;i < 3;i++)
+    for(int i = 0;i < 5;i++)
         val = meanShiftStep(val.first, val.second, src0, sp0, sr);
 
     src0(y, x) = val.second;

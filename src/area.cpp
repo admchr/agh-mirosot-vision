@@ -127,6 +127,10 @@ int PatchType::getMaxPatchSize() {
     return max_area;
 }
 
+int PatchType::getMaxPatchWidth() {
+    return map->config.px_per_cm * 8 * 2;
+}
+
 bool Patch::add(cv::Point p, cv::Point neighbour) {
 	Image img = this->type->map->img;
 	Image hsv = this->type->map->img_hsv;
@@ -135,12 +139,12 @@ bool Patch::add(cv::Point p, cv::Point neighbour) {
     	    origin = img(p);
     	    aabbox = Rect(p, p);
     	}
-    	if (PatchFinder::colorDistance(img(p), origin) > 4000 || PatchFinder::colorDistance(img(p), img(neighbour)) > 4*100)
+    	if (PatchFinder::colorDistance(img(p), img(neighbour)) > 4*100)
     		return false;
     	if (!type->fun(hsv(p)))
     		return false;
     	moments.add(p);
-    	aabbox = aabbox & Rect(p, p);
+    	aabbox = aabbox | Rect(p, p);
     	return true;
     }
     return false;
