@@ -17,6 +17,9 @@ struct mirosot_vision_config {
     image_pos* white_points;
     int white_points_len;
     
+    image_pos* mask_points;
+    int mask_points_len;
+
     double px_per_cm;
     double robot_size;
     
