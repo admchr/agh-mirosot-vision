@@ -37,17 +37,20 @@ void init_config(mirosot_vision_config* config) {
 
     config->meanshift_radius = 4;
     config->meanshift_threshold = 50;
-    
+
     config->white_points = NULL;
     config->white_points_len = 0;
     
+    config->mask_points = NULL;
+    config->mask_points_len = 0;
+
     config->debug_balance = NULL;
     config->debug_prescreen = NULL;
     config->debug_meanshift = NULL;
     config->debug_patches = NULL;
     config->debug_robots = NULL;
 
-    config->state = new VisionState();
+    config->state = NULL;
 }
 
 void free_config(mirosot_vision_config* config) {
@@ -155,7 +158,25 @@ bool is_lil_yellow(Vec3b c){
     return (c[2]>70 && c[0]>15 && c[0]<40) || c[2]>120;// && c[1]*c[2]>128*128/2;
 }
 
+VisionState* newVisionState(mirosot_vision_config* config) {
+	vector<Point> poly;
+	for (int i=0; i<config->mask_points_len; i++) {
+		image_pos pos = config->mask_points[i];
+		poly.push_back(Point(pos.x, pos.y));
+	}
+	VisionState* state = new VisionState();
+
+	state->mask.init(poly, Size(config->width, config->height));
+
+	return state;
+}
+
 vision_data find_teams(mirosot_vision_config* config) {
+	if (!config->state) {
+		config->state = newVisionState(config);
+	}
+    VisionState* state = static_cast<VisionState*>(config->state);
+
     Image img;
     get_matrix(img, config->image, config);//9ms!!!
     Image img_hsv(img.clone());//1ms
@@ -164,8 +185,8 @@ vision_data find_teams(mirosot_vision_config* config) {
     if (config->debug_balance) {
     	debugWhite(img, config);
     }
+    state->mask.apply(img);
     //cvtColor(img, img_hsv, CV_BGR2HSV);// SLOW!
-    VisionState* state = static_cast<VisionState*>(config->state);
     state->converter.convert(img, img_hsv);//1ms
     PatchFinder area(*config);
     
