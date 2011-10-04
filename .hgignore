@@ -1,3 +1,4 @@
 syntax: glob
 concept/out*
 src/*.o
+doc/_build

@@ -25,7 +25,13 @@ struct mirosot_vision_config {
     
     int meanshift_radius;
     int meanshift_threshold;
-    
+
+    int black_cutoff;
+    int blue_min;
+    int blue_max;
+    int yellow_min;
+    int yellow_max;
+
     unsigned char *debug_balance;
     unsigned char *debug_prescreen;
     unsigned char *debug_meanshift;

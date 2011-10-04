@@ -1,0 +1,3 @@
+#!/bin/sh
+make -j perf &&
+time ./perf ../concept/img/wc_robots_2windows_allLights.png ../concept/config_wc.txt 

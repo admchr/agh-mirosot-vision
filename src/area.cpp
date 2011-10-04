@@ -141,7 +141,7 @@ bool Patch::add(cv::Point p, cv::Point neighbour) {
     	}
     	if (PatchFinder::colorDistance(img(p), img(neighbour)) > 4*100)
     		return false;
-    	if (!type->fun(hsv(p)))
+    	if (!type->fun(this->type->config, hsv(p)))
     		return false;
     	moments.add(p);
     	aabbox = aabbox | Rect(p, p);
