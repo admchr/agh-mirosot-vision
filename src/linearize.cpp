@@ -21,21 +21,18 @@ uchar rgb_to_srgb(uchar ch){
 }
 
 
-static cv::Vec3b srgb_to_rgb(cv::Vec3b val){
-    return cv::Vec3b(srgb_to_rgb(val[0]), srgb_to_rgb(val[1]), srgb_to_rgb(val[2]));
-}
-
-static cv::Vec3b rgb_to_srgb(cv::Vec3b val){
-    return cv::Vec3b(rgb_to_srgb(val[0]), rgb_to_srgb(val[1]), rgb_to_srgb(val[2]));
-}
-
 static void do_convert(Image& img, bool de) {
+	int tab[256];
+	for(int i=0;i<256;i++) {
+		if (de)
+			tab[i] = rgb_to_srgb(i);
+		else
+			tab[i] = srgb_to_rgb(i);
+	}
 	for (int y=0; y<img.rows; y++)
 		for (int x=0; x<img.cols; x++) {
-			if (de)
-				img(y, x) = rgb_to_srgb(img(y, x));
-			else
-				img(y, x) = srgb_to_rgb(img(y, x));
+			cv::Vec3b c = img(y, x);
+			img(y, x)=cv::Vec3b(tab[c[0]], tab[c[1]], tab[c[2]]);
 		}
 }
 

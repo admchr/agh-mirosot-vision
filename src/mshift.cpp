@@ -12,7 +12,7 @@ for y in range(16*2):
 print s
 
 */
-static int squares_tab[] = {
+static const int squares_tab[] = {
         65536, 65025, 64516, 64009, 63504, 63001, 62500, 62001, 61504, 61009, 60516, 60025, 59536, 59049, 58564, 58081,
         57600, 57121, 56644, 56169, 55696, 55225, 54756, 54289, 53824, 53361, 52900, 52441, 51984, 51529, 51076, 50625,
         50176, 49729, 49284, 48841, 48400, 47961, 47524, 47089, 46656, 46225, 45796, 45369, 44944, 44521, 44100, 43681,
@@ -54,18 +54,17 @@ std::pair<cv::Point, cv::Vec3b> meanShiftStep(cv::Point p, cv::Vec3b color, cons
 
     height*=height;
 
-    int* squares = squares_tab + 256;
-    int minx =  max(p.x-width, 0);
-    int miny = max(p.y-width, 0);
-    int maxx = min(p.x+width+1, img.cols);
-    int maxy = min(p.y+width+1, img.rows);
+    const int *const squares = squares_tab + 256;
+    const int minx =  max(p.x-width, 0);
+    const int miny = max(p.y-width, 0);
+    const int maxx = min(p.x+width+1, img.cols);
+    const int maxy = min(p.y+width+1, img.rows);
 
     for (int y = miny; y < maxy; y++) {
         const Vec3b* row = img[y] + minx;
         for (int x = minx; x < maxx; x++) {
-            Vec3b acolor = *row;
+            const Vec3b acolor = *row;
             row++;
-
             if (squares[acolor[0] - color[0]] + squares[acolor[1] - color[1]] +squares[acolor[2] - color[2]] > height)
                 continue;
             weight_sum++;
@@ -81,9 +80,10 @@ std::pair<cv::Point, cv::Vec3b> meanShiftStep(cv::Point p, cv::Vec3b color, cons
     for (int i=0; i<3; i++)
         res_color[i] /= weight_sum;
     return make_pair(
-            Point(res_pos[0]/weight_sum, res_pos[1]/weight_sum),
-            Vec3b(res_color[0], res_color[1], res_color[2])
-        );
+    	Point(res_pos[0]/weight_sum, res_pos[1]/weight_sum),
+    	Vec3b(res_color[0], res_color[1], res_color[2])
+    );
+
 }
 
 void meanShiftPoint(Image& src0, int x, int y, double sp0, double sr)

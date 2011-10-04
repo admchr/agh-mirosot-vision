@@ -31,6 +31,9 @@ struct mirosot_vision_config {
     int blue_max;
     int yellow_min;
     int yellow_max;
+    int minimum_saturation;
+    int white_cutoff;
+    char linearize;
 
     unsigned char *debug_balance;
     unsigned char *debug_prescreen;

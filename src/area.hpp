@@ -20,7 +20,7 @@ class PatchFinder {
     public:
         Image img;
         F f;
-        PatchType* operator()(int x, int y, PatchType* b) {
+        PatchType* operator()(int x, int y, PatchType*) {
             return f(img(y, x));
         }
     };

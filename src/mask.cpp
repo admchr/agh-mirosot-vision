@@ -21,7 +21,7 @@ int crossingPoint(Point line1, Point line2, int y) {
 
 bool pointInPolygon(Point point, const std::vector<Point>& polygon) {
 	std::vector<int> intersections;
-	for (int i=0; i<polygon.size(); i++) {
+	for (unsigned int i=0; i<polygon.size(); i++) {
 		Point p0 = polygon[i];
 		Point p1 = polygon[(i+1)%polygon.size()];
 
@@ -34,7 +34,7 @@ bool pointInPolygon(Point point, const std::vector<Point>& polygon) {
 	sort(intersections.begin(), intersections.end());
 
 	bool odd = false;
-	for (int i=0; i<intersections.size() && intersections[i] < point.x; i++) {
+	for (unsigned int i=0; i<intersections.size() && intersections[i] < point.x; i++) {
 		odd = !odd;
 	}
 	return odd;
@@ -50,7 +50,7 @@ void ImageMask::init(vector<Point> poly, Size dimensions) {
 }
 
 void ImageMask::apply(Image& img) {
-	//mask.get(img.cols, img.rows);
+
 	for (int y=0; y<img.rows; y++)
 		for (int x=0; x<img.cols; x++) {
 			if (mask.get(x, y))
