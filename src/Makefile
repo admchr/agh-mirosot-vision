@@ -1,5 +1,5 @@
 
-CXXFLAGS= -g -Wall -Wextra -O2 
+CXXFLAGS= -g -Wall -Wextra -O2
 LIBS= -lcv -lhighgui -lm
 TEST_LIBS= -lboost_unit_test_framework $(LIBS)
 
@@ -24,7 +24,7 @@ test_impl: test_impl.o test_array2d.o test_mshift.o test_linearize.o test_mask.o
 	g++ $(TEST_LIBS)  $^ -o $@
 
 area.o:area.cpp $(IMPL_HEADERS)
-impl.o: impl.cpp header.h
+impl.o: impl.cpp header.h $(IMPL_HEADERS)
 balance.o: balance.cpp $(IMPL_HEADERS)
 driver.o: driver.cpp header.h common.hpp
 perf.o: driver.cpp header.h common.hpp

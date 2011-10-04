@@ -1,0 +1,4 @@
+#!/bin/sh
+make -j driver &&
+./driver ../concept/img/wc_robots_2windows_allLights.png ../concept/config_wc.txt out
+

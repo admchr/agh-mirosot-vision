@@ -58,6 +58,7 @@ def run_for_type(pattern, config):
         cv.SaveImage('out_robo/%s.png' % fname_noext, imgt)
         
 for (pattern, config) in patterns:
-    t = threading.Thread(target=run_for_type, args=(pattern, config))
-    t.start()
+    #t = threading.Thread(target=run_for_type, args=(pattern, config))
+    #t.start()
+    run_for_type(pattern, config)
     

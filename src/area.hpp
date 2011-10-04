@@ -55,13 +55,15 @@ public://TODO make some private
 
 class PatchType {
 public:
-    typedef bool(*Fun)(cv::Vec3b);
+    typedef bool(*Fun)(mirosot_vision_config*, cv::Vec3b);
     Fun fun;
     cv::Vec3b color;
-	PatchType(PatchFinder* pf, Fun fun, cv::Vec3b color) {
+    mirosot_vision_config* config;
+	PatchType(PatchFinder* pf, Fun fun, cv::Vec3b color, mirosot_vision_config* config) {
 		this->map = pf;
 	    this->fun = fun;
 	    this->color = color;
+	    this->config = config;
 	}
 	~PatchType();
 

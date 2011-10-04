@@ -44,6 +44,12 @@ void init_config(mirosot_vision_config* config) {
     config->mask_points = NULL;
     config->mask_points_len = 0;
 
+    config->black_cutoff = 70;
+    config->blue_min = 85;
+    config->blue_max = 115;
+    config->yellow_min = 10;
+    config->yellow_max = 40;
+
     config->debug_balance = NULL;
     config->debug_prescreen = NULL;
     config->debug_meanshift = NULL;
@@ -56,8 +62,6 @@ void init_config(mirosot_vision_config* config) {
 void free_config(mirosot_vision_config* config) {
     delete static_cast<VisionState*>(config->state);
 }
-
-
 
 static void debugWhite(cv::Mat_<cv::Vec3b> & img, mirosot_vision_config *config)
 {
@@ -134,29 +138,28 @@ static void debugRobots(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, const vis
 }
 
 static bool is_black(Vec3b c){
-    return c[2]<40;
+    return c[2]<70;
+}
+inline bool is_lil_blue(mirosot_vision_config* config, Vec3b c){
+    return c[2]>config->black_cutoff && c[0]>config->blue_min && c[0]<config->blue_max && c[1]>40;
+}
+inline bool is_lil_yellow(mirosot_vision_config* config, Vec3b c){
+    return (c[2]>config->black_cutoff && c[0]>config->yellow_min && c[0]<config->yellow_max && c[1]>40) || c[2]>120;// && c[1]*c[2]>128*128/2;
 }
 
 struct Precompute {
     PatchType* blue;
     PatchType* yellow;
     PatchType* orange;
-
+    mirosot_vision_config* config;
     PatchType* operator()(Vec3b c){
-        if(!is_black(c) && c[0]>85 && c[0]<115 && c[1]*c[2]>128*128/4)
+        if(is_lil_blue(config, c))
             return blue;
-        if(!is_black(c) && c[0]>15 && c[0]<40)
+        if(is_lil_yellow(config, c))
             return yellow;
         return 0;
     }
 };
-
-bool is_lil_blue(Vec3b c){
-    return c[2]>70 && c[0]>85 && c[0]<115 && c[1]*c[2]>128*128/8 && c[1]>55;
-}
-bool is_lil_yellow(Vec3b c){
-    return (c[2]>70 && c[0]>15 && c[0]<40) || c[2]>120;// && c[1]*c[2]>128*128/2;
-}
 
 VisionState* newVisionState(mirosot_vision_config* config) {
 	vector<Point> poly;
@@ -191,10 +194,11 @@ vision_data find_teams(mirosot_vision_config* config) {
     PatchFinder area(*config);
     
     area.setImages(img, img_hsv);
-    PatchType blue(&area, is_lil_blue, Vec3b(255, 0, 0));
-    PatchType yellow(&area, is_lil_yellow, Vec3b(0, 255, 255));
-    PatchType orange(&area, is_lil_blue, Vec3b(0, 0, 255));
+    PatchType blue(&area, is_lil_blue, Vec3b(255, 0, 0), config);
+    PatchType yellow(&area, is_lil_yellow, Vec3b(0, 255, 255), config);
+    PatchType orange(&area, is_lil_blue, Vec3b(0, 0, 255), config);
     Precompute precompute;
+    precompute.config = config;
     precompute.blue = &blue;
     precompute.yellow = &yellow;
     precompute.orange = &orange;
@@ -203,7 +207,7 @@ vision_data find_teams(mirosot_vision_config* config) {
         debugPrescreen(img, area, config);
     }
 
-    area.getSets();//10ms
+    area.getSets();//30ms!
 
     vision_data robots;
 
