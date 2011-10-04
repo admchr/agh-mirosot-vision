@@ -47,10 +47,10 @@ public:
             Q.pop();
 
             Vec3b color = a->img(p);
-            int minx = max(p.x - 1, 0);
-            int miny = max(p.y - 1, 0);
-            int maxx = min(p.x + 2, a->img.cols);
-            int maxy = min(p.y + 2, a->img.rows);
+            const int minx = max(p.x - 1, 0);
+            const int miny = max(p.y - 1, 0);
+            const int maxx = min(p.x + 2, a->img.cols);
+            const int maxy = min(p.y + 2, a->img.rows);
 
             for (int nx = minx; nx < maxx; nx++)
                 for (int ny = miny; ny < maxy; ny++) {
@@ -87,7 +87,7 @@ int PatchFinder::colorDistance(Vec3b a, Vec3b b) {
 }
 
 PatchType::~PatchType() {
-	for (int i=0; i<patches.size(); i++) {
+	for (unsigned int i=0; i<patches.size(); i++) {
 		delete patches[i];
 	}
 }
@@ -115,14 +115,14 @@ void PatchType::fillTeam(team_data* data) {
 }
 
 int PatchType::getMinPatchSize() {
-    double min_size = map->config.px_per_cm * 3.5 * 0.85;
+    double min_size = map->config.px_per_cm * 3.5;
     int min_area = min_size*min_size;
 
     return min_area;
 }
 int PatchType::getMaxPatchSize() {
-    double max_size = map->config.px_per_cm * 7.5 * 1.25;
-    int max_area = max_size*max_size;
+    double max_size = map->config.px_per_cm * 8;
+    int max_area = max_size*max_size/2*1.5;
 
     return max_area;
 }
@@ -134,20 +134,18 @@ int PatchType::getMaxPatchWidth() {
 bool Patch::add(cv::Point p, cv::Point neighbour) {
 	Image img = this->type->map->img;
 	Image hsv = this->type->map->img_hsv;
-    if (moments.getCount() < type->getMaxPatchSize()) {
-    	if (moments.getCount() == 0) {
-    	    origin = img(p);
-    	    aabbox = Rect(p, p);
-    	}
-    	if (PatchFinder::colorDistance(img(p), img(neighbour)) > 4*100)
-    		return false;
-    	if (!type->fun(this->type->config, hsv(p)))
-    		return false;
-    	moments.add(p);
-    	aabbox = aabbox | Rect(p, p);
-    	return true;
-    }
-    return false;
+
+	if (moments.getCount() == 0) {
+		origin = img(p);
+		aabbox = Rect(p, p);
+	}
+	if (PatchFinder::colorDistance(img(p), img(neighbour)) > 4*100)
+		return false;
+	if (!type->fun(this->type->config, hsv(p)))
+		return false;
+	moments.add(p);
+	aabbox = aabbox | Rect(p, p);
+    return true;
 }
 
 int Patch::getCount() {

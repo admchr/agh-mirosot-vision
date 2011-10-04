@@ -16,18 +16,22 @@
 using namespace cv;
 using namespace std;
 
+const double DEBUG_DIM = 0.5;
 
 static void get_matrix(Image & mat, unsigned char* buf, mirosot_vision_config* config) {
     cv::Mat img_tmp(cv::Size(config->width, config->height), CV_8UC3, buf);
     Image img(img_tmp);
-    linearize(img);// 8ms
+    if (config->linearize)
+    	linearize(img);// 1ms
+
     mat = img;
 }
 
-static void copy_to(const Image& mat, unsigned char* buf) {
+static void copy_to(const Image& mat, unsigned char* buf, mirosot_vision_config* config) {
     if (buf) {
     	Image mat2(mat.clone());
-    	delinearize(mat2);
+    	if (config->linearize)
+    		delinearize(mat2);
         memcpy(buf, mat2.ptr(), 3 * mat2.size().width * mat2.size().height);
     }
 }
@@ -36,7 +40,7 @@ void init_config(mirosot_vision_config* config) {
     config->px_per_cm = 16/7.5;
 
     config->meanshift_radius = 4;
-    config->meanshift_threshold = 50;
+    config->meanshift_threshold = 30;
 
     config->white_points = NULL;
     config->white_points_len = 0;
@@ -44,11 +48,15 @@ void init_config(mirosot_vision_config* config) {
     config->mask_points = NULL;
     config->mask_points_len = 0;
 
-    config->black_cutoff = 70;
+    config->black_cutoff = 60;
     config->blue_min = 85;
     config->blue_max = 115;
     config->yellow_min = 10;
     config->yellow_max = 40;
+    config->minimum_saturation = 100;
+    config->white_cutoff = 110;
+
+    config->linearize = 0;
 
     config->debug_balance = NULL;
     config->debug_prescreen = NULL;
@@ -70,28 +78,32 @@ static void debugWhite(cv::Mat_<cv::Vec3b> & img, mirosot_vision_config *config)
     	image_pos pos = config->white_points[i];
     	img_white(pos.y, pos.x) = cv::Vec3b(0, 0, 255);
     }
-    copy_to(img_white, config->debug_balance);
+    copy_to(img_white, config->debug_balance, config);
 }
 
-static void debugPrescreen(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, mirosot_vision_config *config)
+static void debugPrescreen(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, VisionState* vs, mirosot_vision_config *config)
 {
     Image img_prescreen(img.clone());
-    img_prescreen *= 0.1;
+    img_prescreen *= DEBUG_DIM;
     for(int x = 0;x < img.size().width;x++)
         for(int y = 0;y < img.size().height;y++){
+        	if (vs->converter.get(img(y, x))[2] < config->black_cutoff)
+        		img_prescreen(y, x) = Vec3b(0, 0, 0);
             PatchType *patch = area.precompute_map.get(x, y);
         	if(patch)
                 img_prescreen(y, x) = patch->color;
+        	if (vs->converter.get(img(y, x))[2] > config->white_cutoff)
+        		img_prescreen(y, x) = Vec3b(255, 255, 255);
 
         }
 
-    copy_to(img_prescreen, config->debug_prescreen);
+    copy_to(img_prescreen, config->debug_prescreen, config);
 }
 
 static void debugPatches(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, mirosot_vision_config *config)
 {
     Image img_patches(img.clone());
-    img_patches *= 0.1;
+    img_patches *= DEBUG_DIM;
     for(int x = 0;x < img.size().width;x++)
         for(int y = 0;y < img.size().height;y++){
             Patch* area_ind = area.area_map.get(x, y);
@@ -102,7 +114,7 @@ static void debugPatches(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, mirosot_
             }
         }
 
-    copy_to(img_patches, config->debug_patches);
+    copy_to(img_patches, config->debug_patches, config);
 }
 
 static void debugTeam(Image& img, const team_data& team) {
@@ -124,7 +136,7 @@ static void debugTeam(Image& img, const team_data& team) {
 static void debugRobots(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, const vision_data& robots, mirosot_vision_config *config)
 {
     Image img_robots(img.clone());
-    img_robots *= 0.1;
+    img_robots *= DEBUG_DIM;
     for(int x = 0;x < img.size().width;x++)
         for(int y = 0;y < img.size().height;y++){
             Patch* area_ind = area.area_map.get(x, y);
@@ -134,17 +146,27 @@ static void debugRobots(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, const vis
         }
     debugTeam(img_robots, robots.blue_team);
     debugTeam(img_robots, robots.yellow_team);
-    copy_to(img_robots, config->debug_robots);
+    copy_to(img_robots, config->debug_robots, config);
 }
 
-static bool is_black(Vec3b c){
-    return c[2]<70;
-}
 inline bool is_lil_blue(mirosot_vision_config* config, Vec3b c){
-    return c[2]>config->black_cutoff && c[0]>config->blue_min && c[0]<config->blue_max && c[1]>40;
+    return
+    		c[2]>config->black_cutoff &&
+    		c[0]>config->blue_min &&
+    		c[0]<config->blue_max &&
+    		c[1]>config->minimum_saturation;
 }
 inline bool is_lil_yellow(mirosot_vision_config* config, Vec3b c){
-    return (c[2]>config->black_cutoff && c[0]>config->yellow_min && c[0]<config->yellow_max && c[1]>40) || c[2]>120;// && c[1]*c[2]>128*128/2;
+    return (
+				c[2]>config->black_cutoff &&
+				c[0]>config->yellow_min &&
+				c[0]<config->yellow_max &&
+				(c[1]>config->minimum_saturation || c[2]>config->white_cutoff)
+    		) ||
+    		(
+    			c[2]>config->white_cutoff &&
+    			c[1]<50
+    		);// && c[1]*c[2]>128*128/2;
 }
 
 struct Precompute {
@@ -175,24 +197,25 @@ VisionState* newVisionState(mirosot_vision_config* config) {
 }
 
 vision_data find_teams(mirosot_vision_config* config) {
+    vision_data robots;
+
 	if (!config->state) {
 		config->state = newVisionState(config);
 	}
     VisionState* state = static_cast<VisionState*>(config->state);
 
     Image img;
-    get_matrix(img, config->image, config);//9ms!!!
-    Image img_hsv(img.clone());//1ms
+    get_matrix(img, config->image, config);//1ms
+    Image img_hsv(img.clone());//<1ms
     
     white_balance(&img, config);//6ms
     if (config->debug_balance) {
     	debugWhite(img, config);
     }
-    state->mask.apply(img);
-    //cvtColor(img, img_hsv, CV_BGR2HSV);// SLOW!
+    state->mask.apply(img);//5ms
     state->converter.convert(img, img_hsv);//1ms
     PatchFinder area(*config);
-    
+
     area.setImages(img, img_hsv);
     PatchType blue(&area, is_lil_blue, Vec3b(255, 0, 0), config);
     PatchType yellow(&area, is_lil_yellow, Vec3b(0, 255, 255), config);
@@ -204,12 +227,11 @@ vision_data find_teams(mirosot_vision_config* config) {
     precompute.orange = &orange;
     area.precompute(precompute);//<1ms
     if (config->debug_prescreen) {
-        debugPrescreen(img, area, config);
+        debugPrescreen(img, area, state, config);
     }
 
-    area.getSets();//30ms!
+    area.getSets();//25ms
 
-    vision_data robots;
 
     blue.fillTeam(&robots.blue_team);
     yellow.fillTeam(&robots.yellow_team);
@@ -222,7 +244,7 @@ vision_data find_teams(mirosot_vision_config* config) {
         debugRobots(img, area, robots, config);
     }
     
-    copy_to(img, config->debug_meanshift);
-    
+    copy_to(img, config->debug_meanshift, config);
+    /**/
     return robots;
 }
