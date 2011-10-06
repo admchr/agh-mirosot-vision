@@ -117,19 +117,45 @@ static void debugPatches(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, mirosot_
     copy_to(img_patches, config->debug_patches, config);
 }
 
-static void debugTeam(Image& img, const team_data& team) {
+void debugLine(image_pos p, double angle, Image & img, int len)
+{
+    for(int i = 0;i < len;i++){
+        int x = p.x + cos(angle) * i;
+        int y = p.y + sin(angle) * i;
+        if(x < 0 || y < 0 || x >= img.cols || y >= img.rows)
+            break;
 
+        img(y, x) = Vec3b(0, 0, 255);
+    }
+}
+
+static void debugTeam(Image& img, const team_data& team) {
+	const int SIDE = 9;
     for (int i=0; i<team.team_len; i++) {
         robot_data robot = team.team[i];
         image_pos p = robot.position;
+        image_pos tmp = p;
         double angle = robot.angle;
-        for (int i=0;i<20;i++) {
-            int x = p.x + cos(angle)*i;
-            int y = p.y + sin(angle)*i;
-            if (x < 0 || y < 0 || x >= img.cols || y >= img.rows)
-                break;
-            img(y, x) = Vec3b(0, 0, 255);
-        }
+        double front_x = cos(angle)*SIDE;
+        double front_y = sin(angle)*SIDE;
+
+        double side_x = cos(angle+M_PI*0.5)*SIDE;
+        double side_y = sin(angle+M_PI*0.5)*SIDE;
+        debugLine(p, angle, img, 20);
+
+        tmp.x=p.x+front_x+side_x;
+        tmp.y=p.y+front_y+side_y;
+        debugLine(tmp, angle+M_PI, img, 2*SIDE);
+        tmp.x=p.x+front_x-side_x;
+        tmp.y=p.y+front_y-side_y;
+        debugLine(tmp, angle+M_PI/2, img, 2*SIDE);
+        tmp.x=p.x-front_x-side_x;
+        tmp.y=p.y-front_y-side_y;
+        debugLine(tmp, angle, img, 2*SIDE);
+        tmp.x=p.x-front_x+side_x;
+        tmp.y=p.y-front_y+side_y;
+        debugLine(tmp, angle+M_PI*3/2, img, 2*SIDE);
+
     }
 }
 
