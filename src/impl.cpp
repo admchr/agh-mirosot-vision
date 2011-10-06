@@ -40,7 +40,7 @@ void init_config(mirosot_vision_config* config) {
     config->px_per_cm = 16/7.5;
 
     config->meanshift_radius = 4;
-    config->meanshift_threshold = 30;
+    config->meanshift_threshold = 50;
 
     config->white_points = NULL;
     config->white_points_len = 0;
@@ -56,7 +56,7 @@ void init_config(mirosot_vision_config* config) {
     config->minimum_saturation = 100;
     config->white_cutoff = 110;
 
-    config->linearize = 0;
+    config->linearize = 1;
 
     config->debug_balance = NULL;
     config->debug_prescreen = NULL;
@@ -232,7 +232,6 @@ vision_data find_teams(mirosot_vision_config* config) {
 
     area.getSets();//25ms
 
-
     blue.fillTeam(&robots.blue_team);
     yellow.fillTeam(&robots.yellow_team);
 
@@ -245,6 +244,6 @@ vision_data find_teams(mirosot_vision_config* config) {
     }
     
     copy_to(img, config->debug_meanshift, config);
-    /**/
+
     return robots;
 }

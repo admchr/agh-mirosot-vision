@@ -170,9 +170,10 @@ Point Patch::getMean() {
 }
 
 double Patch::getAngle() {
+    double angle = moments.getAngle()+M_PI*0.25;
+
 	double a = moments.getRegressionSlope();
 	double b = moments.getRegressionPosition();
-    double angle = moments.getAngle()+M_PI*0.25;
     Rect bbox = getBoundingBox();
     int up = 0;
     int down = 0;
@@ -188,5 +189,6 @@ double Patch::getAngle() {
 
     if (down<up)
     	angle+=M_PI;
+
     return angle;
 }
