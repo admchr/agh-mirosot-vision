@@ -43,14 +43,24 @@ double PatchMoments::getCovariance() {
     return (sum_xy - sum_x*sum_y/count)/(count - 1.0);
 }
 
-double PatchMoments::getAngle() {
+double PatchMoments::getRegressionSlope() {
     // Deming regression
     double var_x = getXVariance();
     double var_y = getYVariance();
     double var_xy = getCovariance();
+    double b1 = (var_y - var_x + sqrt((var_y - var_x) * (var_y - var_x) + 4 * var_xy * var_xy)) / 2 / var_xy;
+    return b1;
+}
 
-    double b1 = (var_y - var_x + sqrt((var_y-var_x)*(var_y-var_x)+4*var_xy*var_xy))/2/var_xy;
-    //double b0 = sum_y - b1*sum_x/count;
-    // y = b0 + b1*x
+double PatchMoments::getRegressionPosition() {
+
+	double b1 = getRegressionSlope();
+    double b0 = sum_y*1.0/count - b1*sum_x/count;
+    return b0;
+}
+
+double PatchMoments::getAngle() {
+    // Deming regression
+    double b1 = getRegressionSlope();
     return atan(b1);
 }

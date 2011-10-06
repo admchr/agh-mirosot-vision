@@ -151,21 +151,21 @@ static void debugRobots(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, const vis
 
 inline bool is_lil_blue(mirosot_vision_config* config, Vec3b c){
     return
-    		c[2]>config->black_cutoff &&
-    		c[0]>config->blue_min &&
-    		c[0]<config->blue_max &&
-    		c[1]>config->minimum_saturation;
+    		c[2] > config->black_cutoff &&
+    		c[0] > config->blue_min &&
+    		c[0] < config->blue_max &&
+    		c[1] > config->minimum_saturation;
 }
 inline bool is_lil_yellow(mirosot_vision_config* config, Vec3b c){
     return (
-				c[2]>config->black_cutoff &&
-				c[0]>config->yellow_min &&
-				c[0]<config->yellow_max &&
-				(c[1]>config->minimum_saturation || c[2]>config->white_cutoff)
+				c[2] > config->black_cutoff &&
+				c[0] > config->yellow_min &&
+				c[0] < config->yellow_max &&
+				(c[1] > config->minimum_saturation || c[2] > config->white_cutoff)
     		) ||
     		(
-    			c[2]>config->white_cutoff &&
-    			c[1]<50
+    			c[2] > config->white_cutoff &&
+    			c[1] < 50
     		);// && c[1]*c[2]>128*128/2;
 }
 

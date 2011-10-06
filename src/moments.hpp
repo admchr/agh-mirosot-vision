@@ -22,5 +22,7 @@ public:
     double getYVariance();
     double getCovariance();
     double getAngle();
+    double getRegressionSlope();
+    double getRegressionPosition();
 };
 #endif

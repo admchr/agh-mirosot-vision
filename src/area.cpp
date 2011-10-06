@@ -107,7 +107,7 @@ void PatchType::fillTeam(team_data* data) {
             cv::Point p = patch->getMean();
             robot->position.x = p.x;
             robot->position.y = p.y;
-            robot->angle = patch->getAngle()+M_PI*0.25;
+            robot->angle = patch->getAngle();
             robot++;
             data->team_len++;
         }
@@ -120,6 +120,7 @@ int PatchType::getMinPatchSize() {
 
     return min_area;
 }
+
 int PatchType::getMaxPatchSize() {
     double max_size = map->config.px_per_cm * 8;
     int max_area = max_size*max_size/2*1.5;
@@ -160,8 +161,32 @@ bool Patch::isLegal() {
 }
 
 Point Patch::getMean() {
-    return moments.getMean();
+	const int MEAN_OFFSET = 3;
+    Point p = moments.getMean();
+    double angle = getAngle() - M_PI*0.5;
+    p.x+=cos(angle)*MEAN_OFFSET;
+    p.y+=sin(angle)*MEAN_OFFSET;
+    return p;
 }
+
 double Patch::getAngle() {
-    return moments.getAngle();
+	double a = moments.getRegressionSlope();
+	double b = moments.getRegressionPosition();
+    double angle = moments.getAngle()+M_PI*0.25;
+    Rect bbox = getBoundingBox();
+    int up = 0;
+    int down = 0;
+    for (int y=bbox.y; y<=bbox.y+bbox.height; y++)
+    	for (int x=bbox.x; x<=bbox.x+bbox.width; x++) {
+    		if (type->map->area_map.get(x, y) == this) {
+    			if (a*x + b > y)
+    				down++;
+    			else
+    				up++;
+    		}
+    	}
+
+    if (down<up)
+    	angle+=M_PI;
+    return angle;
 }
