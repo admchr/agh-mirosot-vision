@@ -271,5 +271,7 @@ vision_data find_teams(mirosot_vision_config* config) {
     
     copy_to(img, config->debug_meanshift, config);
 
+    robots.ball_pos.x = robots.ball_pos.y = 0;
+
     return robots;
 }
