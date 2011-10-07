@@ -5,9 +5,6 @@
 
 .. highlight:: c
 
-agh-mirosot-vision
-==================
-
 
 .. toctree::
 
@@ -24,13 +21,28 @@ Cała istota algorytmu jest zawarta w jednej funkcji:
 
 .. c:function:: robot_data find_teams(mirosot_vision_config* config)
 
-    Przyjmuje ona dane wizualne i tworzy opis drużyn robotów.  
+    Przyjmuje ona dane wizualne i tworzy opis drużyn robotów.
+    
+    Struktury z tej funkcji intensywnie korzystają ze struktury opisującej
+    położenie punktu na płaszczyźnie bitmapy.
+
+.. c:type:: struct image_pos
+
+    ::
+        
+        struct image_pos {
+            int x;
+            int y;
+        };
+    
+
+Konfiguracja
+************
 
 .. c:type:: struct mirosot_vision_config
 
     ::
 
-            
         struct mirosot_vision_config {
             unsigned char* image;
             int height, width;
@@ -38,12 +50,24 @@ Cała istota algorytmu jest zawarta w jednej funkcji:
             image_pos* white_points;
             int white_points_len;
             
+            image_pos* mask_points;
+            int mask_points_len;
+
             double px_per_cm;
             double robot_size;
             
             int meanshift_radius;
             int meanshift_threshold;
-            
+
+            int black_cutoff;
+            int blue_min;
+            int blue_max;
+            int yellow_min;
+            int yellow_max;
+            int minimum_saturation;
+            int white_cutoff;
+            char linearize;
+
             unsigned char *debug_balance;
             unsigned char *debug_prescreen;
             unsigned char *debug_meanshift;
@@ -78,8 +102,9 @@ Alokacją obrazka zajmuje się użytkownik.
 
 inicjalizacja
 ^^^^^^^^^^^^^
-
-Pola, które w normalnym działaniu algortymu zostają ustawiane tylko raz:
+   Przed pierwszym użyciem należy skonfigurować pewne informacje o świecie
+   i warunkach oświetleniowych. Dane na temat samego wyglądu patcha na robocie
+   są aktualnie hardcodowane. 
 
 .. c:member:: double mirosot_vision_config.px_per_cm
 .. c:member:: double mirosot_vision_config.robot_size
@@ -87,16 +112,56 @@ Pola, które w normalnym działaniu algortymu zostają ustawiane tylko raz:
     Podają odpowiednio rozdzielczość obrazu na powierzchni boiska (w pikselach
     na centymetr) i długość boku robota w centymetrach.
 
-.. c:member:: image_pos *mirosot_vision_config.white_points
+.. c:member:: char mirosot_vision_config.linearize
 
-    Pozycje punktów boiska, które można określić jako białe. 
+    Wartość logiczna określająca, czy przed wszystkimi innymi operacjami ma 
+    zostać wykonana konwersja kolorów z sRGB do liniowego RGB.
+
+.. c:member:: image_pos *mirosot_vision_config.white_points
+.. c:member:: int *mirosot_vision_config.white_points_len
+
+    Pozycje punktów boiska, które można określić jako białe. Służą do balansu 
+    bieli na obrazku.
+
+.. c:member:: image_pos *mirosot_vision_config.white_points
+.. c:member:: int *mirosot_vision_config.white_points_len
+
+    Wierzchołki wielokąta opisującego region zainteresowania. Piksele spoza tego
+    wielokąta są maskowane kolorem czarnym. Maskowanie następuje po balansie 
+    bieli.
 
 .. c:member:: int mirosot_vision_config.meanshift_radius
 .. c:member:: int mirosot_vision_config.meanshift_threshold
 
-    Rozmiar okna algorytmu meanshift i odległość obcięcia koloru. Rozmiar okna 
-    może mieć duży wpływ na wydajność.
+    Rozmiar okna algorytmu wygładzania powierzchni meanshift i odległość 
+    obcięcia koloru. Rozmiar okna może mieć duży wpływ na wydajność.
+    Im większe okno, tym większy obszar jest brany pod uwagę przy wygładzaniu.
+    Threshold to odległość w normie euklidesowej pikseli, które są uważane za 
+    różne.
 
+.. c:member:: int mirosot_vision_config.yellow_min
+.. c:member:: int mirosot_vision_config.yellow_max
+.. c:member:: int mirosot_vision_config.blue_min
+.. c:member:: int mirosot_vision_config.blue_max
+
+    Zakresy wartości barwy (Hue), w których znajdują się żółte i niebieskie 
+    patche robotów.
+
+.. c:member:: int mirosot_vision_config.minimum_saturation
+
+    Minimalne nasycenie koloru będącego częścią obszaru żółtego lub 
+    niebieskiego.
+
+.. c:member:: int mirosot_vision_config.black_cutoff
+
+    Minimalna jasność (Lightness) piksela mogącego być przetworzonym. 
+    Ciemniejsze piksele są ignorowane.
+
+.. c:member:: int mirosot_vision_config.white_cutoff
+
+    Jasność, przy której piksel uważa się za prześwietlony. Algorytm zakłada, że
+    żółte obszary mają tendencję do prześwietlania i traktuje takie obszary 
+    jako żółte.
 
 .. c:member:: unsigned char *debug_balance.debug_balance
 .. c:member:: unsigned char *debug_balance.debug_prescreen
@@ -109,11 +174,37 @@ Pola, które w normalnym działaniu algortymu zostają ustawiane tylko raz:
     domalowanymi elementami mogącymi wspomóc diagnozowanie problemów z 
     algorytmem.
 
+Wynik działania
+***************
+
+.. c:type:: struct vision_data
+    
+    Kontener na dane o drużynach i piłce. Zawartość struktur wydaje się być 
+
+    ::
+        
+        struct vision_data {
+            team_data blue_team;
+            team_data yellow_team;
+            image_pos ball_pos;
+        };
+        
+        struct team_data {
+            int team_len;
+            robot_data team[MAX_ROBOTS];
+        };
+
+        struct robot_data {
+            image_pos position;
+            double angle;
+        };
+
+
 Opis algorytmu
 --------------
 
 1. Linearyzacja
-^^^^^^^^^^^^^^^
+***************
 
 Najbardziej popularny sposób kodowania kolorów w kamerach i innych urządzeniach
 przetwarzania obrazu to nieliniowo kodowana przestrzeń sRGB. Aby powiązać 
@@ -121,7 +212,7 @@ wartość liczbową piksela z fizyczną energią światła, wartość piksela na
 zlinearyzować. 
 
 2. Regulacja balansu bieli.
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+***************************
 
 Wiedząc, że pomalowany na biało przedmiot posiada kolor :math:`(w_r, w_g, w_b)`,
 bardzo łatwo przekolorować bitmapę, by biały wyglądał na biały. Wystarczy 
@@ -137,19 +228,19 @@ wyznaczamy punkt bieli jako średnią ważoną wagą :math:`\frac{1}{r^2}`,
 gdzie :math:`r` to odległość punktu z bielą do badanego punktu.
 
 3. Transformacja do HSV
------------------------
+***********************
 
 Obok obrazka w formacie RGB tworzony jest jego odpowiednik HSV.
 
 4. Wstępne zaznaczanie kandydatów
----------------------------------
+*********************************
 
 Piksele, które wpadają w odpowiedni przedział barwy (H) i nasycenia (S) są 
 oznaczane jako kandydaci do dalszego przetwarzania w zbiorach pikseli żółtych i 
 niebieskich. 
 
 5. Meanshift
-------------
+************
 
 Algorytm segmentacji meanshift posiada wstępną fazę filtrowania, która wygładza
 jednolite obszary, tak że po filtrowaniu stanowią jeden jednolity kolor. 
@@ -158,13 +249,15 @@ Istotę tego filtrowania można stosować do każdego piksela z osobna. Dzięki 
 za pomocą zwykłego algorytmu flood-fill.
 
 6. Obszary
-----------
+**********
 
 Następnie obszary są segregowane na podstawie ich rozmiaru. Za duże lub za małe
 obszary są odrzucane.
 
 7. Regresja
------------
+***********
+
 Na wyodrębnionych obszarach wyznaczana jest linia minimalizująca
 sumę kwadratów odległości pikseli od linii (regresja Deminga). Za jej pomocą
-wyznaczamy kąt obrotu robota.
+wyznaczamy kąt obrotu robota. Proste policzenie ilości pikseli patcha pozwala na
+odróżnienie obrotów różniących się od siebie o :math:`180^\circ`.
