@@ -11,14 +11,16 @@ patterns = (
 (di+'/patches*', 'config_pa.txt')
 )
 
-try:
-    os.mkdir('out_robo')
-except:
-    pass
-try:
-    os.mkdir('out_robo_split')
-except:
-    pass
+def md(d):
+
+    try:
+        os.mkdir(d)
+    except:
+        pass
+md('out_robo')
+for i in range(6):
+    md('out_robo_%d'%i)
+md('out_robo_split')
 
 subprocess.check_call(['make', 'driver'], cwd='../src')
 
@@ -40,6 +42,9 @@ def run_for_type(pattern, config):
         img = cv.LoadImageM(fpath)
         w, h = cv.GetSize(img)
         
+        fname = os.path.basename(fpath)
+        fname_noext = os.path.splitext(fname)[0]
+        
         files = glob.glob('%s_*.png'%fname_out)
         files.sort()
         imgt = cv.CreateMat(len(files)*h, w, cv.CV_8UC3)
@@ -47,14 +52,16 @@ def run_for_type(pattern, config):
             try:
                 imgo = cv.LoadImageM(outfile)
                 imgt_frag = cv.GetSubRect(imgt, (0, h*i, w, h))
+                
                 cv.Copy(imgo, imgt_frag)
+                
+                #does cause strange unrelated(?) error
+                os.rename(outfile, 'out_robo_%s/%s.png'%(outfile.split('_')[-1][0],fname_noext))
             except IOError:
                 raise Exception('could not open %s in %s'%(outfile, fpath))
             except IndexError:
                 raise Exception('could not process %s in $s'%(outfile, fpath))
         
-        fname = os.path.basename(fpath)
-        fname_noext = os.path.splitext(fname)[0]
         cv.SaveImage('out_robo/%s.png' % fname_noext, imgt)
         
 for (pattern, config) in patterns:

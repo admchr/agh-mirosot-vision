@@ -55,10 +55,14 @@ public:
             for (int nx = minx; nx < maxx; nx++)
                 for (int ny = miny; ny < maxy; ny++) {
                     Point np = Point(nx, ny);
-                    a->preparePixel(np);
+
                     if (a->area_map.get(nx, ny))
                     	continue;
-                    if (!pt->add(np, p)) continue;
+                    if (!pt->add(np, p)) {
+                        a->preparePixel(np);
+                        if (!pt->add(np, p))
+                            continue;
+                    }
                     a->area_map.set(nx, ny, pt);
 
                     Q.push(np);
@@ -123,7 +127,7 @@ int PatchType::getMinPatchSize() {
 
 int PatchType::getMaxPatchSize() {
     double max_size = map->config.px_per_cm * 8;
-    int max_area = max_size*max_size/2*1.5;
+    int max_area = max_size*max_size;
 
     return max_area;
 }
