@@ -1,6 +1,6 @@
 
 CXXFLAGS= -g -Wall -Wextra -O2
-LIBS= -lcv -lhighgui -lm
+LIBS= -lcv -lcxcore -lhighgui -lm
 TEST_LIBS= -lboost_unit_test_framework $(LIBS)
 
 PROGRAMS= perf perf_gprof driver test_impl
@@ -12,16 +12,16 @@ IMPL_HEADERS=\
 all: $(PROGRAMS)
 
 driver: driver.o $(OBJS)
-	g++ $(LIBS) $^ -o $@
+	g++ $^ -o $@ $(LIBS)
 	
 perf: perf.o  $(OBJS)
-	g++ $(LIBS) $^ -o $@
+	g++ $^ -o $@ $(LIBS)
 
 perf_gprof: perf.o $(OBJS)
-	g++ -pg $(LIBS) $^ -o $@
+	g++ -pg $^ -o $@ $(LIBS)
 
 test_impl: test_impl.o test_array2d.o test_mshift.o test_linearize.o test_mask.o $(OBJS)
-	g++ $(TEST_LIBS)  $^ -o $@
+	g++ $^ -o $@ $(TEST_LIBS) 
 
 area.o:area.cpp $(IMPL_HEADERS)
 impl.o: impl.cpp header.h $(IMPL_HEADERS)
