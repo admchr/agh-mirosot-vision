@@ -2,9 +2,8 @@
 #define AREA_H
 
 #include "defs.hpp"
-#include "header.h"
+#include "amv.h"
 #include "array2d.hpp"
-#include "pixelset.hpp"
 #include "mshift.hpp"
 #include "moments.hpp"
 

@@ -2,7 +2,7 @@
 #define BALANCE_H
 
 #include "defs.hpp"
-#include "header.h"
+#include "amv.h"
 
 #include <opencv/cv.h>
 #include <vector>

@@ -99,7 +99,7 @@ void meanShiftPoint(Image& src0, int x, int y, double sp0, double sr)
 void
 meanShiftFiltering( Image src0,
                          double sp0, double sr,
-                         CvTermCriteria termcrit )
+                         CvTermCriteria)
 {
     //return meanShiftFilteringOriginal(src0, src0, sp0, sr, 0, termcrit);
     for (int y=0;y<src0.rows;y++)
