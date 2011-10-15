@@ -21,23 +21,20 @@ void teamOutput(amv_team_data* team) {
     }
 }
 
-void process(string in_fname, amv_config & config, string config_name, string out_fname)
+void process(string in_fname, string out_fname, amv_state* state)
 {
     cv::Mat_<cv::Vec3b> img0 = cv::imread(in_fname);
     cv::Mat_<cv::Vec3b> img_copy = img0.clone();
-    config.width = img0.size().width;
-    config.height = img0.size().height;
-    config.image = img0.ptr();
-    load_config(&config, config_name.c_str());
     cv::Mat_<cv::Vec3b> img_white(img0.clone()), img_prescreen(img0.clone()), img_mshift(img0.clone()), img_patches(img0.clone()), img_robots(img0.clone());
-    config.debug_balance = img_white.ptr();
-    config.debug_meanshift = img_mshift.ptr();
-    config.debug_prescreen = img_prescreen.ptr();
-    config.debug_patches = img_patches.ptr();
-    config.debug_robots = img_robots.ptr();
 
+    amv_debug_info debug;
+    debug.debug_balance = img_white.ptr();
+    debug.debug_meanshift = img_mshift.ptr();
+    debug.debug_prescreen = img_prescreen.ptr();
+    debug.debug_patches = img_patches.ptr();
+    debug.debug_robots = img_robots.ptr();
 
-    amv_vision_data data = amv_find_teams(&config);
+    amv_vision_data data = amv_find_teams(img0.ptr(), state, &debug);
 
     cout<<data.ball_pos.x<<" "<<data.ball_pos.y<<endl;
     teamOutput(&data.blue_team);
@@ -53,24 +50,39 @@ void process(string in_fname, amv_config & config, string config_name, string ou
 
 int main(int argc, char**argv) {
     amv_config config;
-    amv_init_config(&config);
+    amv_config_init(&config);
     string in_fname;
     string config_fname;
     string out_fname;
     
+    amv_state* state = 0;
+
+
+
     if (argc!=1) {
         in_fname = argv[1];
         config_fname = argv[2];
         out_fname = argv[3];
-        process(in_fname, config, config_fname, out_fname);
+        load_config(&config, config_fname.c_str());
+        state = amv_state_new(config);
+        process(in_fname, out_fname, state);
     } else {
         int n;
         cin>>n;
+        cin>>config_fname;
+        load_config(&config, config_fname.c_str());
         for (int i=0;i<n;i++) {
-            cin>>in_fname>>config_fname>>out_fname;
-            process(in_fname, config, config_fname, out_fname);
+            cin>>in_fname>>out_fname;
+            if (!state) {
+                cv::Mat_<cv::Vec3b> img0 = cv::imread(in_fname);
+                config.width = img0.size().width;
+                config.height = img0.size().height;
+                state = amv_state_new(config);
+            }
+            process(in_fname, out_fname, state);
         }
     }
+    amv_state_free(state);
 
     return 0;
 }

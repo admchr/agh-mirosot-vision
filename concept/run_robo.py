@@ -31,14 +31,14 @@ def run_for_type(pattern, config):
         fname = os.path.basename(fpath)
         fname_noext = os.path.splitext(fname)[0]
         fname_out = 'out_robo_split/' + fname_noext
-        stdin.append([fpath, config, fname_out])
+        stdin.append([fpath, fname_out])
     f = open('/dev/null', 'r')
     proc = subprocess.Popen(['../src/driver'], stdin=subprocess.PIPE, stdout=f, stderr=f)
-    stdin_str = ('%d\n'%len(stdin))+'\n'.join([' '.join(line) for line in stdin])
+    stdin_str = ('%d %s\n'%(len(stdin), config))+'\n'.join([' '.join(line) for line in stdin])
     
     proc.communicate(stdin_str)
-    
-    for (fpath, config, fname_out) in stdin:
+      
+    for (fpath, fname_out) in stdin:
         img = cv.LoadImageM(fpath)
         w, h = cv.GetSize(img)
         
@@ -56,7 +56,7 @@ def run_for_type(pattern, config):
                 cv.Copy(imgo, imgt_frag)
                 
                 #does cause strange unrelated(?) error
-                os.rename(outfile, 'out_robo_%s/%s.png'%(outfile.split('_')[-1][0],fname_noext))
+                #os.rename(outfile, 'out_robo_%s/%s.png'%(outfile.split('_')[-1][0],fname_noext))
             except IOError:
                 raise Exception('could not open %s in %s'%(outfile, fpath))
             except IndexError:

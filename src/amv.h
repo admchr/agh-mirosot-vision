@@ -13,7 +13,6 @@ struct amv_image_pos {
 };
 
 struct amv_config {
-    unsigned char* image;
     int height, width;
     
     struct amv_image_pos* white_points;
@@ -36,13 +35,14 @@ struct amv_config {
     int minimum_saturation;
     int white_cutoff;
     char linearize;
+};
 
+struct amv_debug_info {
     unsigned char *debug_balance;
     unsigned char *debug_prescreen;
     unsigned char *debug_meanshift;
     unsigned char *debug_patches;
     unsigned char *debug_robots;
-    void* state;
 };
 
 struct amv_robot_data {
@@ -61,9 +61,19 @@ struct amv_vision_data {
     struct amv_image_pos ball_pos;
 };
 
-struct amv_vision_data amv_find_teams(struct amv_config* config);
-void amv_init_config(struct amv_config* config);
-void amv_free_config(struct amv_config* config);
+struct amv_state;
+struct amv_vision_data
+    amv_find_teams(
+        unsigned char* image,
+        struct amv_state* state,
+        struct amv_debug_info* debug
+    );
+
+
+void amv_config_init(struct amv_config* config);
+void amv_debug_init(struct amv_debug_info*);
+struct amv_state* amv_state_new(struct amv_config config);
+void amv_state_free(struct amv_state* config);
 
 #ifdef __cplusplus
 }
