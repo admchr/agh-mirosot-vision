@@ -13,6 +13,11 @@
 #include <iostream>
 #include <stdint.h>
 
+struct amv_state {
+    amv_config config;
+    VisionState state;
+};
+
 using namespace cv;
 using namespace std;
 
@@ -36,7 +41,7 @@ static void copy_to(const Image& mat, unsigned char* buf, amv_config* config) {
     }
 }
 
-void amv_init_config(amv_config* config) {
+void amv_config_init(amv_config* config) {
     config->px_per_cm = 16/7.5;
 
     config->meanshift_radius = 4;
@@ -57,50 +62,62 @@ void amv_init_config(amv_config* config) {
     config->white_cutoff = 110;
 
     config->linearize = 1;
-
-    config->debug_balance = NULL;
-    config->debug_prescreen = NULL;
-    config->debug_meanshift = NULL;
-    config->debug_patches = NULL;
-    config->debug_robots = NULL;
-
-    config->state = NULL;
 }
 
-void amv_free_config(amv_config* config) {
-    delete static_cast<VisionState*>(config->state);
+void amv_debug_init(amv_debug_info* debug) {
+    debug->debug_balance = NULL;
+    debug->debug_prescreen = NULL;
+    debug->debug_meanshift = NULL;
+    debug->debug_patches = NULL;
+    debug->debug_robots = NULL;
 }
 
-static void debugWhite(cv::Mat_<cv::Vec3b> & img, amv_config *config)
+amv_state* amv_state_new(amv_config config) {
+    amv_state* state = new amv_state();
+    state->config = config;
+
+    vector<Point> poly;
+    for (int i=0; i<config.mask_points_len; i++) {
+        amv_image_pos pos = config.mask_points[i];
+        poly.push_back(Point(pos.x, pos.y));
+    }
+    state->state.mask.init(poly, Size(config.width, config.height));
+    return state;
+}
+
+void amv_state_free(amv_state* state) {
+    delete state;
+}
+
+static void debugWhite(cv::Mat_<cv::Vec3b> & img, amv_config *config, amv_debug_info* debug)
 {
     Image img_white(img.clone());
     for(int i = 0;i < config->white_points_len;i++) {
     	amv_image_pos pos = config->white_points[i];
     	img_white(pos.y, pos.x) = cv::Vec3b(0, 0, 255);
     }
-    copy_to(img_white, config->debug_balance, config);
+    copy_to(img_white, debug->debug_balance, config);
 }
 
-static void debugPrescreen(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, VisionState* vs, amv_config *config)
+static void debugPrescreen(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, amv_state *state, amv_debug_info* debug)
 {
     Image img_prescreen(img.clone());
     img_prescreen *= DEBUG_DIM;
     for(int x = 0;x < img.size().width;x++)
         for(int y = 0;y < img.size().height;y++){
-        	if (vs->converter.get(img(y, x))[2] < config->black_cutoff)
+        	if (state->state.converter.get(img(y, x))[2] < state->config.black_cutoff)
         		img_prescreen(y, x) = Vec3b(0, 0, 0);
             PatchType *patch = area.precompute_map.get(x, y);
         	if(patch)
                 img_prescreen(y, x) = patch->color;
-        	if (vs->converter.get(img(y, x))[2] > config->white_cutoff)
+        	if (state->state.converter.get(img(y, x))[2] > state->config.white_cutoff)
         		img_prescreen(y, x) = Vec3b(255, 255, 255);
-
         }
 
-    copy_to(img_prescreen, config->debug_prescreen, config);
+    copy_to(img_prescreen, debug->debug_prescreen, &state->config);
 }
 
-static void debugPatches(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, amv_config *config)
+static void debugPatches(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, amv_config *config, amv_debug_info* debug)
 {
     Image img_patches(img.clone());
     img_patches *= DEBUG_DIM;
@@ -114,7 +131,7 @@ static void debugPatches(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, amv_conf
             }
         }
 
-    copy_to(img_patches, config->debug_patches, config);
+    copy_to(img_patches, debug->debug_patches, config);
 }
 
 void debugLine(amv_image_pos p, double angle, Image & img, int len)
@@ -159,7 +176,7 @@ static void debugTeam(Image& img, const amv_team_data& team) {
     }
 }
 
-static void debugRobots(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, const amv_vision_data& robots, amv_config *config)
+static void debugRobots(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, const amv_vision_data& robots, amv_config* config, amv_debug_info *debug)
 {
     Image img_robots(img.clone());
     img_robots *= DEBUG_DIM;
@@ -172,7 +189,7 @@ static void debugRobots(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, const amv
         }
     debugTeam(img_robots, robots.blue_team);
     debugTeam(img_robots, robots.yellow_team);
-    copy_to(img_robots, config->debug_robots, config);
+    copy_to(img_robots, debug->debug_robots, config);
 }
 
 inline bool is_lil_blue(amv_config* config, Vec3b c){
@@ -209,37 +226,25 @@ struct Precompute {
     }
 };
 
-VisionState* newVisionState(amv_config* config) {
-	vector<Point> poly;
-	for (int i=0; i<config->mask_points_len; i++) {
-		amv_image_pos pos = config->mask_points[i];
-		poly.push_back(Point(pos.x, pos.y));
-	}
-	VisionState* state = new VisionState();
+amv_vision_data amv_find_teams(unsigned char* image, amv_state* state, amv_debug_info* debug) {
+    amv_debug_info tmp_debug;
+    amv_debug_init(&tmp_debug);
+    if (!debug) debug = &tmp_debug;
 
-	state->mask.init(poly, Size(config->width, config->height));
 
-	return state;
-}
-
-amv_vision_data amv_find_teams(amv_config* config) {
     amv_vision_data robots;
-
-	if (!config->state) {
-		config->state = newVisionState(config);
-	}
-    VisionState* state = static_cast<VisionState*>(config->state);
+    amv_config* config = &state->config;
 
     Image img;
-    get_matrix(img, config->image, config);//1ms
+    get_matrix(img, image, config);//1ms
     Image img_hsv(img.clone());//<1ms
     
     white_balance(&img, config);//6ms
-    if (config->debug_balance) {
-    	debugWhite(img, config);
+    if (debug->debug_balance) {
+    	debugWhite(img, config, debug);
     }
-    state->mask.apply(img);//5ms
-    state->converter.convert(img, img_hsv);//1ms
+    state->state.mask.apply(img);//5ms
+    state->state.converter.convert(img, img_hsv);//1ms
     PatchFinder area(*config);
 
     area.setImages(img, img_hsv);
@@ -252,8 +257,8 @@ amv_vision_data amv_find_teams(amv_config* config) {
     precompute.yellow = &yellow;
     precompute.orange = &orange;
     area.precompute(precompute);//<1ms
-    if (config->debug_prescreen) {
-        debugPrescreen(img, area, state, config);
+    if (debug->debug_prescreen) {
+        debugPrescreen(img, area, state, debug);
     }
 
     area.getSets();//25ms
@@ -262,14 +267,14 @@ amv_vision_data amv_find_teams(amv_config* config) {
     yellow.fillTeam(&robots.yellow_team);
 
 
-    if (config->debug_patches) {
-        debugPatches(img, area, config);
+    if (debug->debug_patches) {
+        debugPatches(img, area, config, debug);
     }
-    if (config->debug_robots) {
-        debugRobots(img, area, robots, config);
+    if (debug->debug_robots) {
+        debugRobots(img, area, robots, config, debug);
     }
     
-    copy_to(img, config->debug_meanshift, config);
+    copy_to(img, debug->debug_meanshift, config);
 
     robots.ball_pos.x = robots.ball_pos.y = 0;
 
