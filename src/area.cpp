@@ -101,9 +101,9 @@ Patch* PatchType::newPatch()
 	return patches.back();
 }
 
-void PatchType::fillTeam(team_data* data) {
+void PatchType::fillTeam(amv_team_data* data) {
     data->team_len = 0;
-    robot_data* robot = data->team;
+    amv_robot_data* robot = data->team;
     for (unsigned int i=0; i<patches.size(); i++) {
         Patch* patch = patches[i];
         if (patch->isLegal()) {

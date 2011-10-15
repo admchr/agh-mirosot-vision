@@ -6,7 +6,7 @@ using namespace cv;
 using namespace std;
 
 
-cv::Vec3b median(const Image& img, image_pos pos, int radius) {
+cv::Vec3b median(const Image& img, amv_image_pos pos, int radius) {
     std::vector<int> channel[3];
     for (int dx = -radius; dx<=radius; dx++)
         for (int dy = -radius; dy<=radius; dy++) {
@@ -27,14 +27,14 @@ cv::Vec3b median(const Image& img, image_pos pos, int radius) {
     return cv::Vec3b(channel[0][median], channel[1][median], channel[2][median]);
 }
 
-Vec3b get_white(vector<pair<image_pos, Vec3b> > white_points, image_pos pos) {
+Vec3b get_white(vector<pair<amv_image_pos, Vec3b> > white_points, amv_image_pos pos) {
     double weight_sum = 0;
     Vec3d res;
     for (unsigned int i=0;i<white_points.size();i++) {
-        image_pos white_pos = white_points[i].first;
+        amv_image_pos white_pos = white_points[i].first;
         Vec3b white_color = white_points[i].second;
         
-        image_pos diff;
+        amv_image_pos diff;
         diff.x = white_pos.x - pos.x;
         diff.y = white_pos.y - pos.y;
         
@@ -50,11 +50,11 @@ Vec3b get_white(vector<pair<image_pos, Vec3b> > white_points, image_pos pos) {
     return res;
 }
 
-void white_balance(Image* img, mirosot_vision_config* config) {
+void white_balance(Image* img, amv_config* config) {
     
-    vector<pair<image_pos, Vec3b> > white_points;
+    vector<pair<amv_image_pos, Vec3b> > white_points;
     for (int i=0; i< config->white_points_len; i++) {
-        image_pos pos = config->white_points[i];
+        amv_image_pos pos = config->white_points[i];
         white_points.push_back(make_pair(pos, median(*img, pos, 1)));
     }
     
@@ -65,7 +65,7 @@ void white_balance(Image* img, mirosot_vision_config* config) {
     split(*img, mats);
     for (int i=0;i<img->size().width; i+=TILE)
         for (int j=0;j < img->size().height; j+=TILE) {
-            image_pos pos;
+            amv_image_pos pos;
             pos.x = i;
             pos.y = j;
             Vec3b color = get_white(white_points, pos);

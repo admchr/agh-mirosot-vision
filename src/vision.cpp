@@ -18,7 +18,7 @@ using namespace std;
 
 const double DEBUG_DIM = 0.5;
 
-static void get_matrix(Image & mat, unsigned char* buf, mirosot_vision_config* config) {
+static void get_matrix(Image & mat, unsigned char* buf, amv_config* config) {
     cv::Mat img_tmp(cv::Size(config->width, config->height), CV_8UC3, buf);
     Image img(img_tmp);
     if (config->linearize)
@@ -27,7 +27,7 @@ static void get_matrix(Image & mat, unsigned char* buf, mirosot_vision_config* c
     mat = img;
 }
 
-static void copy_to(const Image& mat, unsigned char* buf, mirosot_vision_config* config) {
+static void copy_to(const Image& mat, unsigned char* buf, amv_config* config) {
     if (buf) {
     	Image mat2(mat.clone());
     	if (config->linearize)
@@ -36,7 +36,7 @@ static void copy_to(const Image& mat, unsigned char* buf, mirosot_vision_config*
     }
 }
 
-void init_config(mirosot_vision_config* config) {
+void amv_init_config(amv_config* config) {
     config->px_per_cm = 16/7.5;
 
     config->meanshift_radius = 4;
@@ -67,21 +67,21 @@ void init_config(mirosot_vision_config* config) {
     config->state = NULL;
 }
 
-void free_config(mirosot_vision_config* config) {
+void amv_free_config(amv_config* config) {
     delete static_cast<VisionState*>(config->state);
 }
 
-static void debugWhite(cv::Mat_<cv::Vec3b> & img, mirosot_vision_config *config)
+static void debugWhite(cv::Mat_<cv::Vec3b> & img, amv_config *config)
 {
     Image img_white(img.clone());
     for(int i = 0;i < config->white_points_len;i++) {
-    	image_pos pos = config->white_points[i];
+    	amv_image_pos pos = config->white_points[i];
     	img_white(pos.y, pos.x) = cv::Vec3b(0, 0, 255);
     }
     copy_to(img_white, config->debug_balance, config);
 }
 
-static void debugPrescreen(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, VisionState* vs, mirosot_vision_config *config)
+static void debugPrescreen(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, VisionState* vs, amv_config *config)
 {
     Image img_prescreen(img.clone());
     img_prescreen *= DEBUG_DIM;
@@ -100,7 +100,7 @@ static void debugPrescreen(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, Vision
     copy_to(img_prescreen, config->debug_prescreen, config);
 }
 
-static void debugPatches(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, mirosot_vision_config *config)
+static void debugPatches(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, amv_config *config)
 {
     Image img_patches(img.clone());
     img_patches *= DEBUG_DIM;
@@ -117,7 +117,7 @@ static void debugPatches(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, mirosot_
     copy_to(img_patches, config->debug_patches, config);
 }
 
-void debugLine(image_pos p, double angle, Image & img, int len)
+void debugLine(amv_image_pos p, double angle, Image & img, int len)
 {
     for(int i = 0;i < len;i++){
         int x = p.x + cos(angle) * i;
@@ -129,12 +129,12 @@ void debugLine(image_pos p, double angle, Image & img, int len)
     }
 }
 
-static void debugTeam(Image& img, const team_data& team) {
+static void debugTeam(Image& img, const amv_team_data& team) {
 	const int SIDE = 9;
     for (int i=0; i<team.team_len; i++) {
-        robot_data robot = team.team[i];
-        image_pos p = robot.position;
-        image_pos tmp = p;
+        amv_robot_data robot = team.team[i];
+        amv_image_pos p = robot.position;
+        amv_image_pos tmp = p;
         double angle = robot.angle;
         double front_x = cos(angle)*SIDE;
         double front_y = sin(angle)*SIDE;
@@ -159,7 +159,7 @@ static void debugTeam(Image& img, const team_data& team) {
     }
 }
 
-static void debugRobots(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, const vision_data& robots, mirosot_vision_config *config)
+static void debugRobots(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, const amv_vision_data& robots, amv_config *config)
 {
     Image img_robots(img.clone());
     img_robots *= DEBUG_DIM;
@@ -175,14 +175,14 @@ static void debugRobots(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, const vis
     copy_to(img_robots, config->debug_robots, config);
 }
 
-inline bool is_lil_blue(mirosot_vision_config* config, Vec3b c){
+inline bool is_lil_blue(amv_config* config, Vec3b c){
     return
     		c[2] > config->black_cutoff &&
     		c[0] > config->blue_min &&
     		c[0] < config->blue_max &&
     		c[1] > config->minimum_saturation;
 }
-inline bool is_lil_yellow(mirosot_vision_config* config, Vec3b c){
+inline bool is_lil_yellow(amv_config* config, Vec3b c){
     return (
 				c[2] > config->black_cutoff &&
 				c[0] > config->yellow_min &&
@@ -199,7 +199,7 @@ struct Precompute {
     PatchType* blue;
     PatchType* yellow;
     PatchType* orange;
-    mirosot_vision_config* config;
+    amv_config* config;
     PatchType* operator()(Vec3b c){
         if(is_lil_blue(config, c))
             return blue;
@@ -209,10 +209,10 @@ struct Precompute {
     }
 };
 
-VisionState* newVisionState(mirosot_vision_config* config) {
+VisionState* newVisionState(amv_config* config) {
 	vector<Point> poly;
 	for (int i=0; i<config->mask_points_len; i++) {
-		image_pos pos = config->mask_points[i];
+		amv_image_pos pos = config->mask_points[i];
 		poly.push_back(Point(pos.x, pos.y));
 	}
 	VisionState* state = new VisionState();
@@ -222,8 +222,8 @@ VisionState* newVisionState(mirosot_vision_config* config) {
 	return state;
 }
 
-vision_data find_teams(mirosot_vision_config* config) {
-    vision_data robots;
+amv_vision_data amv_find_teams(amv_config* config) {
+    amv_vision_data robots;
 
 	if (!config->state) {
 		config->state = newVisionState(config);

@@ -12,16 +12,16 @@
 using namespace std;
 
 
-void teamOutput(team_data* team) {
+void teamOutput(amv_team_data* team) {
     cout<<team->team_len<<endl;
     for (int i=0; i<team->team_len; i++) {
-        robot_data robot = team->team[i];
-        image_pos p = robot.position;
+        amv_robot_data robot = team->team[i];
+        amv_image_pos p = robot.position;
         cout<<p.x<<" "<<p.y<<" "<<robot.angle<<endl;
     }
 }
 
-void process(string in_fname, mirosot_vision_config & config, string config_name, string out_fname)
+void process(string in_fname, amv_config & config, string config_name, string out_fname)
 {
     cv::Mat_<cv::Vec3b> img0 = cv::imread(in_fname);
     cv::Mat_<cv::Vec3b> img_copy = img0.clone();
@@ -37,7 +37,7 @@ void process(string in_fname, mirosot_vision_config & config, string config_name
     config.debug_robots = img_robots.ptr();
 
 
-    vision_data data = find_teams(&config);
+    amv_vision_data data = amv_find_teams(&config);
 
     cout<<data.ball_pos.x<<" "<<data.ball_pos.y<<endl;
     teamOutput(&data.blue_team);
@@ -52,8 +52,8 @@ void process(string in_fname, mirosot_vision_config & config, string config_name
 }
 
 int main(int argc, char**argv) {
-    mirosot_vision_config config;
-    init_config(&config);
+    amv_config config;
+    amv_init_config(&config);
     string in_fname;
     string config_fname;
     string out_fname;

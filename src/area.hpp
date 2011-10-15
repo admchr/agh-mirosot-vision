@@ -39,8 +39,8 @@ public://TODO make some private
     Array2d<Patch*> area_map;
     Image img;
     Image img_hsv;
-    mirosot_vision_config config;
-    PatchFinder(mirosot_vision_config config){
+    amv_config config;
+    PatchFinder(amv_config config){
         this->config = config;
     }
     void setImages(Image img, Image img_hsv);
@@ -54,11 +54,11 @@ public://TODO make some private
 
 class PatchType {
 public:
-    typedef bool(*Fun)(mirosot_vision_config*, cv::Vec3b);
+    typedef bool(*Fun)(amv_config*, cv::Vec3b);
     Fun fun;
     cv::Vec3b color;
-    mirosot_vision_config* config;
-	PatchType(PatchFinder* pf, Fun fun, cv::Vec3b color, mirosot_vision_config* config) {
+    amv_config* config;
+	PatchType(PatchFinder* pf, Fun fun, cv::Vec3b color, amv_config* config) {
 		this->map = pf;
 	    this->fun = fun;
 	    this->color = color;
@@ -70,7 +70,7 @@ public:
 	std::vector<Patch*> patches;
 	Patch* newPatch();
 
-	void fillTeam(team_data* data);
+	void fillTeam(amv_team_data* data);
 
 	int getMinPatchSize();
     int getMaxPatchSize();
