@@ -5,21 +5,21 @@
 extern "C" {
 #endif
 
-#define MAX_ROBOTS 256
+#define AMV_MAX_ROBOTS 256
 
-struct image_pos {
+struct amv_image_pos {
     int x;
     int y;
 };
 
-struct mirosot_vision_config {
+struct amv_config {
     unsigned char* image;
     int height, width;
     
-    struct image_pos* white_points;
+    struct amv_image_pos* white_points;
     int white_points_len;
     
-    struct image_pos* mask_points;
+    struct amv_image_pos* mask_points;
     int mask_points_len;
 
     double px_per_cm;
@@ -45,25 +45,25 @@ struct mirosot_vision_config {
     void* state;
 };
 
-struct robot_data {
-    struct image_pos position;
+struct amv_robot_data {
+    struct amv_image_pos position;
     double angle;
 };
 
-struct team_data {
+struct amv_team_data {
     int team_len;
-    struct robot_data team[MAX_ROBOTS];
+    struct amv_robot_data team[AMV_MAX_ROBOTS];
 };
 
-struct vision_data {
-    struct team_data blue_team;
-    struct team_data yellow_team;
-    struct image_pos ball_pos;
+struct amv_vision_data {
+    struct amv_team_data blue_team;
+    struct amv_team_data yellow_team;
+    struct amv_image_pos ball_pos;
 };
 
-struct vision_data find_teams(struct mirosot_vision_config* config);
-void init_config(struct mirosot_vision_config* config);
-void free_config(struct mirosot_vision_config* config);
+struct amv_vision_data amv_find_teams(struct amv_config* config);
+void amv_init_config(struct amv_config* config);
+void amv_free_config(struct amv_config* config);
 
 #ifdef __cplusplus
 }

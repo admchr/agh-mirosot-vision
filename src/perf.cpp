@@ -18,8 +18,8 @@ int main(int argc, char**argv) {
     }
     cv::Mat_<cv::Vec3b> img0 = cv::imread(std::string(argv[1]));
     
-    mirosot_vision_config config;
-    init_config(&config);
+    amv_config config;
+    amv_init_config(&config);
     config.width = img0.size().width;
     config.height = img0.size().height;
     load_config(&config, argv[2]);
@@ -29,7 +29,7 @@ int main(int argc, char**argv) {
     for (int i=0;i<RUNS;i++) {
         cv::Mat_<cv::Vec3b> img_tmp(img0);
         config.image = img_tmp.ptr();
-        find_teams(&config);
+        amv_find_teams(&config);
     }
 
     return 0;

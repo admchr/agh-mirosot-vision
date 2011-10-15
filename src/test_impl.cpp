@@ -23,7 +23,7 @@ BOOST_AUTO_TEST_CASE(median_test) {
     img(11, 23) = Vec3b(7, 12, 3);
     img(12, 23) = Vec3b(1, 12, 3);
     
-    image_pos pos;
+    amv_image_pos pos;
     pos.x=22;
     pos.y=11;
     BOOST_CHECK(median(img, pos, 0) == Vec3b(2, 12, 3));
@@ -41,8 +41,8 @@ BOOST_AUTO_TEST_CASE(median_test) {
 }
 
 BOOST_AUTO_TEST_CASE(get_white_test) {
-    vector<pair<image_pos, Vec3b> > data;
-    image_pos pos;
+    vector<pair<amv_image_pos, Vec3b> > data;
+    amv_image_pos pos;
     pos.x = 0;
     pos.y = 0;
     data.push_back(make_pair(pos, Vec3b(255, 0, 0)));

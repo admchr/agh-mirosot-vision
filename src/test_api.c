@@ -1,11 +1,10 @@
 #include "amv.h"
 
 int main() {
-    struct mirosot_vision_config config;
+    struct amv_config config;
     
-    init_config(&config);
-    
-    free_config(&config);
+    amv_init_config(&config);
+    amv_free_config(&config);
     
     return 0;
 }
