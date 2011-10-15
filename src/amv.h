@@ -1,9 +1,11 @@
 #ifndef HEADER_H
 #define HEADER_H
 
-#define MAX_ROBOTS 256
-
+#ifdef __cplusplus
 extern "C" {
+#endif
+
+#define MAX_ROBOTS 256
 
 struct image_pos {
     int x;
@@ -14,10 +16,10 @@ struct mirosot_vision_config {
     unsigned char* image;
     int height, width;
     
-    image_pos* white_points;
+    struct image_pos* white_points;
     int white_points_len;
     
-    image_pos* mask_points;
+    struct image_pos* mask_points;
     int mask_points_len;
 
     double px_per_cm;
@@ -44,23 +46,27 @@ struct mirosot_vision_config {
 };
 
 struct robot_data {
-    image_pos position;
+    struct image_pos position;
     double angle;
 };
 
 struct team_data {
     int team_len;
-    robot_data team[MAX_ROBOTS];
+    struct robot_data team[MAX_ROBOTS];
 };
 
 struct vision_data {
-    team_data blue_team;
-    team_data yellow_team;
-    image_pos ball_pos;
+    struct team_data blue_team;
+    struct team_data yellow_team;
+    struct image_pos ball_pos;
 };
 
-vision_data find_teams(mirosot_vision_config* config);
-void init_config(mirosot_vision_config* config);
-void free_config(mirosot_vision_config* config);
+struct vision_data find_teams(struct mirosot_vision_config* config);
+void init_config(struct mirosot_vision_config* config);
+void free_config(struct mirosot_vision_config* config);
+
+#ifdef __cplusplus
 }
+#endif
+
 #endif
