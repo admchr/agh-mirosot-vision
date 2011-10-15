@@ -1,5 +1,5 @@
 
-#include "header.h"
+#include "amv.h"
 #include "common.hpp"
 
 #include <opencv/cv.h>
@@ -12,6 +12,10 @@
 const int RUNS = 1000;
 
 int main(int argc, char**argv) {
+    if (argc != 3) {
+        std::cerr<<"usage: ./"<<argv[0]<<" image config"<<std::endl;
+        return 1;
+    }
     cv::Mat_<cv::Vec3b> img0 = cv::imread(std::string(argv[1]));
     
     mirosot_vision_config config;

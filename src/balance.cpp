@@ -30,7 +30,7 @@ cv::Vec3b median(const Image& img, image_pos pos, int radius) {
 Vec3b get_white(vector<pair<image_pos, Vec3b> > white_points, image_pos pos) {
     double weight_sum = 0;
     Vec3d res;
-    for (int i=0;i<white_points.size();i++) {
+    for (unsigned int i=0;i<white_points.size();i++) {
         image_pos white_pos = white_points[i].first;
         Vec3b white_color = white_points[i].second;
         

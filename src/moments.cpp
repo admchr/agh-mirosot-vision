@@ -23,7 +23,6 @@ Moments PatchMoments::getMoments() {
 }
 
 Point PatchMoments::getMean() {
-    Moments m = getMoments();
     return Point(sum_x/count, sum_y/count);
 }
 

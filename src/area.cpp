@@ -46,7 +46,6 @@ public:
             Point p = Q.front();
             Q.pop();
 
-            Vec3b color = a->img(p);
             const int minx = max(p.x - 1, 0);
             const int miny = max(p.y - 1, 0);
             const int maxx = min(p.x + 2, a->img.cols);
