@@ -13,11 +13,6 @@
 #include <iostream>
 #include <stdint.h>
 
-struct amv_state {
-    amv_config config;
-    VisionState state;
-};
-
 using namespace cv;
 using namespace std;
 
@@ -44,8 +39,8 @@ static void copy_to(const Image& mat, unsigned char* buf, amv_config* config) {
 void amv_config_init(amv_config* config) {
     config->px_per_cm = 16/7.5;
 
-    config->meanshift_radius = 4;
-    config->meanshift_threshold = 50;
+    config->meanshift_radius = 3;
+    config->meanshift_threshold = 30;
 
     config->white_points = NULL;
     config->white_points_len = 0;
@@ -70,6 +65,8 @@ void amv_debug_init(amv_debug_info* debug) {
     debug->debug_meanshift = NULL;
     debug->debug_patches = NULL;
     debug->debug_robots = NULL;
+
+    debug->full_meanshift_debug = 0;
 }
 
 amv_state* amv_state_new(amv_config config) {
@@ -127,7 +124,8 @@ static void debugPatches(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, amv_conf
             if (area_ind) {
                 int n = (intptr_t)area_ind;
                 assert(area_ind->type);
-                img_patches(y, x) = Vec3b((n%3)*255/3, (n/3%3)*255/3, 255);
+                int c = 7;
+                img_patches(y, x) = Vec3b((n%c)*255/(c-1), (n/c%c)*255/(c-1), 255);
             }
         }
 
@@ -245,7 +243,7 @@ amv_vision_data amv_find_teams(unsigned char* image, amv_state* state, amv_debug
     }
     state->state.mask.apply(img);//5ms
     state->state.converter.convert(img, img_hsv);//1ms
-    PatchFinder area(*config);
+    PatchFinder area(state);
 
     area.setImages(img, img_hsv);
     PatchType blue(&area, is_lil_blue, Vec3b(255, 0, 0), config);
@@ -273,9 +271,12 @@ amv_vision_data amv_find_teams(unsigned char* image, amv_state* state, amv_debug
     if (debug->debug_robots) {
         debugRobots(img, area, robots, config, debug);
     }
-    
-    copy_to(img, debug->debug_meanshift, config);
-
+    if (debug->debug_meanshift) {
+        if (debug->full_meanshift_debug)
+            meanShiftFiltering(img, config->meanshift_radius, config->meanshift_threshold);
+        copy_to(img, debug->debug_meanshift, config);
+    }
+//*/
     robots.ball_pos.x = robots.ball_pos.y = 0;
 
     return robots;

@@ -9,4 +9,10 @@ public:
     ImageMask mask;
 };
 
+struct amv_state {
+    amv_config config;
+    VisionState state;
+};
+
+
 #endif

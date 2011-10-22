@@ -86,25 +86,24 @@ std::pair<cv::Point, cv::Vec3b> meanShiftStep(cv::Point p, cv::Vec3b color, cons
 
 }
 
-void meanShiftPoint(Image& src0, int x, int y, double sp0, double sr)
+void meanShiftPoint(Image& src0, int x, int y, double radius, double threshold)
 {
     pair<Point,Vec3b> val(Point(x, y), src0(y, x));
     // TODO: there can be faster stop criterion
     for(int i = 0;i < 3;i++)
-        val = meanShiftStep(val.first, val.second, src0, sp0, sr);
+        val = meanShiftStep(val.first, val.second, src0, radius, threshold);
 
     src0(y, x) = val.second;
 }
 
 void
 meanShiftFiltering( Image src0,
-                         double sp0, double sr,
-                         CvTermCriteria)
+                         double radius, double threshold)
 {
     //return meanShiftFilteringOriginal(src0, src0, sp0, sr, 0, termcrit);
     for (int y=0;y<src0.rows;y++)
         for (int x=0;x<src0.cols;x++)
-            meanShiftPoint(src0, x, y, sp0, sr);
+            meanShiftPoint(src0, x, y, radius, threshold);
 }
 
 

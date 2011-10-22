@@ -39,9 +39,9 @@ public://TODO make some private
     Array2d<Patch*> area_map;
     Image img;
     Image img_hsv;
-    amv_config config;
-    PatchFinder(amv_config config){
-        this->config = config;
+    amv_state* state;
+    PatchFinder(amv_state* state){
+        this->state = state;
     }
     void setImages(Image img, Image img_hsv);
     

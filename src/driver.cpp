@@ -28,6 +28,7 @@ void process(string in_fname, string out_fname, amv_state* state)
     cv::Mat_<cv::Vec3b> img_white(img0.clone()), img_prescreen(img0.clone()), img_mshift(img0.clone()), img_patches(img0.clone()), img_robots(img0.clone());
 
     amv_debug_info debug;
+    amv_debug_init(&debug);
     debug.debug_balance = img_white.ptr();
     debug.debug_meanshift = img_mshift.ptr();
     debug.debug_prescreen = img_prescreen.ptr();
