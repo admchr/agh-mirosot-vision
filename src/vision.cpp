@@ -40,7 +40,7 @@ void amv_config_init(amv_config* config) {
     config->px_per_cm = 16/7.5;
 
     config->meanshift_radius = 3;
-    config->meanshift_threshold = 30;
+    config->meanshift_threshold = 40;
 
     config->white_points = NULL;
     config->white_points_len = 0;
@@ -48,7 +48,7 @@ void amv_config_init(amv_config* config) {
     config->mask_points = NULL;
     config->mask_points_len = 0;
 
-    config->black_cutoff = 60;
+    config->black_cutoff = 55;
     config->blue_min = 85;
     config->blue_max = 115;
     config->yellow_min = 10;
@@ -66,7 +66,7 @@ void amv_debug_init(amv_debug_info* debug) {
     debug->debug_patches = NULL;
     debug->debug_robots = NULL;
 
-    debug->full_meanshift_debug = 0;
+    debug->full_meanshift_debug = 1;
 }
 
 amv_state* amv_state_new(amv_config config) {
