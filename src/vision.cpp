@@ -75,12 +75,16 @@ void amv_state_new(amv_state& state, amv_config& config) {
         amv_image_pos pos = config.mask_points[i];
         poly.push_back(Point(pos.x, pos.y));
     }
+    state.config = &config;
     state.state = (void*) new VisionState();
     ((VisionState*) state.state)->mask.init(poly, Size(config.width, config.height));
 }
 
 void amv_state_free(amv_state* state) {
-    delete state;
+    VisionState* vs = (VisionState*)(state->state);
+    state->state = 0;
+    if (vs)
+        delete vs;
 }
 
 static void debugWhite(cv::Mat_<cv::Vec3b> & img, amv_config *config, amv_debug_info* debug)
