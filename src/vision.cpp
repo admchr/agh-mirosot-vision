@@ -69,17 +69,14 @@ void amv_debug_init(amv_debug_info* debug) {
     debug->full_meanshift_debug = 1;
 }
 
-amv_state* amv_state_new(amv_config config) {
-    amv_state* state = new amv_state();
-    state->config = config;
-
+void amv_state_new(amv_state& state, amv_config& config) {
     vector<Point> poly;
     for (int i=0; i<config.mask_points_len; i++) {
         amv_image_pos pos = config.mask_points[i];
         poly.push_back(Point(pos.x, pos.y));
     }
-    state->state.mask.init(poly, Size(config.width, config.height));
-    return state;
+    state.state = (void*) new VisionState();
+    ((VisionState*) state.state)->mask.init(poly, Size(config.width, config.height));
 }
 
 void amv_state_free(amv_state* state) {
@@ -102,16 +99,16 @@ static void debugPrescreen(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, amv_st
     img_prescreen *= DEBUG_DIM;
     for(int x = 0;x < img.size().width;x++)
         for(int y = 0;y < img.size().height;y++){
-        	if (state->state.converter.get(img(y, x))[2] < state->config.black_cutoff)
+        	if (((VisionState*) state->state)->converter.get(img(y, x))[2] < state->config->black_cutoff)
         		img_prescreen(y, x) = Vec3b(0, 0, 0);
             PatchType *patch = area.precompute_map.get(x, y);
         	if(patch)
                 img_prescreen(y, x) = patch->color;
-        	if (state->state.converter.get(img(y, x))[2] > state->config.white_cutoff)
+        	if (((VisionState*) state->state)->converter.get(img(y, x))[2] > state->config->white_cutoff)
         		img_prescreen(y, x) = Vec3b(255, 255, 255);
         }
 
-    copy_to(img_prescreen, debug->debug_prescreen, &state->config);
+    copy_to(img_prescreen, debug->debug_prescreen, state->config);
 }
 
 static void debugPatches(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, amv_config *config, amv_debug_info* debug)
@@ -231,7 +228,7 @@ amv_vision_data amv_find_teams(unsigned char* image, amv_state* state, amv_debug
 
 
     amv_vision_data robots;
-    amv_config* config = &state->config;
+    amv_config* config = state->config;
 
     Image img;
     get_matrix(img, image, config);//1ms
@@ -241,8 +238,8 @@ amv_vision_data amv_find_teams(unsigned char* image, amv_state* state, amv_debug
     if (debug->debug_balance) {
     	debugWhite(img, config, debug);
     }
-    state->state.mask.apply(img);//5ms
-    state->state.converter.convert(img, img_hsv);//1ms
+    ((VisionState*) state->state)->mask.apply(img);//5ms
+    ((VisionState*) state->state)->converter.convert(img, img_hsv);//1ms
     PatchFinder area(state);
 
     area.setImages(img, img_hsv);
