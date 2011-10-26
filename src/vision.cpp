@@ -87,12 +87,25 @@ void amv_state_free(amv_state* state) {
         delete vs;
 }
 
+void debugLine(amv_image_pos p, double angle, Image & img, int len)
+{
+    for(int i = 0;i < len;i++){
+        int x = p.x + cos(angle) * i;
+        int y = p.y + sin(angle) * i;
+        if(x < 0 || y < 0 || x >= img.cols || y >= img.rows)
+            break;
+
+        img(y, x) = Vec3b(0, 0, 255);
+    }
+}
 static void debugWhite(cv::Mat_<cv::Vec3b> & img, amv_config *config, amv_debug_info* debug)
 {
     Image img_white(img.clone());
     for(int i = 0;i < config->white_points_len;i++) {
     	amv_image_pos pos = config->white_points[i];
     	img_white(pos.y, pos.x) = cv::Vec3b(0, 0, 255);
+    	for (int i=0; i<4; i++)
+    	    debugLine(pos, i*M_PI/2, img_white, 5);
     }
     copy_to(img_white, debug->debug_balance, config);
 }
@@ -133,17 +146,6 @@ static void debugPatches(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, amv_conf
     copy_to(img_patches, debug->debug_patches, config);
 }
 
-void debugLine(amv_image_pos p, double angle, Image & img, int len)
-{
-    for(int i = 0;i < len;i++){
-        int x = p.x + cos(angle) * i;
-        int y = p.y + sin(angle) * i;
-        if(x < 0 || y < 0 || x >= img.cols || y >= img.rows)
-            break;
-
-        img(y, x) = Vec3b(0, 0, 255);
-    }
-}
 
 static void debugTeam(Image& img, const amv_team_data& team) {
 	const int SIDE = 9;
@@ -191,14 +193,14 @@ static void debugRobots(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, const amv
     copy_to(img_robots, debug->debug_robots, config);
 }
 
-inline bool is_lil_blue(amv_config* config, Vec3b c){
+inline bool is_blue(amv_config* config, Vec3b c){
     return
     		c[2] > config->black_cutoff &&
     		c[0] > config->blue_min &&
     		c[0] < config->blue_max &&
     		c[1] > config->minimum_saturation;
 }
-inline bool is_lil_yellow(amv_config* config, Vec3b c){
+inline bool is_yellow(amv_config* config, Vec3b c){
     return (
 				c[2] > config->black_cutoff &&
 				c[0] > config->yellow_min &&
@@ -217,9 +219,9 @@ struct Precompute {
     PatchType* orange;
     amv_config* config;
     PatchType* operator()(Vec3b c){
-        if(is_lil_blue(config, c))
+        if(is_blue(config, c))
             return blue;
-        if(is_lil_yellow(config, c))
+        if(is_yellow(config, c))
             return yellow;
         return 0;
     }
@@ -247,9 +249,9 @@ amv_vision_data amv_find_teams(unsigned char* image, amv_state* state, amv_debug
     PatchFinder area(state);
 
     area.setImages(img, img_hsv);
-    PatchType blue(&area, is_lil_blue, Vec3b(255, 0, 0), config);
-    PatchType yellow(&area, is_lil_yellow, Vec3b(0, 255, 255), config);
-    PatchType orange(&area, is_lil_blue, Vec3b(0, 0, 255), config);
+    PatchType blue(&area, is_blue, Vec3b(255, 0, 0), config);
+    PatchType yellow(&area, is_yellow, Vec3b(0, 255, 255), config);
+    PatchType orange(&area, is_blue, Vec3b(0, 0, 255), config);
     Precompute precompute;
     precompute.config = config;
     precompute.blue = &blue;

@@ -5,9 +5,10 @@ import subprocess, os.path, glob, sys, cv, threading
 di = 'img'
 
 patterns = (
-(di+'/um*', 'config_um.txt'),
-(di+'/wc*', 'config_wc.txt'),
-(di+'/si*', 'config_si.txt'),
+(di+'/a_*', 'config_a.txt'),
+(di+'/um_*', 'config_um.txt'),
+(di+'/wc_*', 'config_wc.txt'),
+(di+'/si_*', 'config_si.txt'),
 (di+'/patches*', 'config_pa.txt')
 )
 
