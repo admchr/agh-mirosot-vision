@@ -45,18 +45,20 @@ int main(int argc, char**argv) {
     config.height = img0.size().height;
     load_config(&config, argv[2]);
     
-    amv_state* state = amv_state_new(config);
+    amv_state state;
+    amv_state_new(state, config);
     
     std::cout<<RUNS<<" iterations "<<std::endl;
     Timer t;
     t.start();
     for (int i=0;i<RUNS;i++) {
         cv::Mat_<cv::Vec3b> img_tmp(img0);
-        amv_find_teams(img_tmp.ptr(), state, 0);
+        amv_find_teams(img_tmp.ptr(), &state, 0);
     }
     double time = t.getTime() / RUNS;
     std::cout<<time<<" ms/iteration"<<std::endl;
-    amv_state_free(state);
+
+    amv_state_free(&state);
 
     return 0;
 }

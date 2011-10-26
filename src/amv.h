@@ -5,16 +5,20 @@
 extern "C" {
 #endif
 
-#define DLL __declspec(dllexport)
+#if (defined WIN32 || defined _WIN32 || defined WIN64 || defined _WIN64 || defined WINCE)
+    #define AMV_EXPORT __declspec(dllexport)
+#else
+    #define AMV_EXPORT
+#endif
 
 #define AMV_MAX_ROBOTS 256
 
-struct DLL amv_image_pos {
+struct AMV_EXPORT amv_image_pos {
     int x;
     int y;
 };
 
-struct DLL amv_config {
+struct AMV_EXPORT amv_config {
     int height, width;
     
     struct amv_image_pos* white_points;
@@ -39,36 +43,36 @@ struct DLL amv_config {
     char linearize;
 };
 
-struct DLL amv_debug_info {
+struct AMV_EXPORT amv_debug_info {
     unsigned char *debug_balance;
     unsigned char *debug_prescreen;
     unsigned char *debug_meanshift;
-	char full_meanshift_debug;
+    char full_meanshift_debug;
     unsigned char *debug_patches;
     unsigned char *debug_robots;
 };
 
-struct DLL amv_robot_data {
+struct AMV_EXPORT amv_robot_data {
     struct amv_image_pos position;
     double angle;
 };
 
-struct DLL amv_team_data {
+struct AMV_EXPORT amv_team_data {
     int team_len;
     struct amv_robot_data team[AMV_MAX_ROBOTS];
 };
 
-struct DLL amv_vision_data {
+struct AMV_EXPORT amv_vision_data {
     struct amv_team_data blue_team;
     struct amv_team_data yellow_team;
     struct amv_image_pos ball_pos;
 };
 
-struct DLL amv_state {
+struct AMV_EXPORT amv_state {
     amv_config* config;
     void* state;
 };
-struct amv_vision_data  DLL
+struct amv_vision_data AMV_EXPORT
     amv_find_teams(
         unsigned char* image,
         struct amv_state* state,
@@ -76,11 +80,11 @@ struct amv_vision_data  DLL
     );
 
 
-void DLL amv_config_init(struct amv_config* config);
-void DLL amv_debug_init(struct amv_debug_info*);
-void DLL amv_state_new(amv_state& st, struct amv_config& config);
+void AMV_EXPORT amv_config_init(struct amv_config* config);
+void AMV_EXPORT amv_debug_init(struct amv_debug_info*);
+void AMV_EXPORT amv_state_new(amv_state& st, struct amv_config& config);
 
-void DLL amv_state_free(struct amv_state* state);
+void AMV_EXPORT amv_state_free(struct amv_state* state);
 
 #ifdef __cplusplus
 }

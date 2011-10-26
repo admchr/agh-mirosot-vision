@@ -56,8 +56,7 @@ int main(int argc, char**argv) {
     string config_fname;
     string out_fname;
     
-    amv_state* state = 0;
-
+    amv_state state;
 
 
     if (argc!=1) {
@@ -68,25 +67,28 @@ int main(int argc, char**argv) {
         cv::Mat_<cv::Vec3b> img0 = cv::imread(in_fname);
         config.width = img0.size().width;
         config.height = img0.size().height;
-        state = amv_state_new(config);
-        process(in_fname, out_fname, state);
+
+        amv_state_new(state, config);
+        process(in_fname, out_fname, &state);
     } else {
         int n;
         cin>>n;
         cin>>config_fname;
         load_config(&config, config_fname.c_str());
+        bool initialized = false;
         for (int i=0;i<n;i++) {
             cin>>in_fname>>out_fname;
-            if (!state) {
+            if (!initialized) {
+                initialized = true;
                 cv::Mat_<cv::Vec3b> img0 = cv::imread(in_fname);
                 config.width = img0.size().width;
                 config.height = img0.size().height;
-                state = amv_state_new(config);
+                amv_state_new(state, config);
             }
-            process(in_fname, out_fname, state);
+            process(in_fname, out_fname, &state);
         }
     }
-    amv_state_free(state);
+    amv_state_free(&state);
 
     return 0;
 }
