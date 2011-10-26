@@ -5,14 +5,16 @@
 extern "C" {
 #endif
 
+#define DLL __declspec(dllexport)
+
 #define AMV_MAX_ROBOTS 256
 
-struct amv_image_pos {
+struct DLL amv_image_pos {
     int x;
     int y;
 };
 
-struct amv_config {
+struct DLL amv_config {
     int height, width;
     
     struct amv_image_pos* white_points;
@@ -37,33 +39,36 @@ struct amv_config {
     char linearize;
 };
 
-struct amv_debug_info {
+struct DLL amv_debug_info {
     unsigned char *debug_balance;
     unsigned char *debug_prescreen;
     unsigned char *debug_meanshift;
-    char full_meanshift_debug;
+	char full_meanshift_debug;
     unsigned char *debug_patches;
     unsigned char *debug_robots;
 };
 
-struct amv_robot_data {
+struct DLL amv_robot_data {
     struct amv_image_pos position;
     double angle;
 };
 
-struct amv_team_data {
+struct DLL amv_team_data {
     int team_len;
     struct amv_robot_data team[AMV_MAX_ROBOTS];
 };
 
-struct amv_vision_data {
+struct DLL amv_vision_data {
     struct amv_team_data blue_team;
     struct amv_team_data yellow_team;
     struct amv_image_pos ball_pos;
 };
 
-struct amv_state;
-struct amv_vision_data
+struct DLL amv_state {
+    amv_config* config;
+    void* state;
+};
+struct amv_vision_data  DLL
     amv_find_teams(
         unsigned char* image,
         struct amv_state* state,
@@ -71,10 +76,11 @@ struct amv_vision_data
     );
 
 
-void amv_config_init(struct amv_config* config);
-void amv_debug_init(struct amv_debug_info*);
-struct amv_state* amv_state_new(struct amv_config config);
-void amv_state_free(struct amv_state* config);
+void DLL amv_config_init(struct amv_config* config);
+void DLL amv_debug_init(struct amv_debug_info*);
+void DLL amv_state_new(amv_state& st, struct amv_config& config);
+
+void DLL amv_state_free(struct amv_state* state);
 
 #ifdef __cplusplus
 }

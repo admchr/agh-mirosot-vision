@@ -24,10 +24,10 @@ void PatchFinder::preparePixel(cv::Point p) {
                 img,
                 p.x,
                 p.y,
-                state->config.meanshift_radius, // position radius
-                state->config.meanshift_threshold // value radius
+                state->config->meanshift_radius, // position radius
+                state->config->meanshift_threshold // value radius
             );
-    img_hsv(p) = this->state->state.converter.get(img(p));
+    img_hsv(p) = ((VisionState*) this->state->state)->converter.get(img(p));
     meanshifted.set(p.x, p.y, true);
 }
 Point Q[1024*1024];//TODO: fix this
@@ -107,21 +107,21 @@ void PatchType::fillTeam(amv_team_data* data) {
 }
 
 int PatchType::getMinPatchSize() {
-    double min_size = map->state->config.px_per_cm * 3.5;
+    double min_size = map->state->config->px_per_cm * 3.5;
     int min_area = min_size*min_size;
 
     return min_area;
 }
 
 int PatchType::getMaxPatchSize() {
-    double max_size = map->state->config.px_per_cm * 8;
+    double max_size = map->state->config->px_per_cm * 8;
     int max_area = max_size*max_size;
 
     return max_area;
 }
 
 int PatchType::getMaxPatchWidth() {
-    return map->state->config.px_per_cm * 8 * 2;
+    return map->state->config->px_per_cm * 8 * 2;
 }
 
 bool Patch::add(cv::Point p, cv::Point neighbour) {
