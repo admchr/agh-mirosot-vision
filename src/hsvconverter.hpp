@@ -16,5 +16,5 @@ public:
 
     void convert(Image from, Image to);
 };
-
+extern HSVConverter hsvconverter;
 #endif

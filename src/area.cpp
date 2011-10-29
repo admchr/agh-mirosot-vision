@@ -27,7 +27,7 @@ void PatchFinder::preparePixel(cv::Point p) {
                 state->config->meanshift_radius, // position radius
                 state->config->meanshift_threshold // value radius
             );
-    img_hsv(p) = ((VisionState*) this->state->state)->converter.get(img(p));
+    img_hsv(p) = hsvconverter.get(img(p));
     meanshifted.set(p.x, p.y, true);
 }
 Point Q[1024*1024];//TODO: fix this

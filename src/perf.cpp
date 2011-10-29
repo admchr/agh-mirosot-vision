@@ -44,12 +44,14 @@ int main(int argc, char**argv) {
     config.width = img0.size().width;
     config.height = img0.size().height;
     load_config(&config, argv[2]);
-    
-    amv_state state;
-    amv_state_new(state, config);
-    
-    std::cout<<RUNS<<" iterations "<<std::endl;
+
     Timer t;
+    amv_state state;
+    t.start();
+    amv_state_new(state, config);
+    std::cout<<t.getTime()<<" ms for mask initialization"<<std::endl;
+
+    std::cout<<RUNS<<" iterations "<<std::endl;
     t.start();
     for (int i=0;i<RUNS;i++) {
         cv::Mat_<cv::Vec3b> img_tmp(img0);
