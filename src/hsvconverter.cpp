@@ -25,3 +25,4 @@ void HSVConverter::convert(Image from, Image to) {
             to(y, x) = get(from(y, x));
         }
 }
+HSVConverter hsvconverter;

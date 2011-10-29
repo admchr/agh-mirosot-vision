@@ -5,7 +5,6 @@
 
 class VisionState {
 public:
-    HSVConverter converter;
     ImageMask mask;
 };
 

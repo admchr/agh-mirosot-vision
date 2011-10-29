@@ -112,6 +112,7 @@ struct Precompute {
     }
 };
 
+
 amv_vision_data amv_find_teams(unsigned char* image, amv_state* state, amv_debug_info* debug) {
     amv_debug_info tmp_debug;
     amv_debug_init(&tmp_debug);
@@ -130,7 +131,7 @@ amv_vision_data amv_find_teams(unsigned char* image, amv_state* state, amv_debug
     	debugWhite(img, config, debug);
     }
     ((VisionState*) state->state)->mask.apply(img);//5ms
-    ((VisionState*) state->state)->converter.convert(img, img_hsv);//1ms
+    hsvconverter.convert(img, img_hsv);//1ms
     PatchFinder area(state);
 
     area.setImages(img, img_hsv);

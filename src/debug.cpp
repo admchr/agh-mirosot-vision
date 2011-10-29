@@ -45,12 +45,12 @@ void debugPrescreen(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, amv_state *st
     img_prescreen *= DEBUG_DIM;
     for(int x = 0;x < img.size().width;x++)
         for(int y = 0;y < img.size().height;y++){
-            if (((VisionState*) state->state)->converter.get(img(y, x))[2] < state->config->black_cutoff)
+            if (hsvconverter.get(img(y, x))[2] < state->config->black_cutoff)
                 img_prescreen(y, x) = Vec3b(0, 0, 0);
             PatchType *patch = area.precompute_map.get(x, y);
             if(patch)
                 img_prescreen(y, x) = patch->color;
-            if (((VisionState*) state->state)->converter.get(img(y, x))[2] > state->config->white_cutoff)
+            if (hsvconverter.get(img(y, x))[2] > state->config->white_cutoff)
                 img_prescreen(y, x) = Vec3b(255, 255, 255);
         }
 
