@@ -54,7 +54,7 @@ int main(int argc, char**argv) {
     std::cout<<RUNS<<" iterations "<<std::endl;
     t.start();
     for (int i=0;i<RUNS;i++) {
-        cv::Mat_<cv::Vec3b> img_tmp(img0);
+        cv::Mat_<cv::Vec3b> img_tmp(img0.clone());
         amv_find_teams(img_tmp.ptr(), &state, 0);
     }
     double time = t.getTime() / RUNS;
