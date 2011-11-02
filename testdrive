@@ -1,0 +1,5 @@
+#!/bin/sh
+cd src
+make -j driver &&
+./driver ../test.png ../concept/config_wc.txt out
+

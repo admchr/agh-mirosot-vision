@@ -1,0 +1,4 @@
+#!/bin/sh
+cd src
+make -j perf &&
+time ./perf ../test.png ../concept/config_wc.txt 
