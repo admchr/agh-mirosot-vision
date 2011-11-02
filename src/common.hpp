@@ -1,10 +1,16 @@
 
 #include <fstream>
+#include <iostream>
+#include <cstdlib>
+
 void load_config(amv_config* config, const char* fname) {
     std::ifstream configfile(fname);
     
     int white_len;
-    configfile>>white_len;
+    if (!(configfile>>white_len)) {
+        std::cerr << "Could not read from config "<<fname<<"."<<std::endl;
+        abort();
+    }
     config->white_points_len = white_len;
     
     amv_image_pos* tab_w = new amv_image_pos[white_len];

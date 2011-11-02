@@ -30,19 +30,24 @@ void PatchFinder::preparePixel(cv::Point p) {
     img_hsv(p) = hsvconverter.get(img(p));
     meanshifted.set(p.x, p.y, true);
 }
-Point Q[1024*1024];//TODO: fix this
 
 void PatchFinder::getSets() {
-    int i=0;
+    std::vector<Point> Q;
+
+    // seemed to increase performance for 800x600 images
+    // reserving 800x600 slots was not as effective
+    Q.reserve(1024*1024);
+
     for (int orig_y=0; orig_y<img.rows; orig_y++) {
         for (int orig_x=0; orig_x<img.cols; orig_x++) {
             PatchType* b = precompute_map.get(orig_x, orig_y);
             if (!b) continue;
             if (area_map.get(orig_x, orig_y)) continue;
             Patch* pt = b->newPatch();
-            Q[++i]=Point(orig_x, orig_y);
-            while (i) {
-                Point p = Q[i--];
+            Q.push_back(Point(orig_x, orig_y));
+            while (!Q.empty()) {
+                Point p = Q.back();
+                Q.pop_back();
                 const int minx = max(p.x - 1, 0);
                 const int miny = max(p.y - 1, 0);
                 const int maxx = min(p.x + 2, img.cols);
@@ -55,14 +60,13 @@ void PatchFinder::getSets() {
                         if (area_map.get(nx, ny))
                             continue;
                         if (!pt->add(np, p)) {
-                            //preparePixel(p);
                             preparePixel(np);
                             if (!pt->add(np, p))
                                 continue;
                         }
                         area_map.set(nx, ny, pt);
 
-                        Q[++i]=np;
+                        Q.push_back(np);
                 }
             }
         }
@@ -132,7 +136,7 @@ bool Patch::add(cv::Point p, cv::Point neighbour) {
 		origin = img(p);
 		aabbox = Rect(p, p);
 	}
-	if (PatchFinder::colorDistance(color, img(neighbour)) > 4*100)
+	if (PatchFinder::colorDistance(color, img(neighbour)) > 4*10*10)
 		return false;
 	if (!type->fun(this->type->config, hsv(p)))
 		return false;

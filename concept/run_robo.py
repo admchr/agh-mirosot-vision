@@ -34,11 +34,14 @@ def run_for_type(pattern, config):
         fname_out = 'out_robo_split/' + fname
         stdin.append([fpath, fname_out])
     f = open('/dev/null', 'r')
-    proc = subprocess.Popen(['../src/driver'], stdin=subprocess.PIPE, stdout=f, stderr=f)
+    proc = subprocess.Popen(['../src/driver'], stdin=subprocess.PIPE, stdout=f)
     stdin_str = ('%d %s\n'%(len(stdin), config))+'\n'.join([' '.join(line) for line in stdin])
     
     proc.communicate(stdin_str)
-      
+    
+    if proc.returncode != 0:
+        raise Exception('Process exited with code %d'%proc.returncode)
+    
     for (fpath, fname_out) in stdin:
         img = cv.LoadImageM(fpath)
         w, h = cv.GetSize(img)
@@ -48,7 +51,10 @@ def run_for_type(pattern, config):
         
         files = glob.glob('%s_*.png'%fname_out)
         files.sort()
-        imgt = cv.CreateMat(len(files)*h, w, cv.CV_8UC3)
+        try:
+            imgt = cv.CreateMat(len(files)*h, w, cv.CV_8UC3)
+        except cv.error as e:
+            raise Exception('Could not create output image for %dx%d images:%s; fname_out=%s'%(w, h, files, fname_out), e)
         for (i, outfile) in enumerate(files):
             try:
                 imgo = cv.LoadImageM(outfile)

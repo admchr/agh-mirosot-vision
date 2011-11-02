@@ -4,8 +4,7 @@
 #include "defs.hpp"
 
 #include <opencv/cv.h>
-// TODO: where is std::pair?
-#include <map>
+#include <utility>
 
 std::pair<cv::Point, cv::Vec3b> meanShiftStep(cv::Point p, cv::Vec3b color, const Image& img, int width, int height);
 
