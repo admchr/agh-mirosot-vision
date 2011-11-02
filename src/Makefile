@@ -3,7 +3,7 @@ CXXFLAGS= -g -Wall -Wextra -O2
 LIBS= -lcv -lcxcore -lhighgui -lm
 TEST_LIBS= -lboost_unit_test_framework $(LIBS)
 
-PROGRAMS= perf perf_gprof driver test_impl test_api
+PROGRAMS= perf perf_gprof driver interactive test_impl test_api
 OBJS= vision.o mshift.o balance.o area.o hsvconverter.o moments.o linearize.o mask.o debug.o
 API_HEADERS=amv.h
 IMPL_HEADERS=\
@@ -16,6 +16,9 @@ all: $(PROGRAMS)
 driver: driver.o $(OBJS)
 	g++ $^ -o $@ $(LIBS)
 	
+interactive: interactive.o $(OBJS)
+	g++ $^ -o $@ $(LIBS)
+
 perf: perf.o  $(OBJS)
 	g++ $^ -o $@ $(LIBS)
 
@@ -31,6 +34,7 @@ test_api: test_api.o $(OBJS) $(API_HEADERS)
 $(OBJS): $(IMPL_HEADERS)
 driver.o: common.hpp
 perf.o: common.hpp
+interactive.o: common.hpp
 
 test_impl.o: test_impl.cpp $(API_HEADERS)
 test_array2d.o: test_array2d.cpp array2d.hpp

@@ -24,5 +24,6 @@ for fname in files:
     cv.Smooth(img_med, img_med, smoothtype=cv.CV_MEDIAN, param1=med, param2=med)
     cv.SaveImage('out_med/'+os.path.basename(fname), img_med)
     
-    cv.Sub(img, img_med, img)
+    cv.AddWeighted(img, 1, img_med, -1, 128,img)
+    #cv.Sub(img, img_med, img)
     cv.SaveImage('out_sub/'+os.path.basename(fname), img)

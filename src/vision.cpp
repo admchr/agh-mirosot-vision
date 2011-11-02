@@ -94,7 +94,7 @@ inline bool is_yellow(amv_config* config, Vec3b c){
     		) ||
     		(
     			c[2] > config->white_cutoff &&
-    			c[1] < 50
+                c[1] < 50
     		);// && c[1]*c[2]>128*128/2;
 }
 
