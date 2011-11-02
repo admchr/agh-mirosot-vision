@@ -136,7 +136,7 @@ bool Patch::add(cv::Point p, cv::Point neighbour) {
 		origin = img(p);
 		aabbox = Rect(p, p);
 	}
-	if (PatchFinder::colorDistance(color, img(neighbour)) > 4*100)
+	if (PatchFinder::colorDistance(color, img(neighbour)) > 4*10*10)
 		return false;
 	if (!type->fun(this->type->config, hsv(p)))
 		return false;
