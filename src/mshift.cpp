@@ -89,6 +89,8 @@ std::pair<cv::Point, cv::Vec3b> meanShiftStep(cv::Point p, cv::Vec3b color, cons
 void meanShiftPoint(Image& src0, int x, int y, double radius, double threshold)
 {
     pair<Point,Vec3b> val(Point(x, y), src0(y, x));
+    threshold*=(val.second[0]+val.second[1]+val.second[2]);
+    threshold/=256*3;
     // TODO: there can be faster stop criterion
     for(int i = 0;i < 3;i++)
         val = meanShiftStep(val.first, val.second, src0, radius, threshold);
