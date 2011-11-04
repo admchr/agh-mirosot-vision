@@ -7,7 +7,7 @@ PROGRAMS= perf perf_gprof driver interactive test_impl test_api
 OBJS= vision.o mshift.o balance.o area.o hsvconverter.o moments.o linearize.o mask.o debug.o
 API_HEADERS=amv.h
 IMPL_HEADERS=\
-    $(API_HEADER) \
+    $(API_HEADERS) \
     area.hpp array2d.hpp balance.hpp defs.hpp moments.hpp mshift.hpp hsvconverter.hpp \
     visionstate.hpp linearize.hpp mask.hpp common.hpp debug.hpp
 

@@ -31,7 +31,9 @@ void amv_config_init(amv_config* config) {
     config->px_per_cm = 16/7.5;
 
     config->meanshift_radius = 3;
-    config->meanshift_threshold = 40;
+    config->meanshift_threshold = 70;
+
+    config->same_color_distance = 20;
 
     config->white_points = NULL;
     config->white_points_len = 0;
@@ -39,15 +41,15 @@ void amv_config_init(amv_config* config) {
     config->mask_points = NULL;
     config->mask_points_len = 0;
 
-    config->black_cutoff = 55;
+    config->black_cutoff = 45;
     config->blue_min = 85;
     config->blue_max = 115;
     config->yellow_min = 10;
     config->yellow_max = 40;
-    config->minimum_saturation = 100;
+    config->minimum_saturation = 60;
     config->white_cutoff = 110;
 
-    config->linearize = 1;
+    config->linearize = 0;
 }
 
 void amv_debug_init(amv_debug_info* debug) {
@@ -93,9 +95,8 @@ inline bool is_yellow(amv_config* config, Vec3b c){
 				(c[1] > config->minimum_saturation || c[2] > config->white_cutoff)
     		) ||
     		(
-    			c[2] > config->white_cutoff &&
-                c[1] < 50
-    		);// && c[1]*c[2]>128*128/2;
+    			c[2] > config->white_cutoff
+    		);
 }
 
 struct Precompute {

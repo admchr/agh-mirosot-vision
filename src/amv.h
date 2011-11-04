@@ -32,6 +32,7 @@ struct AMV_EXPORT amv_config {
     
     int meanshift_radius;
     int meanshift_threshold;
+    int same_color_distance;
 
     int black_cutoff;
     int blue_min;

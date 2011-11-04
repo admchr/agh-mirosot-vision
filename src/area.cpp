@@ -112,7 +112,7 @@ void PatchType::fillTeam(amv_team_data* data) {
 
 int PatchType::getMinPatchSize() {
     double min_size = map->state->config->px_per_cm * 3.5;
-    int min_area = min_size*min_size;
+    int min_area = min_size*min_size * 0.75;
 
     return min_area;
 }
@@ -136,7 +136,8 @@ bool Patch::add(cv::Point p, cv::Point neighbour) {
 		origin = img(p);
 		aabbox = Rect(p, p);
 	}
-	if (PatchFinder::colorDistance(color, img(neighbour)) > 4*10*10)
+	int dst = this->type->config->same_color_distance;
+	if (PatchFinder::colorDistance(color, img(neighbour)) > dst*dst)
 		return false;
 	if (!type->fun(this->type->config, hsv(p)))
 		return false;
