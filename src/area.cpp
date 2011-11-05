@@ -2,8 +2,11 @@
 #include "area.hpp"
 #include "visionstate.hpp"
 #include "mshift.hpp"
+#include "util.hpp"
+
 #include <opencv/cv.h>
 #include <queue>
+#include <utility>
 
 using namespace cv;
 
@@ -44,6 +47,7 @@ void PatchFinder::getSets() {
             if (!b) continue;
             if (area_map.get(orig_x, orig_y)) continue;
             Patch* pt = b->newPatch();
+            pt->add(Point(orig_x, orig_y), Point(orig_x, orig_y));
             Q.push_back(Point(orig_x, orig_y));
             while (!Q.empty()) {
                 Point p = Q.back();
@@ -97,16 +101,31 @@ Patch* PatchType::newPatch()
 void PatchType::fillTeam(amv_team_data* data) {
     data->team_len = 0;
     amv_robot_data* robot = data->team;
+
+    std::priority_queue<std::pair<double, Patch*> > team;
+
     for (unsigned int i=0; i<patches.size(); i++) {
         Patch* patch = patches[i];
-        if (patch->isLegal()) {
-            cv::Point p = patch->getMean();
-            robot->position.x = p.x;
-            robot->position.y = p.y;
-            robot->angle = patch->getAngle();
-            robot++;
-            data->team_len++;
-        }
+        team.push(std::make_pair(-patch->getRobotCertainty(), patch));
+
+        if (team.size() > config->team_size)
+            team.pop();
+    }
+
+    while (!team.empty()) {
+        Patch* patch = team.top().second;
+        double certainty = -team.top().first;
+        team.pop();
+
+        patch->isRobot = true;
+
+        cv::Point p = patch->getMean();
+        robot->position.x = p.x;
+        robot->position.y = p.y;
+        robot->angle = patch->getAngle();
+        robot->certainty = certainty;
+        robot++;
+        data->team_len++;
     }
 }
 
@@ -139,9 +158,10 @@ bool Patch::add(cv::Point p, cv::Point neighbour) {
 	int dst = this->type->config->same_color_distance;
 	if (PatchFinder::colorDistance(color, img(neighbour)) > dst*dst)
 		return false;
-	if (!type->fun(this->type->config, hsv(p)))
+	if (!is_robot(this->type->config, &this->type->team, hsv(p)))
 		return false;
 	moments.add(p);
+	color_sum += color;
 	aabbox = aabbox | Rect(p, p);
     return true;
 }
@@ -153,8 +173,20 @@ Rect Patch::getBoundingBox() {
     return aabbox;
 }
 
-bool Patch::isLegal() {
-    return moments.getCount() > type->getMinPatchSize() && moments.getCount() < type->getMaxPatchSize();
+Vec3b Patch::getMeanColor() {
+    int count = moments.getCount();
+    if (count==0)
+        return Vec3b(0,0,0);
+    return Vec3b(color_sum[0]/count, color_sum[1]/count, color_sum[2]/count);
+}
+
+double Patch::getRobotCertainty() {
+    double result = 1;
+    result*=positive_value_certainty(type->getMinPatchSize(), type->getMaxPatchSize(), moments.getCount());
+
+    Vec3b hsv = hsvconverter.get(getMeanColor());
+    result*=positive_value_certainty(type->team.hue_min, type->team.hue_max, hsv[0]);
+    result*=0.5*hsv[1]/256.0+0.5;
 }
 
 Point Patch::getMean() {

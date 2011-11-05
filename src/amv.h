@@ -1,5 +1,5 @@
-#ifndef HEADER_H
-#define HEADER_H
+#ifndef AMV_H
+#define AMV_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -18,6 +18,13 @@ struct AMV_EXPORT amv_image_pos {
     int y;
 };
 
+struct AMV_EXPORT amv_team_info {
+    int hue_min;
+    int hue_max;
+
+    int captures_white;
+};
+
 struct AMV_EXPORT amv_config {
     int height, width;
     
@@ -29,16 +36,15 @@ struct AMV_EXPORT amv_config {
 
     double px_per_cm;
     double robot_size;
+    int team_size;
     
     int meanshift_radius;
     int meanshift_threshold;
     int same_color_distance;
 
     int black_cutoff;
-    int blue_min;
-    int blue_max;
-    int yellow_min;
-    int yellow_max;
+    struct amv_team_info blue;
+    struct amv_team_info yellow;
     int minimum_saturation;
     int white_cutoff;
     char linearize;
@@ -56,6 +62,7 @@ struct AMV_EXPORT amv_debug_info {
 struct AMV_EXPORT amv_robot_data {
     struct amv_image_pos position;
     double angle;
+    double certainty;
 };
 
 struct AMV_EXPORT amv_team_data {

@@ -113,7 +113,8 @@ void debugRobots(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, const amv_vision
     for(int x = 0;x < img.size().width;x++)
         for(int y = 0;y < img.size().height;y++){
             Patch* area_ind = area.area_map.get(x, y);
-            if (area_ind && area_ind->isLegal()) {
+
+            if (area_ind && area_ind->isRobot) {
                 img_robots(y, x) = area_ind->type->color;
             }
         }
