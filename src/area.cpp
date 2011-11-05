@@ -187,6 +187,8 @@ double Patch::getRobotCertainty() {
     Vec3b hsv = hsvconverter.get(getMeanColor());
     result*=positive_value_certainty(type->team.hue_min, type->team.hue_max, hsv[0]);
     result*=0.5*hsv[1]/256.0+0.5;
+
+    return result;
 }
 
 Point Patch::getMean() {

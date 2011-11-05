@@ -55,7 +55,7 @@ void amv_config_init(amv_config* config) {
     config->white_cutoff = 110;
     config->black_cutoff = 45;
 
-    config->team_size = 5;
+    config->team_size = 255;
 
     config->linearize = 0;
 }
