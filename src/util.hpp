@@ -17,5 +17,5 @@ inline static bool is_robot(amv_config* config, amv_team_info* team, cv::Vec3b c
 }
 
 double positive_value_certainty(double min, double max, double actual);
-
+double certainty_or(double p, double q);
 #endif

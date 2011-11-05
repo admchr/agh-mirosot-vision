@@ -186,11 +186,20 @@ Vec3b Patch::getMeanColor() {
 
 double Patch::getRobotCertainty() {
     double result = 1;
-    result*=positive_value_certainty(type->getMinPatchSize(), type->getMaxPatchSize(), moments.getCount());
+    result *= positive_value_certainty(type->getMinPatchSize(), type->getMaxPatchSize(), moments.getCount());
 
     Vec3b hsv = hsvconverter.get(getMeanColor());
-    result*=positive_value_certainty(type->team.hue_min, type->team.hue_max, hsv[0]);
-    result*=0.5*hsv[1]/256.0+0.5;
+
+    double color_result = positive_value_certainty(type->team.hue_min, type->team.hue_max, hsv[0]);
+    color_result *= hsv[1]/256.0;
+
+    double white_result;
+    if (type->config->white_cutoff)
+        white_result = positive_value_certainty(type->config->white_cutoff, 2*256+type->config->white_cutoff, hsv[2]); // TODO: provisional
+    else
+        white_result = 0;
+
+    result *= certainty_or(color_result, white_result*0.5);
 
     return result;
 }
