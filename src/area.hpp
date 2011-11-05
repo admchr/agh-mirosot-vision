@@ -54,13 +54,12 @@ public://TODO make some private
 
 class PatchType {
 public:
-    typedef bool(*Fun)(amv_config*, cv::Vec3b);
-    Fun fun;
+    amv_team_info team;
     cv::Vec3b color;
     amv_config* config;
-	PatchType(PatchFinder* pf, Fun fun, cv::Vec3b color, amv_config* config) {
+	PatchType(PatchFinder* pf, amv_team_info team, cv::Vec3b color, amv_config* config) {
 		this->map = pf;
-	    this->fun = fun;
+	    this->team = team;
 	    this->color = color;
 	    this->config = config;
 	}
@@ -80,16 +79,20 @@ public:
 class Patch {
     cv::Vec3b origin;
     cv::Rect aabbox;
+    cv::Vec3i color_sum;
 public:
     PatchMoments moments;
 	PatchType* type;
+    bool isRobot;
 	Patch(PatchType*t) {
 	    assert(t);
 	    type = t;
+        isRobot = false;
 	}
 	bool add(cv::Point p, cv::Point neighbour);
 	int getCount();
-	bool isLegal();
+	cv::Vec3b getMeanColor();
+	double getRobotCertainty();
 	cv::Point getMean();
 	double getAngle();
 	cv::Rect getBoundingBox();

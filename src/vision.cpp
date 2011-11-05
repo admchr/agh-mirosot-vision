@@ -5,6 +5,7 @@
 #include "visionstate.hpp"
 #include "linearize.hpp"
 #include "debug.hpp"
+#include "util.hpp"
 
 #include <opencv/cv.h>
 
@@ -41,13 +42,20 @@ void amv_config_init(amv_config* config) {
     config->mask_points = NULL;
     config->mask_points_len = 0;
 
-    config->black_cutoff = 45;
-    config->blue_min = 85;
-    config->blue_max = 115;
-    config->yellow_min = 10;
-    config->yellow_max = 40;
+
+    config->blue.hue_min = 85;
+    config->blue.hue_max = 115;
+    config->blue.captures_white = 0;
+    config->yellow.hue_min = 10;
+    config->yellow.hue_max = 40;
+    config->yellow.captures_white = 1;
+
+
     config->minimum_saturation = 60;
     config->white_cutoff = 110;
+    config->black_cutoff = 45;
+
+    config->team_size = 5;
 
     config->linearize = 0;
 }
@@ -80,24 +88,6 @@ void amv_state_free(amv_state* state) {
         delete vs;
 }
 
-inline bool is_blue(amv_config* config, Vec3b c){
-    return
-    		c[2] > config->black_cutoff &&
-    		c[0] > config->blue_min &&
-    		c[0] < config->blue_max &&
-    		c[1] > config->minimum_saturation;
-}
-inline bool is_yellow(amv_config* config, Vec3b c){
-    return (
-				c[2] > config->black_cutoff &&
-				c[0] > config->yellow_min &&
-				c[0] < config->yellow_max &&
-				(c[1] > config->minimum_saturation || c[2] > config->white_cutoff)
-    		) ||
-    		(
-    			c[2] > config->white_cutoff
-    		);
-}
 
 struct Precompute {
     PatchType* blue;
@@ -105,9 +95,9 @@ struct Precompute {
     PatchType* orange;
     amv_config* config;
     PatchType* operator()(Vec3b c){
-        if(is_blue(config, c))
+        if(is_robot(config, &config->blue, c))
             return blue;
-        if(is_yellow(config, c))
+        if(is_robot(config, &config->yellow, c))
             return yellow;
         return 0;
     }
@@ -136,14 +126,14 @@ amv_vision_data amv_find_teams(unsigned char* image, amv_state* state, amv_debug
     PatchFinder area(state);
 
     area.setImages(img, img_hsv);
-    PatchType blue(&area, is_blue, Vec3b(255, 0, 0), config);
-    PatchType yellow(&area, is_yellow, Vec3b(0, 255, 255), config);
-    PatchType orange(&area, is_blue, Vec3b(0, 0, 255), config);
+    PatchType blue(&area, config->blue, Vec3b(255, 0, 0), config);
+    PatchType yellow(&area, config->yellow, Vec3b(0, 255, 255), config);
+    //PatchType orange(&area, , Vec3b(0, 0, 255), config);
     Precompute precompute;
     precompute.config = config;
     precompute.blue = &blue;
     precompute.yellow = &yellow;
-    precompute.orange = &orange;
+    //precompute.orange = &orange;
     area.precompute(precompute);//<1ms
     if (debug->debug_prescreen) {
         debugPrescreen(img, area, state, debug);
@@ -153,7 +143,6 @@ amv_vision_data amv_find_teams(unsigned char* image, amv_state* state, amv_debug
 
     blue.fillTeam(&robots.blue_team);
     yellow.fillTeam(&robots.yellow_team);
-
 
     if (debug->debug_patches) {
         debugPatches(img, area, config, debug);

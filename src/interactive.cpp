@@ -10,18 +10,6 @@ using namespace std;
 
 amv_config config;
 amv_debug_info debug;
-int g_switch_value = 0;
-int colorInt = 0;
-
-// Trackbar/switch callback
-void switch_callback( int position, void* ){
-    if( position == 0 ){
-         colorInt = 0;
-    }else{
-         colorInt = 1;
-    }
-
-}
 
 int dbg_i;
 int debug_count = 5;
@@ -30,6 +18,7 @@ char** images;
 int img_i = 0;
 int image_count;
 cv::Mat_<cv::Vec3b> img0;
+
 
 int main(int argc, char** argv)
 {
@@ -51,12 +40,13 @@ int main(int argc, char** argv)
 
     cv::Mat_<cv::Vec3b> dbg_img(img0.clone());
 
+    cv::createTrackbar( "num", trackbar_window, &config.team_size, 255, 0, 0 );
     cv::createTrackbar( "black", trackbar_window, &config.black_cutoff, 255, 0, 0 );
     cv::createTrackbar( "white", trackbar_window, &config.white_cutoff, 255, 0, 0 );
-    cv::createTrackbar( "y1", trackbar_window, &config.yellow_min, 255, 0, 0 );
-    cv::createTrackbar( "y2", trackbar_window, &config.yellow_max, 255, 0, 0 );
-    cv::createTrackbar( "b1", trackbar_window, &config.blue_min, 255, 0, 0 );
-    cv::createTrackbar( "b2", trackbar_window, &config.blue_max, 255, 0, 0 );
+    cv::createTrackbar( "y1", trackbar_window, &config.yellow.hue_min, 255, 0, 0 );
+    cv::createTrackbar( "y2", trackbar_window, &config.yellow.hue_max, 255, 0, 0 );
+    cv::createTrackbar( "b1", trackbar_window, &config.blue.hue_min, 255, 0, 0 );
+    cv::createTrackbar( "b2", trackbar_window, &config.blue.hue_max, 255, 0, 0 );
     cv::createTrackbar( "sat", trackbar_window, &config.minimum_saturation, 255, 0, 0 );
     cv::createTrackbar( "dst", trackbar_window, &config.same_color_distance, 255, 0, 0 );
     cv::createTrackbar( "msr", trackbar_window, &config.meanshift_radius, 255, 0, 0 );
