@@ -1,5 +1,5 @@
 
-CXXFLAGS= -g -Wall -Wextra -O2
+CXXFLAGS= -g -Wall -Wextra -O0
 LIBS= -lcv -lcxcore -lhighgui -lm
 TEST_LIBS= -lboost_unit_test_framework $(LIBS)
 
@@ -25,7 +25,7 @@ perf: perf.o  $(OBJS)
 perf_gprof: perf.o $(OBJS)
 	g++ -pg $^ -o $@ $(LIBS)
 
-test_impl: test_impl.o test_array2d.o test_mshift.o test_linearize.o test_mask.o $(OBJS)
+test_impl: test_impl.o test_array2d.o test_mshift.o test_linearize.o test_mask.o test_moments.o $(OBJS)
 	g++ $^ -o $@ $(TEST_LIBS) 
 
 test_api: test_api.o $(OBJS) $(API_HEADERS)
@@ -41,6 +41,7 @@ test_array2d.o: test_array2d.cpp array2d.hpp
 test_mshift.o: test_mshift.cpp mshift.hpp
 test_linearize.o: test_linearize.cpp linearize.hpp
 test_mask.o: test_mask.cpp mask.hpp
+test_moments.o: test_moments.cpp moments.hpp
 
 .PHONY: clean
 clean:

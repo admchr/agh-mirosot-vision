@@ -11,7 +11,6 @@ class PatchMoments {
     double sum_xx;
     double sum_xy;
     double sum_yy;
-    std::vector<cv::Point> points;
     cv::Moments getMoments();
 public:
     PatchMoments();

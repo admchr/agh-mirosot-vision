@@ -47,12 +47,26 @@ double PatchMoments::getRegressionSlope() {
     double var_x = getXVariance();
     double var_y = getYVariance();
     double var_xy = getCovariance();
-    double b1 = (var_y - var_x + sqrt((var_y - var_x) * (var_y - var_x) + 4 * var_xy * var_xy)) / 2 / var_xy;
+
+    double tmp = sqrt((var_y - var_x) * (var_y - var_x) + 4 * var_xy * var_xy);
+
+    double b1;
+    if (var_y > var_x)
+        b1 = (var_y - var_x + tmp) / 2 / var_xy;
+    else
+        b1 = 2 * var_xy / (var_x - var_y + tmp);
+    if (isnan(b1)) {
+        // return some predefined value, as we cannot compute it
+        // this can occur for:
+        // 1. empty set
+        // 2. singleton point
+        // 3. sets with no unique regression line
+        return 0;
+    }
     return b1;
 }
 
 double PatchMoments::getRegressionPosition() {
-
 	double b1 = getRegressionSlope();
     double b0 = sum_y*1.0/count - b1*sum_x/count;
     return b0;
