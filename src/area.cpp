@@ -47,8 +47,10 @@ void PatchFinder::getSets() {
             if (!b) continue;
             if (area_map.get(orig_x, orig_y)) continue;
             Patch* pt = b->newPatch();
-            pt->add(Point(orig_x, orig_y), Point(orig_x, orig_y));
+
             Q.push_back(Point(orig_x, orig_y));
+            // this point will be added to the patch later
+
             while (!Q.empty()) {
                 Point p = Q.back();
                 Q.pop_back();
@@ -106,6 +108,8 @@ void PatchType::fillTeam(amv_team_data* data) {
 
     for (unsigned int i=0; i<patches.size(); i++) {
         Patch* patch = patches[i];
+        if (patch->getCount() <= 1)
+            continue;
         team.push(std::make_pair(-patch->getRobotCertainty(), patch));
 
         if (team.size() > config->team_size)
