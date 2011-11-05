@@ -1,5 +1,5 @@
 
-CXXFLAGS= -g -Wall -Wextra -O0
+CXXFLAGS= -g -Wall -Wextra -O2
 LIBS= -lcv -lcxcore -lhighgui -lm
 TEST_LIBS= -lboost_unit_test_framework $(LIBS)
 
