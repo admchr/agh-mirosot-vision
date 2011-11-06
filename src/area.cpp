@@ -123,7 +123,7 @@ void PatchType::fillTeam(amv_team_data* data) {
 
         patch->isRobot = true;
 
-        cv::Point p = patch->getMean();
+        cv::Point p = patch->getRobotCenter();
         robot->position.x = p.x;
         robot->position.y = p.y;
         robot->angle = patch->getAngle();
@@ -131,6 +131,29 @@ void PatchType::fillTeam(amv_team_data* data) {
         robot++;
         data->team_len++;
     }
+}
+
+void PatchType::fillBall(amv_vision_data* data) {
+    if (patches.empty()) {
+        data->ball_pos.x = data->ball_pos.y = -1;
+        return;
+    }
+
+
+    Patch* maximal = patches[0];
+    for (unsigned int i=0; i<patches.size(); i++) {
+        Patch* patch = patches[i];
+        if (patch->getCount() <= 1)
+            continue;
+        if (patch->getBallCertainty() > maximal->getBallCertainty()) {
+            maximal = patch;
+        }
+
+    }
+    maximal->isBall = true;
+
+    data->ball_pos.x = maximal->getCenter().x;
+    data->ball_pos.y = maximal->getCenter().y;
 }
 
 int PatchType::getMinPatchSize() {
@@ -186,16 +209,16 @@ Vec3b Patch::getMeanColor() {
 
 double Patch::getRobotCertainty() {
     double result = 1;
-    result *= positive_value_certainty(type->getMinPatchSize(), type->getMaxPatchSize(), moments.getCount());
+    result *= positive_interval_certainty(type->getMinPatchSize(), type->getMaxPatchSize(), moments.getCount());
 
     Vec3b hsv = hsvconverter.get(getMeanColor());
 
-    double color_result = positive_value_certainty(type->team.hue_min, type->team.hue_max, hsv[0]);
+    double color_result = interval_certainty(type->team.hue_min, type->team.hue_max, hsv[0]);
     color_result *= hsv[1]/256.0;
 
     double white_result;
     if (type->config->white_cutoff)
-        white_result = positive_value_certainty(type->config->white_cutoff, 2*256+type->config->white_cutoff, hsv[2]); // TODO: provisional
+        white_result = interval_certainty(type->config->white_cutoff, 2*256+type->config->white_cutoff, hsv[2]); // TODO: provisional
     else
         white_result = 0;
 
@@ -204,7 +227,34 @@ double Patch::getRobotCertainty() {
     return result;
 }
 
-Point Patch::getMean() {
+
+double Patch::getBallCertainty() {
+    double result = 1;
+    // TODO: provisional
+    double ball_radius = 4.27/2*type->config->px_per_cm;
+    double ball_area = ball_radius*ball_radius*M_PI;
+    result *= positive_interval_certainty(ball_area*3/4, ball_area*5/4, moments.getCount());
+
+    Vec3b hsv = hsvconverter.get(getMeanColor());
+
+    double color_result = interval_certainty(type->team.hue_min, type->team.hue_max, hsv[0]);
+    color_result *= hsv[1]/256.0;
+
+    double white_result;
+    if (type->config->white_cutoff)
+        white_result = interval_certainty(type->config->white_cutoff, 2*256+type->config->white_cutoff, hsv[2]); // TODO: provisional
+    else
+        white_result = 0;
+
+    result *= certainty_or(color_result, white_result*0.5);
+
+    return result;
+}
+
+Point Patch::getCenter() {
+    return moments.getMean();
+}
+Point Patch::getRobotCenter() {
 	const int MEAN_OFFSET = 3;
     Point p = moments.getMean();
     double angle = getAngle() - M_PI*0.5;

@@ -46,9 +46,12 @@ void amv_config_init(amv_config* config) {
     config->blue.hue_min = 85;
     config->blue.hue_max = 115;
     config->blue.captures_white = 0;
-    config->yellow.hue_min = 10;
+    config->yellow.hue_min = 20;
     config->yellow.hue_max = 40;
     config->yellow.captures_white = 1;
+    config->orange.hue_min = 0;
+    config->orange.hue_max = 20;
+    config->orange.captures_white = 0;
 
 
     config->minimum_saturation = 60;
@@ -99,6 +102,8 @@ struct Precompute {
             return blue;
         if(is_robot(config, &config->yellow, c))
             return yellow;
+        if(is_robot(config, &config->orange, c))
+            return orange;
         return 0;
     }
 };
@@ -128,12 +133,12 @@ amv_vision_data amv_find_teams(unsigned char* image, amv_state* state, amv_debug
     area.setImages(img, img_hsv);
     PatchType blue(&area, config->blue, Vec3b(255, 0, 0), config);
     PatchType yellow(&area, config->yellow, Vec3b(0, 255, 255), config);
-    //PatchType orange(&area, , Vec3b(0, 0, 255), config);
+    PatchType orange(&area, config->orange, Vec3b(0, 128, 255), config);
     Precompute precompute;
     precompute.config = config;
     precompute.blue = &blue;
     precompute.yellow = &yellow;
-    //precompute.orange = &orange;
+    precompute.orange = &orange;
     area.precompute(precompute);//<1ms
     if (debug->debug_prescreen) {
         debugPrescreen(img, area, state, debug);
@@ -143,6 +148,7 @@ amv_vision_data amv_find_teams(unsigned char* image, amv_state* state, amv_debug
 
     blue.fillTeam(&robots.blue_team);
     yellow.fillTeam(&robots.yellow_team);
+    orange.fillBall(&robots);
 
     if (debug->debug_patches) {
         debugPatches(img, area, config, debug);

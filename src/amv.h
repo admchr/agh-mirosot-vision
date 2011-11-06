@@ -18,7 +18,7 @@ struct AMV_EXPORT amv_image_pos {
     int y;
 };
 
-struct AMV_EXPORT amv_team_info {
+struct AMV_EXPORT amv_color_info {
     int hue_min;
     int hue_max;
 
@@ -43,8 +43,9 @@ struct AMV_EXPORT amv_config {
     int same_color_distance;
 
     int black_cutoff;
-    struct amv_team_info blue;
-    struct amv_team_info yellow;
+    struct amv_color_info blue;
+    struct amv_color_info yellow;
+    struct amv_color_info orange;
     int minimum_saturation;
     int white_cutoff;
     char linearize;

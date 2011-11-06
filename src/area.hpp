@@ -54,10 +54,10 @@ public://TODO make some private
 
 class PatchType {
 public:
-    amv_team_info team;
+    amv_color_info team;
     cv::Vec3b color;
     amv_config* config;
-	PatchType(PatchFinder* pf, amv_team_info team, cv::Vec3b color, amv_config* config) {
+	PatchType(PatchFinder* pf, amv_color_info team, cv::Vec3b color, amv_config* config) {
 		this->map = pf;
 	    this->team = team;
 	    this->color = color;
@@ -70,6 +70,7 @@ public:
 	Patch* newPatch();
 
 	void fillTeam(amv_team_data* data);
+	void fillBall(amv_vision_data* data);
 
 	int getMinPatchSize();
     int getMaxPatchSize();
@@ -84,16 +85,20 @@ public:
     PatchMoments moments;
 	PatchType* type;
     bool isRobot;
+    bool isBall;
 	Patch(PatchType*t) {
 	    assert(t);
 	    type = t;
         isRobot = false;
+        isBall = false;
 	}
 	bool add(cv::Point p, cv::Point neighbour);
 	int getCount();
 	cv::Vec3b getMeanColor();
-	double getRobotCertainty();
-	cv::Point getMean();
+    double getRobotCertainty();
+    double getBallCertainty();
+    cv::Point getRobotCenter();
+    cv::Point getCenter();
 	double getAngle();
 	cv::Rect getBoundingBox();
 };

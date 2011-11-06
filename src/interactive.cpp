@@ -47,6 +47,8 @@ int main(int argc, char** argv)
     cv::createTrackbar( "y2", trackbar_window, &config.yellow.hue_max, 255, 0, 0 );
     cv::createTrackbar( "b1", trackbar_window, &config.blue.hue_min, 255, 0, 0 );
     cv::createTrackbar( "b2", trackbar_window, &config.blue.hue_max, 255, 0, 0 );
+    cv::createTrackbar( "o1", trackbar_window, &config.orange.hue_min, 255, 0, 0 );
+    cv::createTrackbar( "o2", trackbar_window, &config.orange.hue_max, 255, 0, 0 );
     cv::createTrackbar( "sat", trackbar_window, &config.minimum_saturation, 255, 0, 0 );
     cv::createTrackbar( "dst", trackbar_window, &config.same_color_distance, 255, 0, 0 );
     cv::createTrackbar( "msr", trackbar_window, &config.meanshift_radius, 255, 0, 0 );
