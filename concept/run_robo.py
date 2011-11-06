@@ -40,6 +40,8 @@ def run_for_type(pattern, config):
     proc.communicate(stdin_str)
     
     if proc.returncode != 0:
+        print 'Input:'
+        print stdin_str
         raise Exception('Process exited with code %d'%proc.returncode)
     
     for (fpath, fname_out) in stdin:

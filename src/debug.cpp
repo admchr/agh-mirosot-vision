@@ -75,7 +75,6 @@ void debugPatches(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, amv_config *con
     copy_to(img_patches, debug->debug_patches, config);
 }
 
-
 void debugTeam(Image& img, const amv_team_data& team) {
     const int SIDE = 9;
     for (int i=0; i<team.team_len; i++) {
@@ -114,12 +113,16 @@ void debugRobots(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, const amv_vision
         for(int y = 0;y < img.size().height;y++){
             Patch* area_ind = area.area_map.get(x, y);
 
-            if (area_ind && area_ind->isRobot) {
+            if (area_ind && (area_ind->isRobot || area_ind->isBall)) {
                 img_robots(y, x) = area_ind->type->color;
             }
         }
     debugTeam(img_robots, robots.blue_team);
     debugTeam(img_robots, robots.yellow_team);
+
+    for (int i=0; i<4; i++)
+        debugLine(robots.ball_pos, M_PI*0.5*i, img_robots, 10);
+
     copy_to(img_robots, debug->debug_robots, config);
 }
 
