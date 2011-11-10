@@ -32,7 +32,7 @@ void amv_config_init(amv_config* config) {
     config->px_per_cm = 16/7.5;
 
     config->meanshift_radius = 3;
-    config->meanshift_threshold = 70;
+    config->meanshift_threshold = 36;//=0
 
     config->same_color_distance = 20;
 

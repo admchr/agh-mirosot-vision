@@ -65,8 +65,8 @@ void PatchFinder::getSets() {
 
                         if (area_map.get(nx, ny))
                             continue;
+                        preparePixel(np);
                         if (!pt->add(np, p)) {
-                            preparePixel(np);
                             if (!pt->add(np, p))
                                 continue;
                         }
@@ -257,6 +257,7 @@ Point Patch::getCenter() {
 Point Patch::getRobotCenter() {
 	const int MEAN_OFFSET = 3;
     Point p = moments.getMean();
+    return p;
     double angle = getAngle() - M_PI*0.5;
     p.x+=cos(angle)*MEAN_OFFSET;
     p.y+=sin(angle)*MEAN_OFFSET;
@@ -264,6 +265,7 @@ Point Patch::getRobotCenter() {
 }
 
 double Patch::getAngle() {
+    return moments.getAngle();
     double angle = moments.getAngle()+M_PI*0.25;
 
 	double a = moments.getRegressionSlope();

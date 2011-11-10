@@ -20,6 +20,8 @@ w, h = 1, 1
 
 px, py = -1, -1
 
+hues = [0.0]*18;
+
 for i in range(0, 1000):
     j = i*0.001
     x = int((prcx0+(prcx1-prcx0)*j)*w)
@@ -30,6 +32,8 @@ for i in range(0, 1000):
     (h, s, v, tmp) = cv.Get2D(imgh, y, x)
     for (vec, ch) in ((vb, b), (vg, g), (vr, r), (vh, h), (vs, s), (vv, v)):
         vec.append(ch)
+    
+    hues[int(h/10)]+=s*v
     vch.append(s*v/256)
     vl.append((r+g+b)/3)
     cv.Set2D(img, y, x, (255, 255, 255))
@@ -39,8 +43,9 @@ for i in range(0, 1000):
 imgn = numpy.asarray(img)
 plt.imshow(imgn, interpolation='nearest')
 fig = plt.figure()
-ax = fig.add_subplot(2,1,1)
-bx = fig.add_subplot(2,1,2)
+ax = fig.add_subplot(3,1,1)
+bx = fig.add_subplot(3,1,2)
+cx = fig.add_subplot(3,1,3)
 k=range(0, len(vr))
 ax.grid(True)
 ax.plot(k, vr, color='r')
@@ -61,10 +66,13 @@ for h in range(6):
         }
         bx.add_artist(patch.Rectangle((0, (h*60+step)/2), 1, 1, color='#%.2x%.2x%.2x'%tuple(col[c][h]*255 for c in 'rgb')))
 
+print list(enumerate(hues))
+
 bx.plot(k, vh, color='#000000')
 bx.plot(k, vch, color='r')
 bx.plot(k, vl, color='#888800')
 bx.grid(True)
+cx.plot(range(18), hues)
 plt.show()
 
 
