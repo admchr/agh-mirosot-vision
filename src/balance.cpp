@@ -69,10 +69,11 @@ void white_balance(Image* img, amv_config* config) {
             pos.x = i;
             pos.y = j;
             Vec3b color = get_white(white_points, pos);
+            int gray = (color[0] + color[1] + color[2])/3;
             for (int k=0;k<3;k++){   
                 buf=mats[k](cv::Rect(i,j,TILE,TILE) & cv::Rect(0, 0, img->size().width, img->size().height));
                 //mats[k].mul(mats[k],);
-                buf*=255.0/color[k]*SHRINK_FACTOR;
+                buf*=255.0/((color[k]+gray)/2)*SHRINK_FACTOR;
             }
         }
     

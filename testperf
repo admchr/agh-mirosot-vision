@@ -1,4 +1,4 @@
 #!/bin/sh
 cd src
 make -j perf &&
-time ./perf ../test.png ../concept/config_wc.txt 
+time ./perf ../concept/img/a_32.jpg ../concept/config_a.txt 

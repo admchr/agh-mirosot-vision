@@ -89,20 +89,25 @@ void debugTeam(Image& img, const amv_team_data& team) {
         double side_y = sin(angle+M_PI*0.5)*SIDE;
         debugLine(p, angle, img, 20);
 
+        tmp.x=p.x+front_x+side_x/2;
+        tmp.y=p.y+front_y+side_y/2;
+        debugLine(tmp, angle+M_PI, img, 2*SIDE);
         tmp.x=p.x+front_x+side_x;
         tmp.y=p.y+front_y+side_y;
         debugLine(tmp, angle+M_PI, img, 2*SIDE);
-        tmp.x=p.x+front_x-side_x;
+/*        tmp.x=p.x+front_x-side_x;
         tmp.y=p.y+front_y-side_y;
         debugLine(tmp, angle+M_PI/2, img, 2*SIDE);
+*/      tmp.x=p.x-front_x-side_x/2;
+        tmp.y=p.y-front_y-side_y/2;
+        debugLine(tmp, angle, img, 2*SIDE);
         tmp.x=p.x-front_x-side_x;
         tmp.y=p.y-front_y-side_y;
         debugLine(tmp, angle, img, 2*SIDE);
-        tmp.x=p.x-front_x+side_x;
+/*        tmp.x=p.x-front_x+side_x;
         tmp.y=p.y-front_y+side_y;
         debugLine(tmp, angle+M_PI*3/2, img, 2*SIDE);
-
-    }
+*/    }
 }
 
 void debugRobots(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, const amv_vision_data& robots, amv_config* config, amv_debug_info *debug)
