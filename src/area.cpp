@@ -23,7 +23,7 @@ void PatchFinder::setImages(Image img, Image img_hsv) {
 void PatchFinder::preparePixel(cv::Point p) {
     if (meanshifted.get(p.x, p.y))
         return;
-    meanShiftPoint(
+    meanShiftPointProportional(
                 img,
                 p.x,
                 p.y,

@@ -63,15 +63,6 @@ void amv_config_init(amv_config* config) {
     config->linearize = 0;
 }
 
-void amv_debug_init(amv_debug_info* debug) {
-    debug->debug_balance = NULL;
-    debug->debug_prescreen = NULL;
-    debug->debug_meanshift = NULL;
-    debug->debug_patches = NULL;
-    debug->debug_robots = NULL;
-
-    debug->full_meanshift_debug = 1;
-}
 
 void amv_state_new(amv_state& state, amv_config& config) {
     vector<Point> poly;
@@ -123,9 +114,8 @@ amv_vision_data amv_find_teams(unsigned char* image, amv_state* state, amv_debug
     Image img_hsv(img.clone());//<1ms
     
     white_balance(&img, config);//6ms
-    if (debug->debug_balance) {
-    	debugWhite(img, config, debug);
-    }
+    debugWhite(img, config, debug);
+
     ((VisionState*) state->state)->mask.apply(img);//5ms
     hsvconverter.convert(img, img_hsv);//1ms
     PatchFinder area(state);
@@ -140,25 +130,17 @@ amv_vision_data amv_find_teams(unsigned char* image, amv_state* state, amv_debug
     precompute.yellow = &yellow;
     precompute.orange = &orange;
     area.precompute(precompute);//<1ms
-    if (debug->debug_prescreen) {
-        debugPrescreen(img, area, state, debug);
-    }
-
+    debugPrescreen(img, area, state, debug);
     area.getSets();//25ms
 
     blue.fillTeam(&robots.blue_team);
     yellow.fillTeam(&robots.yellow_team);
     orange.fillBall(&robots);
 
-    if (debug->debug_patches) {
-        debugPatches(img, area, config, debug);
-    }
-    if (debug->debug_robots) {
-        debugRobots(img, area, robots, config, debug);
-    }
-    if (debug->debug_meanshift) {
-        debugMeanshift(debug, img, config);
-    }
+    debugPatches(img, area, config, debug);
+    debugRobots(img, area, robots, config, debug);
+    debugMeanshift(debug, img, config);
+
 //*/
     robots.ball_pos.x = robots.ball_pos.y = 0;
 

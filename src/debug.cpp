@@ -6,6 +6,18 @@ using namespace cv;
 
 const double DEBUG_DIM = 0.5;
 
+void amv_debug_init(amv_debug_info* debug) {
+    debug->debug_balance = NULL;
+    debug->debug_prescreen = NULL;
+    debug->debug_meanshift = NULL;
+    debug->debug_patches = NULL;
+    debug->debug_robots = NULL;
+
+    debug->full_meanshift_debug = 1;
+    debug->linear_meanshift = 1;
+    debug->multiple_meanshift = 1;
+}
+
 static void copy_to(const Image& mat, unsigned char* buf, amv_config* config) {
     if (buf) {
         Image mat2(mat.clone());
@@ -29,6 +41,8 @@ void debugLine(amv_image_pos p, double angle, Image & img, int len)
 
 void debugWhite(cv::Mat_<cv::Vec3b> & img, amv_config *config, amv_debug_info* debug)
 {
+    if (!debug->debug_balance)
+        return;
     Image img_white(img.clone());
     for(int i = 0;i < config->white_points_len;i++) {
         amv_image_pos pos = config->white_points[i];
@@ -41,6 +55,8 @@ void debugWhite(cv::Mat_<cv::Vec3b> & img, amv_config *config, amv_debug_info* d
 
 void debugPrescreen(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, amv_state *state, amv_debug_info* debug)
 {
+    if (!debug->debug_prescreen)
+        return;
     Image img_prescreen(img.clone());
     img_prescreen *= DEBUG_DIM;
     for(int x = 0;x < img.size().width;x++)
@@ -59,6 +75,8 @@ void debugPrescreen(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, amv_state *st
 
 void debugPatches(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, amv_config *config, amv_debug_info* debug)
 {
+    if (!debug->debug_patches)
+        return;
     Image img_patches(img.clone());
     img_patches *= DEBUG_DIM;
     for(int x = 0;x < img.size().width;x++)
@@ -112,6 +130,8 @@ void debugTeam(Image& img, const amv_team_data& team) {
 
 void debugRobots(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, const amv_vision_data& robots, amv_config* config, amv_debug_info *debug)
 {
+    if (!debug->debug_robots)
+        return;
     Image img_robots(img.clone());
     img_robots *= DEBUG_DIM;
     for(int x = 0;x < img.size().width;x++)
@@ -133,8 +153,14 @@ void debugRobots(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, const amv_vision
 
 void debugMeanshift(amv_debug_info *debug, Image img, amv_config *config)
 {
+    if (!debug->debug_meanshift)
+        return;
     if(debug->full_meanshift_debug)
-        meanShiftFiltering(img, config->meanshift_radius, config->meanshift_threshold);
-
+        for (int i=0; i<debug->multiple_meanshift; i++) {
+            if (debug->linear_meanshift)
+                meanShiftFilteringProportional(img, config->meanshift_radius, config->meanshift_threshold);
+            else
+                meanShiftFiltering(img, config->meanshift_radius, config->meanshift_threshold);
+        }
     copy_to(img, debug->debug_meanshift, config);
 }

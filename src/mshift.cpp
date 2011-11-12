@@ -89,8 +89,7 @@ std::pair<cv::Point, cv::Vec3b> meanShiftStep(cv::Point p, cv::Vec3b color, cons
 void meanShiftPoint(Image& src0, int x, int y, double radius, double threshold)
 {
     pair<Point,Vec3b> val(Point(x, y), src0(y, x));
-    threshold*=(val.second[0]+val.second[1]+val.second[2]);
-    threshold/=256*3;
+
     // TODO: there can be faster stop criterion
     for(int i = 0;i < 3;i++)
         val = meanShiftStep(val.first, val.second, src0, radius, threshold);
@@ -98,9 +97,15 @@ void meanShiftPoint(Image& src0, int x, int y, double radius, double threshold)
     src0(y, x) = val.second;
 }
 
-void
-meanShiftFiltering( Image src0,
-                         double radius, double threshold)
+void meanShiftPointProportional(Image& src0, int x, int y, double radius, double threshold)
+{
+    Vec3b val(y, x);
+    threshold*=(val[0]+val[1]+val[2]);
+    threshold/=256*3;
+    meanShiftPoint(src0, x, y, radius, threshold);
+}
+
+void meanShiftFiltering( Image src0, double radius, double threshold)
 {
     //return meanShiftFilteringOriginal(src0, src0, sp0, sr, 0, termcrit);
     for (int y=0;y<src0.rows;y++)
@@ -108,7 +113,15 @@ meanShiftFiltering( Image src0,
             meanShiftPoint(src0, x, y, radius, threshold);
 }
 
+void meanShiftFilteringProportional( Image src0, double radius, double threshold)
+{
+    for (int y=0;y<src0.rows;y++)
+        for (int x=0;x<src0.cols;x++)
+            meanShiftPointProportional(src0, x, y, radius, threshold);
+}
 
+
+// the following comes from opencv (with slight modifications)
 /*M///////////////////////////////////////////////////////////////////////////////////////
 //
 //  IMPORTANT: READ BEFORE DOWNLOADING, COPYING, INSTALLING OR USING.
