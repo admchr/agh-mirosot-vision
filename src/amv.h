@@ -55,7 +55,9 @@ struct AMV_EXPORT amv_debug_info {
     unsigned char *debug_balance;
     unsigned char *debug_prescreen;
     unsigned char *debug_meanshift;
-    char full_meanshift_debug;
+    int full_meanshift_debug;
+    int linear_meanshift;
+    int multiple_meanshift;
     unsigned char *debug_patches;
     unsigned char *debug_robots;
 };
