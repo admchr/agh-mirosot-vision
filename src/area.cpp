@@ -7,8 +7,74 @@
 #include <opencv/cv.h>
 #include <queue>
 #include <utility>
+#include <set>
 
 using namespace cv;
+
+bool comparePoint(Point p, Point q) {
+    if (p.x != q.x)
+        return p.x < q.x;
+    return p.y < q.y;
+}
+
+#include <iostream>
+void Patch::getSecondaryPatches() {
+    std::set<Point, bool(*)(Point, Point)> visited(comparePoint);
+    Point p = getCenter();
+    double angle = getAngle();
+
+    double front_x = cos(angle);
+    double front_y = sin(angle);
+    angle-=M_PI/2;
+    double side_x = cos(angle);
+    double side_y = sin(angle);
+
+
+    for (double i=-9; i <= 9; i+=0.5)
+        for (double j=4; j <= 8;  j+=0.5) {
+            Point q(p.x + front_x*i + side_x*j, p.y + front_y*i + side_y*j);
+            if (visited.find(q) != visited.end())
+                continue;
+            visited.insert(q);
+
+            int min_index = 0;
+            int min_dist = 256;
+            for (int k=0; k<3; k++) {
+                int dist = hue_distance(type->map->img_hsv(q)[0], type->map->state->config->team_hue[k]);
+                if (dist < min_dist) {
+                    min_dist = dist;
+                    min_index = k;
+                }
+            }
+            type->map->img(q)[min_index]=255;
+
+        }
+
+}
+
+void fillTeam(vector<Patch*> team, amv_team_data* data) {
+    data->team_len = 0;
+    amv_robot_data* robot = data->team;
+    for (unsigned int i = 0; i<team.size(); i++) {
+        Patch* patch = team[i];
+        patch->getSecondaryPatches();
+        cv::Point p = patch->getRobotCenter();
+        robot->position.x = p.x;
+        robot->position.y = p.y;
+        robot->angle = patch->getAngle();
+        robot->certainty = patch->getRobotCertainty();
+        robot++;
+        data->team_len++;
+    }
+}
+
+void fillBall(Patch* ball, amv_vision_data* data) {
+    if (!ball) {
+        data->ball_pos.x = data->ball_pos.y = -1;
+    }
+    data->ball_pos.x = ball->getCenter().x;
+    data->ball_pos.y = ball->getCenter().y;
+}
 
 void PatchFinder::setImages(Image img, Image img_hsv) {
 	this->img = img;
@@ -100,10 +166,8 @@ Patch* PatchType::newPatch()
 	return patches.back();
 }
 
-void PatchType::fillTeam(amv_team_data* data) {
-    data->team_len = 0;
-    amv_robot_data* robot = data->team;
-
+vector<Patch*> PatchType::getTeam() {
+    vector<Patch*> out;
     std::priority_queue<std::pair<double, Patch*> > team;
 
     for (unsigned int i=0; i<patches.size(); i++) {
@@ -118,27 +182,18 @@ void PatchType::fillTeam(amv_team_data* data) {
 
     while (!team.empty()) {
         Patch* patch = team.top().second;
-        double certainty = -team.top().first;
         team.pop();
 
         patch->isRobot = true;
-
-        cv::Point p = patch->getRobotCenter();
-        robot->position.x = p.x;
-        robot->position.y = p.y;
-        robot->angle = patch->getAngle();
-        robot->certainty = certainty;
-        robot++;
-        data->team_len++;
+        out.push_back(patch);
     }
+    return out;
 }
 
-void PatchType::fillBall(amv_vision_data* data) {
+Patch* PatchType::getBall() {
     if (patches.empty()) {
-        data->ball_pos.x = data->ball_pos.y = -1;
-        return;
+        return 0;
     }
-
 
     Patch* maximal = patches[0];
     for (unsigned int i=0; i<patches.size(); i++) {
@@ -152,8 +207,7 @@ void PatchType::fillBall(amv_vision_data* data) {
     }
     maximal->isBall = true;
 
-    data->ball_pos.x = maximal->getCenter().x;
-    data->ball_pos.y = maximal->getCenter().y;
+    return maximal;
 }
 
 int PatchType::getMinPatchSize() {

@@ -22,8 +22,10 @@ for fname in files:
     img = cv.LoadImageM(fname)
     img_med = cv.LoadImageM(fname)
     cv.Smooth(img_med, img_med, smoothtype=cv.CV_MEDIAN, param1=med, param2=med)
-    cv.SaveImage('out_med/'+os.path.basename(fname), img_med)
-    
     cv.AddWeighted(img, 1, img_med, -1, 128,img)
-    #cv.Sub(img, img_med, img)
-    cv.SaveImage('out_sub/'+os.path.basename(fname), img)
+    
+    fname_noext = os.path.splitext(os.path.basename(fname))[0]
+    
+    cv.SaveImage('out_med/%s.png'%fname_noext, img_med)
+    cv.SaveImage('out_sub/%s.png'%fname_noext, img)
+

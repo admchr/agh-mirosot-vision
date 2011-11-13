@@ -53,6 +53,9 @@ void amv_config_init(amv_config* config) {
     config->orange.hue_max = 20;
     config->orange.captures_white = 0;
 
+    config->team_hue[0] = 130;
+    config->team_hue[1] = 60;
+    config->team_hue[2] = 0;
 
     config->minimum_saturation = 60;
     config->white_cutoff = 110;
@@ -133,9 +136,16 @@ amv_vision_data amv_find_teams(unsigned char* image, amv_state* state, amv_debug
     debugPrescreen(img, area, state, debug);
     area.getSets();//25ms
 
-    blue.fillTeam(&robots.blue_team);
-    yellow.fillTeam(&robots.yellow_team);
-    orange.fillBall(&robots);
+    vector<Patch*> blueTeam, yellowTeam;
+    blueTeam = blue.getTeam();
+    yellowTeam = yellow.getTeam();
+    Patch* ball = orange.getBall();
+
+
+
+    fillTeam(blueTeam, &robots.blue_team);
+    fillTeam(yellowTeam, &robots.yellow_team);
+    fillBall(ball, &robots);
 
     debugPatches(img, area, config, debug);
     debugRobots(img, area, robots, config, debug);
