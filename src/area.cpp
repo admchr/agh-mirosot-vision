@@ -16,7 +16,8 @@ bool comparePoint(Point p, Point q) {
         return p.x < q.x;
     return p.y < q.y;
 }
-
+// TODO removeme
+#include "debug.hpp"
 #include <iostream>
 void Patch::getSecondaryPatches() {
     std::set<Point, bool(*)(Point, Point)> visited(comparePoint);
@@ -46,7 +47,12 @@ void Patch::getSecondaryPatches() {
                     min_index = k;
                 }
             }
-            type->map->img(q)[min_index]=255;
+            if (min_index==0)
+                paintPoint(type->map->img, q, Vec3b(255, 0, 0));
+            if (min_index==1)
+                paintPoint(type->map->img, q, Vec3b(0, 255, 0));
+            if (min_index==2)
+                paintPoint(type->map->img, q, Vec3b(0, 0, 255));
 
         }
 

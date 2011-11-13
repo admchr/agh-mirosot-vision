@@ -27,6 +27,13 @@ static void copy_to(const Image& mat, unsigned char* buf, amv_config* config) {
     }
 }
 
+void paintPoint(Image img, Point p, Vec3b color) {
+    if(p.x < 0 || p.y < 0 || p.x >= img.cols || p.y >= img.rows)
+        return;
+
+    img(p) = color;
+}
+
 void debugLine(amv_image_pos p, double angle, Image & img, int len)
 {
     for(int i = 0;i < len;i++){
