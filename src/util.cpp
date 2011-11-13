@@ -2,6 +2,7 @@
 
 #include <cmath>
 
+
 double logistic_cdf(double x) {
     return 1/(1+exp(-x));
 }
@@ -15,4 +16,9 @@ double positive_interval_certainty(double min, double max, double actual) {
 }
 double certainty_or(double p, double q) {
     return 1 - (1-p)*(1-q);
+}
+
+int hue_distance(int a, int b) {
+    int res = abs(a - b);
+    return std::min(res, 180 - res);
 }

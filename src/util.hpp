@@ -19,4 +19,7 @@ inline static bool is_robot(amv_config* config, amv_color_info* team, cv::Vec3b 
 double interval_certainty(double min, double max, double actual);
 double positive_interval_certainty(double min, double max, double actual);
 double certainty_or(double p, double q);
+
+int hue_distance(int a, int b);
+
 #endif

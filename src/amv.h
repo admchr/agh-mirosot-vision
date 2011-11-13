@@ -27,7 +27,7 @@ struct AMV_EXPORT amv_color_info {
 
 struct AMV_EXPORT amv_config {
     int height, width;
-    
+
     struct amv_image_pos* white_points;
     int white_points_len;
     
@@ -46,6 +46,7 @@ struct AMV_EXPORT amv_config {
     struct amv_color_info blue;
     struct amv_color_info yellow;
     struct amv_color_info orange;
+    int team_hue[3];
     int minimum_saturation;
     int white_cutoff;
     char linearize;

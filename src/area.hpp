@@ -10,6 +10,10 @@
 #include <vector>
 
 class Patch;
+
+void fillTeam(std::vector<Patch*> team, amv_team_data* data);
+void fillBall(Patch* ball, amv_vision_data* data);
+
 class PatchType;
 
 
@@ -69,8 +73,8 @@ public:
 	std::vector<Patch*> patches;
 	Patch* newPatch();
 
-	void fillTeam(amv_team_data* data);
-	void fillBall(amv_vision_data* data);
+    std::vector<Patch*> getTeam();
+    Patch* getBall();
 
 	int getMinPatchSize();
     int getMaxPatchSize();
@@ -98,6 +102,7 @@ public:
     double getRobotCertainty();
     double getBallCertainty();
     cv::Point getRobotCenter();
+    void getSecondaryPatches();
     cv::Point getCenter();
 	double getAngle();
 	cv::Rect getBoundingBox();
