@@ -5,6 +5,8 @@
 #include "defs.hpp"
 #include "area.hpp"
 
+void paintPoint(Image img, cv::Point p, cv::Vec3b color);
+
 void debugLine(amv_image_pos p, double angle, Image & img, int len);
 void debugWhite(cv::Mat_<cv::Vec3b> & img, amv_config *config, amv_debug_info* debug);
 void debugPrescreen(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, amv_state *state, amv_debug_info* debug);
