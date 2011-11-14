@@ -77,6 +77,7 @@ void fillTeam(vector<Patch*> team, amv_team_data* data) {
 void fillBall(Patch* ball, amv_vision_data* data) {
     if (!ball) {
         data->ball_pos.x = data->ball_pos.y = -1;
+        return;
     }
     data->ball_pos.x = ball->getCenter().x;
     data->ball_pos.y = ball->getCenter().y;

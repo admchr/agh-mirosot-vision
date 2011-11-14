@@ -32,9 +32,9 @@ test_api: test_api.o $(OBJS) $(API_HEADERS)
 	gcc test_api.o $(OBJS) -o $@ $(LIBS)
 
 $(OBJS): $(IMPL_HEADERS)
-driver.o: common.hpp
-perf.o: common.hpp
-interactive.o: common.hpp
+driver.o: common.hpp $(API_HEADERS)
+perf.o: common.hpp $(API_HEADERS)
+interactive.o: common.hpp $(API_HEADERS)
 
 test_impl.o: test_impl.cpp $(API_HEADERS)
 test_array2d.o: test_array2d.cpp array2d.hpp
