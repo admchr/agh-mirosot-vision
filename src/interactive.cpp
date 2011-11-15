@@ -58,6 +58,9 @@ int main(int argc, char** argv)
     cv::createTrackbar( "fms", trackbar_window2, &debug.full_meanshift_debug, 1, 0, 0 );
     cv::createTrackbar( "lms", trackbar_window2, &debug.linear_meanshift, 1, 0, 0 );
     cv::createTrackbar( "mms", trackbar_window2, &debug.multiple_meanshift, 4, 0, 0 );
+    cv::createTrackbar( "bh", trackbar_window2, config.team_hue, 180, 0, 0 );
+    cv::createTrackbar( "gh", trackbar_window2, config.team_hue+1, 180, 0, 0 );
+    cv::createTrackbar( "rh", trackbar_window2, config.team_hue+2, 180, 0, 0 );
 
     while(true) {
         amv_state state;

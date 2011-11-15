@@ -102,7 +102,7 @@ public:
     double getRobotCertainty();
     double getBallCertainty();
     cv::Point getRobotCenter();
-    void getSecondaryPatches();
+    void getSecondaryPatches(char* out);
     cv::Point getCenter();
 	double getAngle();
 	cv::Rect getBoundingBox();

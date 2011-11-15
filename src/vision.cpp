@@ -54,8 +54,8 @@ void amv_config_init(amv_config* config) {
     config->orange.captures_white = 0;
 
     config->team_hue[0] = 130;
-    config->team_hue[1] = 60;
-    config->team_hue[2] = 0;
+    config->team_hue[1] = 60+30+10;
+    config->team_hue[2] = 0+180-10;
 
     config->minimum_saturation = 60;
     config->white_cutoff = 110;
