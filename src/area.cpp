@@ -19,7 +19,7 @@ bool comparePoint(Point p, Point q) {
 // TODO removeme
 #include "debug.hpp"
 #include <iostream>
-void Patch::getSecondaryPatches() {
+void Patch::getSecondaryPatches(char* out) {
     std::set<Point, bool(*)(Point, Point)> visited(comparePoint);
     Point p = getCenter();
     double angle = getAngle();
@@ -31,6 +31,7 @@ void Patch::getSecondaryPatches() {
     double side_y = sin(angle);
 
 
+    int counts[3]={0,0,0};
     for (double i=-9; i <= 9; i+=0.5)
         for (double j=4; j <= 8;  j+=0.5) {
             Point q(p.x + front_x*i + side_x*j, p.y + front_y*i + side_y*j);
@@ -47,6 +48,8 @@ void Patch::getSecondaryPatches() {
                     min_index = k;
                 }
             }
+            counts[min_index]++;
+
             if (min_index==0)
                 paintPoint(type->map->img, q, Vec3b(255, 0, 0));
             if (min_index==1)
@@ -55,7 +58,20 @@ void Patch::getSecondaryPatches() {
                 paintPoint(type->map->img, q, Vec3b(0, 0, 255));
 
         }
+    int min_count = min(counts[0], min(counts[1], counts[2]));
 
+    if (min_count == counts[0]) {
+        out[0] = 1;
+        out[1] = 2;
+    }
+    if (min_count == counts[1]) {
+        out[0] = 0;
+        out[1] = 2;
+    }
+    if (min_count == counts[2]) {
+        out[0] = 0;
+        out[1] = 1;
+    }
 }
 
 void fillTeam(vector<Patch*> team, amv_team_data* data) {
@@ -63,7 +79,7 @@ void fillTeam(vector<Patch*> team, amv_team_data* data) {
     amv_robot_data* robot = data->team;
     for (unsigned int i = 0; i<team.size(); i++) {
         Patch* patch = team[i];
-        patch->getSecondaryPatches();
+        patch->getSecondaryPatches(robot->color);
         cv::Point p = patch->getRobotCenter();
         robot->position.x = p.x;
         robot->position.y = p.y;

@@ -65,6 +65,7 @@ struct AMV_EXPORT amv_debug_info {
 
 struct AMV_EXPORT amv_robot_data {
     struct amv_image_pos position;
+    char color[2];
     double angle;
     double certainty;
 };
