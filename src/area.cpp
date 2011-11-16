@@ -16,10 +16,8 @@ bool comparePoint(Point p, Point q) {
         return p.x < q.x;
     return p.y < q.y;
 }
-// TODO removeme
-#include "debug.hpp"
-#include <iostream>
-void Patch::getSecondaryPatches(char* out) {
+
+void Patch::getSecondaryPatches(int* out) {
     std::set<Point, bool(*)(Point, Point)> visited(comparePoint);
     Point p = getCenter();
     double angle = getAngle();
@@ -30,8 +28,7 @@ void Patch::getSecondaryPatches(char* out) {
     double side_x = cos(angle);
     double side_y = sin(angle);
 
-
-    int counts[3]={0,0,0};
+    PatchMoments colors[3];
     for (double i=-9; i <= 9; i+=0.5)
         for (double j=4; j <= 8;  j+=0.5) {
             Point q(p.x + front_x*i + side_x*j, p.y + front_y*i + side_y*j);
@@ -48,29 +45,41 @@ void Patch::getSecondaryPatches(char* out) {
                     min_index = k;
                 }
             }
-            counts[min_index]++;
-
+            colors[min_index].add(q);
+            /*
             if (min_index==0)
                 paintPoint(type->map->img, q, Vec3b(255, 0, 0));
             if (min_index==1)
                 paintPoint(type->map->img, q, Vec3b(0, 255, 0));
             if (min_index==2)
                 paintPoint(type->map->img, q, Vec3b(0, 0, 255));
+                */
 
         }
-    int min_count = min(counts[0], min(counts[1], counts[2]));
+    int min_count = min(colors[0].getCount(), min(colors[1].getCount(), colors[2].getCount()));
 
-    if (min_count == counts[0]) {
+    if (min_count == colors[0].getCount()) {
         out[0] = 1;
         out[1] = 2;
     }
-    if (min_count == counts[1]) {
+    if (min_count == colors[1].getCount()) {
         out[0] = 0;
         out[1] = 2;
     }
-    if (min_count == counts[2]) {
+    if (min_count == colors[2].getCount()) {
         out[0] = 0;
         out[1] = 1;
+    }
+
+    Point back_patch(colors[out[0]].getMean());
+    Point front_patch(colors[out[1]].getMean());
+
+    int secondary_x = front_patch.x - back_patch.x;
+    int secondary_y = front_patch.y - back_patch.y;
+
+    // inner product
+    if (secondary_x*front_x + secondary_y*front_y < 0) {
+        std::swap(out[0], out[1]);
     }
 }
 
@@ -83,7 +92,7 @@ void fillTeam(vector<Patch*> team, amv_team_data* data) {
         cv::Point p = patch->getRobotCenter();
         robot->position.x = p.x;
         robot->position.y = p.y;
-        robot->angle = patch->getAngle();
+        robot->angle = patch->getRobotAngle();
         robot->certainty = patch->getRobotCertainty();
         robot++;
         data->team_len++;
@@ -341,9 +350,12 @@ Point Patch::getRobotCenter() {
     return p;
 }
 
+double Patch::getRobotAngle() {
+    return getAngle()+M_PI*0.25;
+}
+
 double Patch::getAngle() {
-    return moments.getAngle();
-    double angle = moments.getAngle()+M_PI*0.25;
+    double angle = moments.getAngle();
 
 	double a = moments.getRegressionSlope();
 	double b = moments.getRegressionPosition();
