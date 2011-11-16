@@ -34,7 +34,7 @@ void paintPoint(Image img, Point p, Vec3b color) {
     img(p) = color;
 }
 
-void debugLine(amv_image_pos p, double angle, Image & img, int len)
+void debugLine(amv_image_pos p, double angle, Image & img, int len, Vec3b color)
 {
     for(int i = 0;i < len;i++){
         int x = p.x + cos(angle) * i;
@@ -42,7 +42,7 @@ void debugLine(amv_image_pos p, double angle, Image & img, int len)
         if(x < 0 || y < 0 || x >= img.cols || y >= img.rows)
             break;
 
-        img(y, x) = Vec3b(0, 0, 255);
+        img(y, x) = color;
     }
 }
 
@@ -55,7 +55,7 @@ void debugWhite(cv::Mat_<cv::Vec3b> & img, amv_config *config, amv_debug_info* d
         amv_image_pos pos = config->white_points[i];
         img_white(pos.y, pos.x) = cv::Vec3b(0, 0, 255);
         for (int i=0; i<4; i++)
-            debugLine(pos, i*M_PI/2, img_white, 5);
+            debugLine(pos, i*M_PI/2, img_white, 5, Vec3b(0, 0, 255));
     }
     copy_to(img_white, debug->debug_balance, config);
 }
@@ -102,6 +102,14 @@ void debugPatches(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, amv_config *con
 
 void debugTeam(Image& img, const amv_team_data& team) {
     const int SIDE = 9;
+
+    Vec3b primary(255, 255, 255);
+    Vec3b instanceColors[3];
+    instanceColors[2] = Vec3b(0, 0, 255);
+    instanceColors[1] = Vec3b(0, 255, 0);
+    instanceColors[0] = Vec3b(255, 0, 0);
+
+
     for (int i=0; i<team.team_len; i++) {
         amv_robot_data robot = team.team[i];
         amv_image_pos p = robot.position;
@@ -110,29 +118,29 @@ void debugTeam(Image& img, const amv_team_data& team) {
         double front_x = cos(angle)*SIDE;
         double front_y = sin(angle)*SIDE;
 
-        double side_x = cos(angle+M_PI*0.5)*SIDE;
-        double side_y = sin(angle+M_PI*0.5)*SIDE;
-        debugLine(p, angle, img, 20);
+        double right_side_x = cos(angle+M_PI*0.5)*SIDE;
+        double right_side_y = sin(angle+M_PI*0.5)*SIDE;
+        debugLine(p, angle, img, 20, primary);
 
-        tmp.x=p.x+front_x+side_x/2;
-        tmp.y=p.y+front_y+side_y/2;
-        debugLine(tmp, angle+M_PI, img, 2*SIDE);
-        tmp.x=p.x+front_x+side_x;
-        tmp.y=p.y+front_y+side_y;
-        debugLine(tmp, angle+M_PI, img, 2*SIDE);
-/*        tmp.x=p.x+front_x-side_x;
-        tmp.y=p.y+front_y-side_y;
-        debugLine(tmp, angle+M_PI/2, img, 2*SIDE);
-*/      tmp.x=p.x-front_x-side_x/2;
-        tmp.y=p.y-front_y-side_y/2;
-        debugLine(tmp, angle, img, 2*SIDE);
-        tmp.x=p.x-front_x-side_x;
-        tmp.y=p.y-front_y-side_y;
-        debugLine(tmp, angle, img, 2*SIDE);
-/*        tmp.x=p.x-front_x+side_x;
-        tmp.y=p.y-front_y+side_y;
-        debugLine(tmp, angle+M_PI*3/2, img, 2*SIDE);
-*/    }
+        //right
+        tmp.x=p.x+front_x+right_side_x;
+        tmp.y=p.y+front_y+right_side_y;
+        debugLine(tmp, angle+M_PI, img, 2*SIDE, primary);
+        // front
+        tmp.x=p.x+front_x-right_side_x;
+        tmp.y=p.y+front_y-right_side_y;
+        debugLine(tmp, angle+M_PI/2, img, 2*SIDE, primary);
+
+        // left
+        tmp.x=p.x-front_x-right_side_x;
+        tmp.y=p.y-front_y-right_side_y;
+        debugLine(tmp, angle, img, 2*SIDE, instanceColors[robot.color[1]]);
+
+        // back
+        tmp.x=p.x-front_x+right_side_x;
+        tmp.y=p.y-front_y+right_side_y;
+        debugLine(tmp, angle+M_PI*3/2, img, 2*SIDE, instanceColors[robot.color[0]]);
+    }
 }
 
 void debugRobots(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, const amv_vision_data& robots, amv_config* config, amv_debug_info *debug)
@@ -153,7 +161,7 @@ void debugRobots(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, const amv_vision
     debugTeam(img_robots, robots.yellow_team);
 
     for (int i=0; i<4; i++)
-        debugLine(robots.ball_pos, M_PI*0.5*i, img_robots, 10);
+        debugLine(robots.ball_pos, M_PI*0.5*i, img_robots, 10, Vec3b(0, 0, 255));
 
     copy_to(img_robots, debug->debug_robots, config);
 }
