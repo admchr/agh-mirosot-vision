@@ -3,6 +3,7 @@
 #include "visionstate.hpp"
 #include "mshift.hpp"
 #include "util.hpp"
+#include "debug.hpp"
 
 #include <opencv/cv.h>
 #include <queue>
@@ -17,7 +18,7 @@ bool comparePoint(Point p, Point q) {
     return p.y < q.y;
 }
 
-void Patch::getSecondaryPatches(int* out) {
+void Patch::getSecondaryPatches(int* out, Image* debug) {
     std::set<Point, bool(*)(Point, Point)> visited(comparePoint);
     Point p = getCenter();
     double angle = getAngle();
@@ -29,8 +30,8 @@ void Patch::getSecondaryPatches(int* out) {
     double side_y = sin(angle);
 
     PatchMoments colors[3];
-    for (double i=-9; i <= 9; i+=0.5)
-        for (double j=4; j <= 8;  j+=0.5) {
+    for (double i=-8; i <= 8; i+=0.5)
+        for (double j=5; j <= 8;  j+=0.5) {
             Point q(p.x + front_x*i + side_x*j, p.y + front_y*i + side_y*j);
             if (visited.find(q) != visited.end())
                 continue;
@@ -46,14 +47,14 @@ void Patch::getSecondaryPatches(int* out) {
                 }
             }
             colors[min_index].add(q);
-            /*
-            if (min_index==0)
-                paintPoint(type->map->img, q, Vec3b(255, 0, 0));
-            if (min_index==1)
-                paintPoint(type->map->img, q, Vec3b(0, 255, 0));
-            if (min_index==2)
-                paintPoint(type->map->img, q, Vec3b(0, 0, 255));
-                */
+            if (debug) {
+                if (min_index==0)
+                    paintPoint(*debug, q, Vec3b(255, 0, 0));
+                if (min_index==1)
+                    paintPoint(*debug, q, Vec3b(0, 255, 0));
+                if (min_index==2)
+                    paintPoint(*debug, q, Vec3b(0, 0, 255));
+            }
 
         }
     int min_count = min(colors[0].getCount(), min(colors[1].getCount(), colors[2].getCount()));
@@ -242,6 +243,13 @@ Patch* PatchType::getBall() {
     return maximal;
 }
 
+int PatchType::getPatchSize() {
+    double min_size = map->state->config->px_per_cm * 7.5;
+    int area = min_size*min_size * 0.5;
+
+    return area;
+}
+
 int PatchType::getMinPatchSize() {
     double min_size = map->state->config->px_per_cm * 3.5;
     int min_area = min_size*min_size * 0.75;
@@ -294,8 +302,10 @@ Vec3b Patch::getMeanColor() {
 }
 
 double Patch::getRobotCertainty() {
+    if (abs(getBoundingBox().height - getBoundingBox().width) > 20)
+        return 0;
     double result = 1;
-    result *= positive_interval_certainty(type->getMinPatchSize(), type->getMaxPatchSize(), moments.getCount());
+    result *= positive_point_certainty(type->getPatchSize(), moments.getCount());
 
     Vec3b hsv = hsvconverter.get(getMeanColor());
 
@@ -304,11 +314,11 @@ double Patch::getRobotCertainty() {
 
     double white_result;
     if (type->config->white_cutoff)
-        white_result = interval_certainty(type->config->white_cutoff, 2*256+type->config->white_cutoff, hsv[2]); // TODO: provisional
+        white_result = interval_certainty(type->config->white_cutoff, 2*256-type->config->white_cutoff, hsv[2]); // TODO: provisional
     else
         white_result = 0;
 
-    result *= certainty_or(color_result, white_result*0.5);
+    result *= certainty_or(color_result, white_result);
 
     return result;
 }

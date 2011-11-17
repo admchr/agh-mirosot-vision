@@ -34,7 +34,7 @@ void amv_config_init(amv_config* config) {
     config->meanshift_radius = 3;
     config->meanshift_threshold = 36;//=0
 
-    config->same_color_distance = 20;
+    config->same_color_distance = 15;
 
     config->white_points = NULL;
     config->white_points_len = 0;
@@ -117,7 +117,7 @@ amv_vision_data amv_find_teams(unsigned char* image, amv_state* state, amv_debug
     Image img_hsv(img.clone());//<1ms
     
     white_balance(&img, config);//6ms
-    debugWhite(img, config, debug);
+    debugImageWhite(img, config, debug);
 
     ((VisionState*) state->state)->mask.apply(img);//5ms
     hsvconverter.convert(img, img_hsv);//1ms
@@ -133,7 +133,7 @@ amv_vision_data amv_find_teams(unsigned char* image, amv_state* state, amv_debug
     precompute.yellow = &yellow;
     precompute.orange = &orange;
     area.precompute(precompute);//<1ms
-    debugPrescreen(img, area, state, debug);
+    debugImagePrescreen(img, area, state, debug);
     area.getSets();//25ms
 
     vector<Patch*> blueTeam, yellowTeam;
@@ -147,9 +147,9 @@ amv_vision_data amv_find_teams(unsigned char* image, amv_state* state, amv_debug
     fillTeam(yellowTeam, &robots.yellow_team);
     fillBall(ball, &robots);
 
-    debugPatches(img, area, config, debug);
-    debugRobots(img, area, robots, config, debug);
-    debugMeanshift(debug, img, config);
+    debugImagePatches(img, area, config, debug);
+    debugImageRobots(img, area, robots, config, debug, blueTeam, yellowTeam);
+    debugImageMeanshift(debug, img, config);
 
 //*/
     robots.ball_pos.x = robots.ball_pos.y = 0;
