@@ -164,8 +164,8 @@ void PatchFinder::getSets() {
 
                         if (area_map.get(nx, ny))
                             continue;
-                        preparePixel(np);
                         if (!pt->add(np, p)) {
+                            preparePixel(np);
                             if (!pt->add(np, p))
                                 continue;
                         }
