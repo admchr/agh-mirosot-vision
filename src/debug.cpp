@@ -46,7 +46,7 @@ void debugLine(amv_image_pos p, double angle, Image & img, int len, Vec3b color)
     }
 }
 
-void debugWhite(cv::Mat_<cv::Vec3b> & img, amv_config *config, amv_debug_info* debug)
+void debugImageWhite(cv::Mat_<cv::Vec3b> & img, amv_config *config, amv_debug_info* debug)
 {
     if (!debug->debug_balance)
         return;
@@ -60,7 +60,7 @@ void debugWhite(cv::Mat_<cv::Vec3b> & img, amv_config *config, amv_debug_info* d
     copy_to(img_white, debug->debug_balance, config);
 }
 
-void debugPrescreen(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, amv_state *state, amv_debug_info* debug)
+void debugImagePrescreen(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, amv_state *state, amv_debug_info* debug)
 {
     if (!debug->debug_prescreen)
         return;
@@ -80,7 +80,7 @@ void debugPrescreen(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, amv_state *st
     copy_to(img_prescreen, debug->debug_prescreen, state->config);
 }
 
-void debugPatches(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, amv_config *config, amv_debug_info* debug)
+void debugImagePatches(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, amv_config *config, amv_debug_info* debug)
 {
     if (!debug->debug_patches)
         return;
@@ -143,11 +143,22 @@ void debugTeam(Image& img, const amv_team_data& team) {
     }
 }
 
-void debugRobots(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, const amv_vision_data& robots, amv_config* config, amv_debug_info *debug)
+void debugSecondaryPatches(Image& img, vector<Patch*> patches) {
+    int out[2];
+    for (unsigned int i=0; i<patches.size(); i++) {
+        patches[i]->getSecondaryPatches(out, &img);
+    }
+}
+
+void debugImageRobots(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, const amv_vision_data& robots, amv_config* config, amv_debug_info *debug, std::vector<Patch*> blue, std::vector<Patch*> yellow)
 {
     if (!debug->debug_robots)
         return;
     Image img_robots(img.clone());
+
+    debugSecondaryPatches(img_robots, blue);
+    debugSecondaryPatches(img_robots, yellow);
+
     img_robots *= DEBUG_DIM;
     for(int x = 0;x < img.size().width;x++)
         for(int y = 0;y < img.size().height;y++){
@@ -166,7 +177,7 @@ void debugRobots(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, const amv_vision
     copy_to(img_robots, debug->debug_robots, config);
 }
 
-void debugMeanshift(amv_debug_info *debug, Image img, amv_config *config)
+void debugImageMeanshift(amv_debug_info *debug, Image img, amv_config *config)
 {
     if (!debug->debug_meanshift)
         return;

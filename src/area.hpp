@@ -76,6 +76,7 @@ public:
     std::vector<Patch*> getTeam();
     Patch* getBall();
 
+    int getPatchSize();
 	int getMinPatchSize();
     int getMaxPatchSize();
     int getMaxPatchWidth();
@@ -103,7 +104,7 @@ public:
     double getBallCertainty();
     cv::Point getRobotCenter();
     double getRobotAngle();
-    void getSecondaryPatches(int* out);
+    void getSecondaryPatches(int* out, Image* debug=0);
     cv::Point getCenter();
 	double getAngle();
 	cv::Rect getBoundingBox();
