@@ -33,6 +33,9 @@ void Patch::getSecondaryPatches(int* out, Image* debug) {
     for (double i=-8; i <= 8; i+=0.5)
         for (double j=5; j <= 8;  j+=0.5) {
             Point q(p.x + front_x*i + side_x*j, p.y + front_y*i + side_y*j);
+            if (q.x<0 || q.y <0 || q.x >= type->map->img.cols || q.y >= type->map->img.rows)
+                continue;
+
             if (visited.find(q) != visited.end())
                 continue;
             visited.insert(q);
