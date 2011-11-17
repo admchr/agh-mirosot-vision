@@ -35,7 +35,6 @@ struct AMV_EXPORT amv_config {
     int mask_points_len;
 
     double px_per_cm;
-    double robot_size;
     int team_size;
     
     int meanshift_radius;
