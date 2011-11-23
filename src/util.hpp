@@ -4,15 +4,15 @@
 #include <opencv/cv.h>
 #include "amv.h"
 
-inline static bool is_robot(amv_config* config, amv_color_info* team, cv::Vec3b c){
+inline static bool is_patch(amv_config* config, amv_color_info* color, cv::Vec3b hsv){
     return
-            (c[2] > config->black_cutoff &&
-            c[0] > team->hue_min &&
-            c[0] < team->hue_max &&
-            c[1] > config->minimum_saturation) ||
+            (hsv[2] > config->black_cutoff &&
+            hsv[0] > color->hue_min &&
+            hsv[0] < color->hue_max &&
+            hsv[1] > config->minimum_saturation) ||
             (
-                c[2] > config->white_cutoff &&
-                team->captures_white
+                hsv[2] > config->white_cutoff &&
+                color->captures_white
             );
 }
 
@@ -23,5 +23,6 @@ double positive_interval_certainty(double min, double max, double actual);
 double certainty_or(double p, double q);
 
 int hue_distance(int a, int b);
+bool in_hue(amv_color_info* color, int hue);
 
 #endif

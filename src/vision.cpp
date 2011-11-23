@@ -33,7 +33,7 @@ void amv_config_init(amv_config* config) {
     config->meanshift_radius = 3;
     config->meanshift_threshold = 36;//=0
 
-    config->same_color_distance = 15;
+    config->same_color_distance = 250;
 
     config->white_points = NULL;
     config->white_points_len = 0;
@@ -41,25 +41,31 @@ void amv_config_init(amv_config* config) {
     config->mask_points = NULL;
     config->mask_points_len = 0;
 
-    config->blue.hue_min = 85;
-    config->blue.hue_max = 110;
-    config->blue.captures_white = 0;
-    config->yellow.hue_min = 20;
-    config->yellow.hue_max = 40;
-    config->yellow.captures_white = 1;
+    config->blue.color.hue_min = 85;
+    config->blue.color.hue_max = 110;
+    config->blue.color.captures_white = 0;
+    config->yellow.color.hue_min = 20;
+    config->yellow.color.hue_max = 40;
+    config->yellow.color.captures_white = 1;
     config->orange.hue_min = 0;
     config->orange.hue_max = 20;
     config->orange.captures_white = 0;
 
-    config->team_hue[0] = 130;
-    config->team_hue[1] = 60+30+10;
-    config->team_hue[2] = 0+180-10;
-
+    config->secondary_patches[0].hue_min = 150;
+    config->secondary_patches[0].hue_max = 45;
+    config->secondary_patches[0].captures_white = 0;
+    config->secondary_patches[1].hue_min = 45;
+    config->secondary_patches[1].hue_max = 115;
+    config->secondary_patches[1].captures_white = 0;
+    config->secondary_patches[2].hue_min = 115;
+    config->secondary_patches[2].hue_max = 150;
+    config->secondary_patches[2].captures_white = 0;
     config->minimum_saturation = 60;
     config->white_cutoff = 125;
     config->black_cutoff = 45;
 
-    config->team_size = 5;
+    config->yellow.team_size = 5;
+    config->blue.team_size = 5;
 
     config->linearize = 0;
 }
@@ -89,11 +95,11 @@ struct Precompute {
     PatchType* orange;
     amv_config* config;
     PatchType* operator()(Vec3b c){
-        if(is_robot(config, &config->blue, c))
+        if(is_patch(config, &config->blue.color, c))
             return blue;
-        if(is_robot(config, &config->yellow, c))
+        if(is_patch(config, &config->yellow.color, c))
             return yellow;
-        if(is_robot(config, &config->orange, c))
+        if(is_patch(config, &config->orange, c))
             return orange;
         return 0;
     }
@@ -121,8 +127,8 @@ amv_vision_data amv_find_teams(unsigned char* image, amv_state* state, amv_debug
     PatchFinder area(state);
 
     area.setImages(img, img_hsv);
-    PatchType blue(&area, config->blue, Vec3b(255, 0, 0), config);
-    PatchType yellow(&area, config->yellow, Vec3b(0, 255, 255), config);
+    PatchType blue(&area, config->blue.color, Vec3b(255, 0, 0), config);
+    PatchType yellow(&area, config->yellow.color, Vec3b(0, 255, 255), config);
     PatchType orange(&area, config->orange, Vec3b(0, 128, 255), config);
     Precompute precompute;
     precompute.config = config;
@@ -134,10 +140,9 @@ amv_vision_data amv_find_teams(unsigned char* image, amv_state* state, amv_debug
     area.getSets();//25ms
 
     vector<Patch*> blueTeam, yellowTeam;
-    blueTeam = blue.getTeam();
-    yellowTeam = yellow.getTeam();
+    blueTeam = blue.getTeam(config->blue.team_size);
+    yellowTeam = yellow.getTeam(config->yellow.team_size);
     Patch* ball = orange.getBall();
-
 
 
     fillTeam(blueTeam, &robots.blue_team);

@@ -32,3 +32,9 @@ int hue_distance(int a, int b) {
     int res = abs(a - b);
     return std::min(res, 180 - res);
 }
+
+bool in_hue(amv_color_info* color, int hue) {
+    if (color->hue_min <= color->hue_max)
+        return color->hue_min < hue && hue < color->hue_max;
+    return color->hue_min < hue || hue < color->hue_max;
+}
