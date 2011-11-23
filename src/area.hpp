@@ -73,7 +73,7 @@ public:
 	std::vector<Patch*> patches;
 	Patch* newPatch();
 
-    std::vector<Patch*> getTeam();
+    std::vector<Patch*> getTeam(int size);
     Patch* getBall();
 
     int getPatchSize();

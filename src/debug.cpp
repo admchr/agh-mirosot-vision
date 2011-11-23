@@ -47,7 +47,7 @@ void debugLine(amv_image_pos p, double angle, Image & img, int len, Vec3b color)
     }
 }
 
-void debugImageWhite(cv::Mat_<cv::Vec3b> & img, amv_config *config, amv_debug_info* debug)
+void debugImageWhite(Image & img, amv_config *config, amv_debug_info* debug)
 {
     if (!debug->debug_balance)
         return;
@@ -61,7 +61,7 @@ void debugImageWhite(cv::Mat_<cv::Vec3b> & img, amv_config *config, amv_debug_in
     copy_to(img_white, debug->debug_balance, config);
 }
 
-void debugImagePrescreen(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, amv_state *state, amv_debug_info* debug)
+void debugImagePrescreen(Image & img, PatchFinder & area, amv_state *state, amv_debug_info* debug)
 {
     if (!debug->debug_prescreen)
         return;
@@ -81,7 +81,7 @@ void debugImagePrescreen(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, amv_stat
     copy_to(img_prescreen, debug->debug_prescreen, state->config);
 }
 
-void debugImagePatches(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, amv_config *config, amv_debug_info* debug)
+void debugImagePatches(Image & img, PatchFinder & area, amv_config *config, amv_debug_info* debug)
 {
     if (!debug->debug_patches)
         return;
@@ -107,7 +107,7 @@ void debugTeam(Image& img, const amv_team_data& team, Vec3b primary) {
     Vec3b instanceColors[3];
     instanceColors[2] = Vec3b(0, 0, 255);
     instanceColors[1] = Vec3b(0, 255, 0);
-    instanceColors[0] = Vec3b(255, 0, 0);
+    instanceColors[0] = Vec3b(255, 0, 255);
 
 
     for (int i=0; i<team.team_len; i++) {
@@ -150,7 +150,7 @@ void debugSecondaryPatches(Image& img, vector<Patch*> patches) {
     }
 }
 
-void debugImageRobots(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, const amv_vision_data& robots, amv_config* config, amv_debug_info *debug, std::vector<Patch*> blue, std::vector<Patch*> yellow)
+void debugImageRobots(Image& img, PatchFinder & area, const amv_vision_data& robots, amv_config* config, amv_debug_info *debug, std::vector<Patch*> blue, std::vector<Patch*> yellow)
 {
     if (!debug->debug_robots)
         return;

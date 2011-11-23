@@ -21,8 +21,12 @@ struct AMV_EXPORT amv_image_pos {
 struct AMV_EXPORT amv_color_info {
     int hue_min;
     int hue_max;
-
     int captures_white;
+};
+
+struct AMV_EXPORT amv_team_info {
+    amv_color_info color;
+    int team_size;
 };
 
 struct AMV_EXPORT amv_config {
@@ -35,17 +39,16 @@ struct AMV_EXPORT amv_config {
     int mask_points_len;
 
     double px_per_cm;
-    int team_size;
     
     int meanshift_radius;
     int meanshift_threshold;
     int same_color_distance;
 
     int black_cutoff;
-    struct amv_color_info blue;
-    struct amv_color_info yellow;
+    struct amv_team_info blue;
+    struct amv_team_info yellow;
     struct amv_color_info orange;
-    int team_hue[3];
+    amv_color_info secondary_patches[3];
     int minimum_saturation;
     int white_cutoff;
     char linearize;

@@ -40,22 +40,22 @@ void Patch::getSecondaryPatches(int* out, Image* debug) {
                 continue;
             visited.insert(q);
 
-            int min_index = 0;
-            int min_dist = 256;
+            int in_index = -1;
+            int hue = type->map->img_hsv(q)[0];
             for (int k=0; k<3; k++) {
-                int dist = hue_distance(type->map->img_hsv(q)[0], type->map->state->config->team_hue[k]);
-                if (dist < min_dist) {
-                    min_dist = dist;
-                    min_index = k;
-                }
+                if (in_hue(type->config->secondary_patches+k, hue))
+                    in_index = k;
             }
-            colors[min_index].add(q);
+            if (in_index == -1)
+                continue;
+
+            colors[in_index].add(q);
             if (debug) {
-                if (min_index==0)
-                    paintPoint(*debug, q, Vec3b(255, 0, 0));
-                if (min_index==1)
+                if (in_index==0)
+                    paintPoint(*debug, q, Vec3b(255, 0, 255));
+                if (in_index==1)
                     paintPoint(*debug, q, Vec3b(0, 255, 0));
-                if (min_index==2)
+                if (in_index==2)
                     paintPoint(*debug, q, Vec3b(0, 0, 255));
             }
 
@@ -202,7 +202,7 @@ Patch* PatchType::newPatch()
 	return patches.back();
 }
 
-vector<Patch*> PatchType::getTeam() {
+vector<Patch*> PatchType::getTeam(int size) {
     vector<Patch*> out;
     std::priority_queue<std::pair<double, Patch*> > team;
 
@@ -212,7 +212,7 @@ vector<Patch*> PatchType::getTeam() {
             continue;
         team.push(std::make_pair(-patch->getRobotCertainty(), patch));
 
-        if (team.size() > config->team_size)
+        if (team.size() > size)
             team.pop();
     }
 
@@ -282,7 +282,7 @@ bool Patch::add(cv::Point p, cv::Point neighbour) {
 	int dst = this->type->config->same_color_distance;
 	if (PatchFinder::colorDistance(color, img(neighbour)) > dst*dst)
 		return false;
-	if (!is_robot(this->type->config, &this->type->team, hsv(p)))
+	if (!is_patch(this->type->config, &this->type->team, hsv(p)))
 		return false;
 	moments.add(p);
 	color_sum += color;
