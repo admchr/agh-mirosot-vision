@@ -60,6 +60,7 @@ struct AMV_EXPORT amv_debug_info {
     int multiple_meanshift;
     unsigned char *debug_patches;
     unsigned char *debug_robots;
+    unsigned char *debug_results;
 };
 
 struct AMV_EXPORT amv_robot_data {

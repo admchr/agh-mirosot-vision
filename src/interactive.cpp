@@ -12,7 +12,7 @@ amv_config config;
 amv_debug_info debug;
 
 int dbg_i;
-int debug_count = 5;
+int debug_count = 7;
 
 char** images;
 int img_i = 0;
@@ -68,29 +68,37 @@ int main(int argc, char** argv)
         amv_state_new(state, config);
 
         if (dbg_i == 0)
+            dbg_img = img0.clone();
+
+        if (dbg_i == 1)
             debug.debug_balance = dbg_img.ptr();
         else
             debug.debug_balance = 0;
 
-        if (dbg_i == 1)
+        if (dbg_i == 2)
             debug.debug_meanshift = dbg_img.ptr();
         else
             debug.debug_meanshift = 0;
 
-        if (dbg_i == 2)
+        if (dbg_i == 3)
             debug.debug_prescreen = dbg_img.ptr();
         else
             debug.debug_prescreen = 0;
 
-        if (dbg_i == 3)
+        if (dbg_i == 4)
             debug.debug_patches = dbg_img.ptr();
         else
             debug.debug_patches = 0;
 
-        if (dbg_i == 4)
+        if (dbg_i == 5)
             debug.debug_robots = dbg_img.ptr();
         else
             debug.debug_robots = 0;
+
+        if (dbg_i == 6)
+            debug.debug_results = dbg_img.ptr();
+        else
+            debug.debug_results = 0;
 
         amv_find_teams(img.ptr(), &state, &debug);
 

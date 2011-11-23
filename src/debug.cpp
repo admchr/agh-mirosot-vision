@@ -12,6 +12,7 @@ void amv_debug_init(amv_debug_info* debug) {
     debug->debug_meanshift = NULL;
     debug->debug_patches = NULL;
     debug->debug_robots = NULL;
+    debug->debug_results = NULL;
 
     debug->full_meanshift_debug = 1;
     debug->linear_meanshift = 1;
@@ -100,10 +101,9 @@ void debugImagePatches(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, amv_config
     copy_to(img_patches, debug->debug_patches, config);
 }
 
-void debugTeam(Image& img, const amv_team_data& team) {
+void debugTeam(Image& img, const amv_team_data& team, Vec3b primary) {
     const int SIDE = 9;
 
-    Vec3b primary(255, 255, 255);
     Vec3b instanceColors[3];
     instanceColors[2] = Vec3b(0, 0, 255);
     instanceColors[1] = Vec3b(0, 255, 0);
@@ -156,9 +156,6 @@ void debugImageRobots(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, const amv_v
         return;
     Image img_robots(img.clone());
 
-    debugSecondaryPatches(img_robots, blue);
-    debugSecondaryPatches(img_robots, yellow);
-
     img_robots *= DEBUG_DIM;
     for(int x = 0;x < img.size().width;x++)
         for(int y = 0;y < img.size().height;y++){
@@ -168,11 +165,9 @@ void debugImageRobots(cv::Mat_<cv::Vec3b> & img, PatchFinder & area, const amv_v
                 img_robots(y, x) = area_ind->type->color;
             }
         }
-    debugTeam(img_robots, robots.blue_team);
-    debugTeam(img_robots, robots.yellow_team);
 
-    for (int i=0; i<4; i++)
-        debugLine(robots.ball_pos, M_PI*0.5*i, img_robots, 10, Vec3b(0, 0, 255));
+    debugSecondaryPatches(img_robots, blue);
+    debugSecondaryPatches(img_robots, yellow);
 
     copy_to(img_robots, debug->debug_robots, config);
 }
@@ -189,4 +184,20 @@ void debugImageMeanshift(amv_debug_info *debug, Image img, amv_config *config)
                 meanShiftFiltering(img, config->meanshift_radius, config->meanshift_threshold);
         }
     copy_to(img, debug->debug_meanshift, config);
+}
+
+void debugImageResults(Image& img, amv_vision_data* data, amv_config* config, amv_debug_info* debug) {
+    if (!debug->debug_results)
+        return;
+    Image img_robots(img.clone());
+
+    //img_robots *= DEBUG_DIM;
+    debugTeam(img_robots, data->blue_team, Vec3b(255, 0, 0));
+    debugTeam(img_robots, data->yellow_team, Vec3b(0, 255, 255));
+
+    for (int i=0; i<4; i++)
+        debugLine(data->ball_pos, M_PI*0.5*i, img_robots, 10, Vec3b(0, 0, 255));
+
+    copy_to(img_robots, debug->debug_results, config);
+
 }
