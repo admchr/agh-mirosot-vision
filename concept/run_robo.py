@@ -19,7 +19,7 @@ def md(d):
     except:
         pass
 md('out_robo')
-for i in range(6):
+for i in range(7):
     md('out_robo_%d'%i)
 md('out_robo_split')
 

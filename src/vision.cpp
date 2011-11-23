@@ -27,7 +27,6 @@ static void get_matrix(Image & mat, unsigned char* buf, amv_config* config) {
     mat = img;
 }
 
-
 void amv_config_init(amv_config* config) {
     config->px_per_cm = 16/7.5;
 
@@ -42,9 +41,8 @@ void amv_config_init(amv_config* config) {
     config->mask_points = NULL;
     config->mask_points_len = 0;
 
-
     config->blue.hue_min = 85;
-    config->blue.hue_max = 115;
+    config->blue.hue_max = 110;
     config->blue.captures_white = 0;
     config->yellow.hue_min = 20;
     config->yellow.hue_max = 40;
@@ -58,7 +56,7 @@ void amv_config_init(amv_config* config) {
     config->team_hue[2] = 0+180-10;
 
     config->minimum_saturation = 60;
-    config->white_cutoff = 110;
+    config->white_cutoff = 125;
     config->black_cutoff = 45;
 
     config->team_size = 5;
@@ -84,7 +82,6 @@ void amv_state_free(amv_state* state) {
     if (vs)
         delete vs;
 }
-
 
 struct Precompute {
     PatchType* blue;
@@ -149,6 +146,7 @@ amv_vision_data amv_find_teams(unsigned char* image, amv_state* state, amv_debug
 
     debugImagePatches(img, area, config, debug);
     debugImageRobots(img, area, robots, config, debug, blueTeam, yellowTeam);
+    debugImageResults(img, &robots, config, debug);
     debugImageMeanshift(debug, img, config);
 
 //*/
