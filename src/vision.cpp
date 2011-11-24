@@ -155,7 +155,6 @@ amv_vision_data amv_find_teams(unsigned char* image, amv_state* state, amv_debug
     debugImageMeanshift(debug, img, config);
 
 //*/
-    robots.ball_pos.x = robots.ball_pos.y = 0;
 
     return robots;
 }
