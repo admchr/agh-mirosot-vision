@@ -57,6 +57,9 @@ void white_balance(Image* img, amv_config* config) {
         amv_image_pos pos = config->white_points[i];
         white_points.push_back(make_pair(pos, median(*img, pos, 1)));
     }
+    if (white_points.empty())
+        return;
+
     
     const int TILE=16;
     const double SHRINK_FACTOR = 0.5;
