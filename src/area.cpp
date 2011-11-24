@@ -41,7 +41,13 @@ void Patch::getSecondaryPatches(int* out, Image* debug) {
             visited.insert(q);
 
             int in_index = -1;
-            int hue = type->map->img_hsv(q)[0];
+            Vec3b hsv = type->map->img_hsv(q);
+            if (hsv[1] < type->config->minimum_saturation)
+                continue;
+            if (hsv[2] < type->config->black_cutoff)
+                continue;
+
+            int hue = hsv[0];
             for (int k=0; k<3; k++) {
                 if (in_hue(type->config->secondary_patches+k, hue))
                     in_index = k;
