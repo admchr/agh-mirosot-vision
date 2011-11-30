@@ -20,6 +20,7 @@ public:
     double getXVariance();
     double getYVariance();
     double getCovariance();
+    double getDeterminant();
     double getAngle();
     double getRegressionSlope();
     double getRegressionPosition();

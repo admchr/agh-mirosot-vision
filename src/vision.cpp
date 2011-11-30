@@ -19,7 +19,7 @@ using namespace cv;
 using namespace std;
 
 static void get_matrix(Image & mat, unsigned char* buf, amv_config* config) {
-    cv::Mat img_tmp(cv::Size(config->width, config->height), CV_8UC3, buf);
+    cv::Mat img_tmp(cv::Size(config->image_width, config->image_height), CV_8UC3, buf);
     Image img(img_tmp);
     if (config->linearize)
     	linearize(img);// 1ms
@@ -43,23 +43,23 @@ void amv_config_init(amv_config* config) {
 
     config->blue.color.hue_min = 85;
     config->blue.color.hue_max = 110;
-    config->blue.color.captures_white = 0;
     config->yellow.color.hue_min = 20;
     config->yellow.color.hue_max = 40;
-    config->yellow.color.captures_white = 1;
+    config->white_is_yellow = 1;
     config->orange.hue_min = 0;
     config->orange.hue_max = 20;
-    config->orange.captures_white = 0;
 
-    config->secondary_patches[0].hue_min = 150;
-    config->secondary_patches[0].hue_max = 45;
-    config->secondary_patches[0].captures_white = 0;
-    config->secondary_patches[1].hue_min = 45;
-    config->secondary_patches[1].hue_max = 115;
-    config->secondary_patches[1].captures_white = 0;
-    config->secondary_patches[2].hue_min = 115;
-    config->secondary_patches[2].hue_max = 150;
-    config->secondary_patches[2].captures_white = 0;
+    config->blue.secondary_colors[0].hue_min = 150;
+    config->blue.secondary_colors[0].hue_max = 45;
+    config->blue.secondary_colors[1].hue_min = 45;
+    config->blue.secondary_colors[1].hue_max = 115;
+    config->blue.secondary_colors[2].hue_min = 115;
+    config->blue.secondary_colors[2].hue_max = 150;
+    for (int i=0; i<AMV_MAX_ROBOTS;  i++)
+        config->yellow.secondary_colors[i] = config->blue.secondary_colors[i];
+    config->blue.home_team = 1;
+    config->yellow.home_team = 1;
+
     config->minimum_saturation = 60;
     config->white_cutoff = 125;
     config->black_cutoff = 45;
@@ -79,7 +79,7 @@ void amv_state_new(amv_state& state, amv_config& config) {
     }
     state.config = &config;
     state.state = (void*) new VisionState();
-    ((VisionState*) state.state)->mask.init(poly, Size(config.width, config.height));
+    ((VisionState*) state.state)->mask.init(poly, Size(config.image_width, config.image_height));
 }
 
 void amv_state_free(amv_state* state) {

@@ -49,7 +49,7 @@ void Patch::getSecondaryPatches(int* out, Image* debug) {
 
             int hue = hsv[0];
             for (int k=0; k<3; k++) {
-                if (in_hue(type->config->secondary_patches+k, hue))
+                if (in_hue(type->config->blue.secondary_colors+k, hue))
                     in_index = k;
             }
             if (in_index == -1)
@@ -338,7 +338,7 @@ double Patch::getBallCertainty() {
     // TODO: provisional
     double ball_radius = 4.27/2*type->config->px_per_cm;
     double ball_area = ball_radius*ball_radius*M_PI;
-    result *= positive_interval_certainty(ball_area*3/4, ball_area*5/4, moments.getCount());
+    result *= positive_point_certainty(ball_area, moments.getCount());
 
     Vec3b hsv = hsvconverter.get(getMeanColor());
 

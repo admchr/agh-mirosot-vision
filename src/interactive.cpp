@@ -35,8 +35,8 @@ int main(int argc, char** argv)
 
     amv_config_init(&config);
     load_config(&config, argv[1]);
-    config.width = img0.cols;
-    config.height = img0.rows;
+    config.image_width = img0.cols;
+    config.image_height = img0.rows;
 
     amv_debug_init(&debug);
 
@@ -58,14 +58,14 @@ int main(int argc, char** argv)
     cv::createTrackbar( "mst", trackbar_window2, &config.meanshift_threshold, 255, 0, 0 );
     cv::createTrackbar( "fms", trackbar_window2, &debug.full_meanshift_debug, 1, 0, 0 );
     cv::createTrackbar( "lms", trackbar_window2, &debug.linear_meanshift, 1, 0, 0 );
-    cv::createTrackbar( "mms", trackbar_window2, &debug.multiple_meanshift, 4, 0, 0 );
+    cv::createTrackbar( "mms", trackbar_window2, &debug.multiple_meanshift, 4, 0, 0 );/*
     cv::createTrackbar( "bh[", trackbar_window2, &config.secondary_patches[0].hue_min, 180, 0, 0 );
     cv::createTrackbar( "bh]", trackbar_window2, &config.secondary_patches[0].hue_max, 180, 0, 0 );
     cv::createTrackbar( "gh[", trackbar_window2, &config.secondary_patches[1].hue_min, 180, 0, 0 );
     cv::createTrackbar( "gh]", trackbar_window2, &config.secondary_patches[1].hue_max, 180, 0, 0 );
     cv::createTrackbar( "rh[", trackbar_window2, &config.secondary_patches[2].hue_min, 180, 0, 0 );
     cv::createTrackbar( "rh]", trackbar_window2, &config.secondary_patches[2].hue_max, 180, 0, 0 );
-
+*/
     while(true) {
         amv_state state;
         cv::Mat_<cv::Vec3b> img(img0.clone());
