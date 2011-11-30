@@ -12,7 +12,7 @@ inline static bool is_patch(amv_config* config, amv_color_info* color, cv::Vec3b
             hsv[1] > config->minimum_saturation) ||
             (
                 hsv[2] > config->white_cutoff &&
-                color->captures_white
+                config->white_is_yellow
             );
 }
 

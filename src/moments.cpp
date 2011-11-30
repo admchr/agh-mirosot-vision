@@ -42,6 +42,10 @@ double PatchMoments::getCovariance() {
     return (sum_xy - sum_x*sum_y/count)/(count - 1.0);
 }
 
+double PatchMoments::getDeterminant() {
+    return getXVariance()*getYVariance() - getCovariance()*getCovariance();
+}
+
 double PatchMoments::getRegressionSlope() {
     // Deming regression
     double var_x = getXVariance();

@@ -67,8 +67,8 @@ int main(int argc, char**argv) {
         out_fname = argv[3];
         load_config(&config, config_fname.c_str());
         cv::Mat_<cv::Vec3b> img0 = cv::imread(in_fname);
-        config.width = img0.size().width;
-        config.height = img0.size().height;
+        config.image_width = img0.size().width;
+        config.image_height = img0.size().height;
 
         amv_state_new(state, config);
         process(in_fname, out_fname, &state);
@@ -83,8 +83,8 @@ int main(int argc, char**argv) {
             if (!initialized) {
                 initialized = true;
                 cv::Mat_<cv::Vec3b> img0 = cv::imread(in_fname);
-                config.width = img0.size().width;
-                config.height = img0.size().height;
+                config.image_width = img0.size().width;
+                config.image_height = img0.size().height;
                 amv_state_new(state, config);
             }
             process(in_fname, out_fname, &state);

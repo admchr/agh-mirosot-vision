@@ -41,8 +41,8 @@ int main(int argc, char**argv) {
     
     amv_config config;
     amv_config_init(&config);
-    config.width = img0.size().width;
-    config.height = img0.size().height;
+    config.image_width = img0.size().width;
+    config.image_height = img0.size().height;
     load_config(&config, argv[2]);
 
     Timer t;
