@@ -10,11 +10,9 @@
 #include <vector>
 
 class Patch;
-
-void fillTeam(std::vector<Patch*> team, amv_team_data* data);
+class PatchType;
 void fillBall(Patch* ball, amv_vision_data* data);
 
-class PatchType;
 
 
 class PatchFinder {
@@ -73,7 +71,6 @@ public:
 	std::vector<Patch*> patches;
 	Patch* newPatch();
 
-    std::vector<Patch*> getTeam(int size);
     Patch* getBall();
 
     int getPatchSize();
@@ -104,7 +101,6 @@ public:
     double getBallCertainty();
     cv::Point getRobotCenter();
     double getRobotAngle();
-    void getSecondaryPatches(int* out, Image* debug=0);
     cv::Point getCenter();
 	double getAngle();
 	cv::Rect getBoundingBox();

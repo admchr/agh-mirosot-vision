@@ -49,14 +49,32 @@ void amv_config_init(amv_config* config) {
     config->orange.hue_min = 0;
     config->orange.hue_max = 20;
 
-    config->blue.secondary_colors[0].hue_min = 150;
-    config->blue.secondary_colors[0].hue_max = 45;
-    config->blue.secondary_colors[1].hue_min = 45;
-    config->blue.secondary_colors[1].hue_max = 115;
-    config->blue.secondary_colors[2].hue_min = 115;
-    config->blue.secondary_colors[2].hue_max = 150;
-    for (int i=0; i<AMV_MAX_ROBOTS;  i++)
+    config->yellow.team_size = 5;
+    config->blue.team_size = 5;
+
+    config->blue.secondary_colors[0].hue_min = 115;
+    config->blue.secondary_colors[0].hue_max = 140;
+    config->blue.secondary_colors[1].hue_min = 70;
+    config->blue.secondary_colors[1].hue_max = 100;
+    config->blue.secondary_colors[2].hue_min = 140;
+    config->blue.secondary_colors[2].hue_max = 53;
+    for (int i=0; i<AMV_MAX_SECONDARY_COLORS;  i++)
         config->yellow.secondary_colors[i] = config->blue.secondary_colors[i];
+
+    config->blue.robot_info[0].back_color = 0;
+    config->blue.robot_info[0].front_color = 1;
+    config->blue.robot_info[1].back_color = 0;
+    config->blue.robot_info[1].front_color = 2;
+    config->blue.robot_info[2].back_color = 1;
+    config->blue.robot_info[2].front_color = 0;
+    config->blue.robot_info[3].back_color = 1;
+    config->blue.robot_info[3].front_color = 2;
+    config->blue.robot_info[4].back_color = 2;
+    config->blue.robot_info[4].front_color = 1;
+
+    for (int i=0; i<config->blue.team_size;  i++)
+        config->yellow.robot_info[i] = config->blue.robot_info[i];
+
     config->blue.home_team = 1;
     config->yellow.home_team = 1;
 
@@ -64,8 +82,6 @@ void amv_config_init(amv_config* config) {
     config->white_cutoff = 125;
     config->black_cutoff = 45;
 
-    config->yellow.team_size = 5;
-    config->blue.team_size = 5;
 
     config->linearize = 0;
 }
@@ -139,18 +155,17 @@ amv_vision_data amv_find_teams(unsigned char* image, amv_state* state, amv_debug
     debugImagePrescreen(img, area, state, debug);
     area.getSets();//25ms
 
-    vector<Patch*> blueTeam, yellowTeam;
-    blueTeam = blue.getTeam(config->blue.team_size);
-    yellowTeam = yellow.getTeam(config->yellow.team_size);
+    vector<Robot> yellowTeam, blueTeam;
+    yellowTeam = getTeam(&yellow, &config->yellow);
+    blueTeam = getTeam(&blue, &config->blue);
     Patch* ball = orange.getBall();
 
-
-    fillTeam(blueTeam, &robots.blue_team);
     fillTeam(yellowTeam, &robots.yellow_team);
+    fillTeam(blueTeam, &robots.blue_team);
     fillBall(ball, &robots);
 
     debugImagePatches(img, area, config, debug);
-    debugImageRobots(img, area, robots, config, debug, blueTeam, yellowTeam);
+    debugImageRobots(img, area, config, debug, blueTeam, yellowTeam);
     debugImageResults(img, &robots, config, debug);
     debugImageMeanshift(debug, img, config);
 
