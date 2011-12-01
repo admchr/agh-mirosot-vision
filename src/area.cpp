@@ -11,103 +11,10 @@
 #include <set>
 
 using namespace cv;
+using namespace std;
 
-bool comparePoint(Point p, Point q) {
-    if (p.x != q.x)
-        return p.x < q.x;
-    return p.y < q.y;
-}
 
-void Patch::getSecondaryPatches(int* out, Image* debug) {
-    std::set<Point, bool(*)(Point, Point)> visited(comparePoint);
-    Point p = getCenter();
-    double angle = getAngle();
 
-    double front_x = cos(angle);
-    double front_y = sin(angle);
-    angle-=M_PI/2;
-    double side_x = cos(angle);
-    double side_y = sin(angle);
-
-    PatchMoments colors[3];
-    for (double i=-8; i <= 8; i+=0.5)
-        for (double j=5; j <= 8;  j+=0.5) {
-            Point q(p.x + front_x*i + side_x*j, p.y + front_y*i + side_y*j);
-            if (q.x<0 || q.y <0 || q.x >= type->map->img.cols || q.y >= type->map->img.rows)
-                continue;
-
-            if (visited.find(q) != visited.end())
-                continue;
-            visited.insert(q);
-
-            int in_index = -1;
-            Vec3b hsv = type->map->img_hsv(q);
-            if (hsv[1] < type->config->minimum_saturation)
-                continue;
-            if (hsv[2] < type->config->black_cutoff)
-                continue;
-
-            int hue = hsv[0];
-            for (int k=0; k<3; k++) {
-                if (in_hue(type->config->blue.secondary_colors+k, hue))
-                    in_index = k;
-            }
-            if (in_index == -1)
-                continue;
-
-            colors[in_index].add(q);
-            if (debug) {
-                if (in_index==0)
-                    paintPoint(*debug, q, Vec3b(255, 0, 255));
-                if (in_index==1)
-                    paintPoint(*debug, q, Vec3b(0, 255, 0));
-                if (in_index==2)
-                    paintPoint(*debug, q, Vec3b(0, 0, 255));
-            }
-
-        }
-    int min_count = min(colors[0].getCount(), min(colors[1].getCount(), colors[2].getCount()));
-
-    if (min_count == colors[0].getCount()) {
-        out[0] = 1;
-        out[1] = 2;
-    }
-    if (min_count == colors[1].getCount()) {
-        out[0] = 0;
-        out[1] = 2;
-    }
-    if (min_count == colors[2].getCount()) {
-        out[0] = 0;
-        out[1] = 1;
-    }
-
-    Point back_patch(colors[out[0]].getMean());
-    Point front_patch(colors[out[1]].getMean());
-
-    int secondary_x = front_patch.x - back_patch.x;
-    int secondary_y = front_patch.y - back_patch.y;
-
-    // inner product
-    if (secondary_x*front_x + secondary_y*front_y < 0) {
-        std::swap(out[0], out[1]);
-    }
-}
-
-void fillTeam(vector<Patch*> team, amv_team_data* data) {
-    data->team_len = 0;
-    amv_robot_data* robot = data->team;
-    for (unsigned int i = 0; i<team.size(); i++) {
-        Patch* patch = team[i];
-        patch->getSecondaryPatches(robot->color);
-        cv::Point p = patch->getRobotCenter();
-        robot->position.x = p.x;
-        robot->position.y = p.y;
-        robot->angle = patch->getRobotAngle();
-        robot->certainty = patch->getRobotCertainty();
-        robot++;
-        data->team_len++;
-    }
-}
 
 void fillBall(Patch* ball, amv_vision_data* data) {
     if (!ball) {
@@ -206,30 +113,6 @@ Patch* PatchType::newPatch()
 {
 	patches.push_back(new Patch(this));
 	return patches.back();
-}
-
-vector<Patch*> PatchType::getTeam(int size) {
-    vector<Patch*> out;
-    std::priority_queue<std::pair<double, Patch*> > team;
-
-    for (unsigned int i=0; i<patches.size(); i++) {
-        Patch* patch = patches[i];
-        if (patch->getCount() <= 1)
-            continue;
-        team.push(std::make_pair(-patch->getRobotCertainty(), patch));
-
-        if (team.size() > size)
-            team.pop();
-    }
-
-    while (!team.empty()) {
-        Patch* patch = team.top().second;
-        team.pop();
-
-        patch->isRobot = true;
-        out.push_back(patch);
-    }
-    return out;
 }
 
 Patch* PatchType::getBall() {

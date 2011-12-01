@@ -12,6 +12,7 @@ extern "C" {
 #endif
 
 #define AMV_MAX_ROBOTS 256
+#define AMV_MAX_SECONDARY_COLORS 3
 
 struct AMV_EXPORT amv_image_pos {
     int x;
@@ -34,7 +35,7 @@ struct AMV_EXPORT amv_team_info {
 
     int home_team;
     struct amv_robot_info robot_info[AMV_MAX_ROBOTS];
-    amv_color_info secondary_colors[3];
+    amv_color_info secondary_colors[AMV_MAX_SECONDARY_COLORS];
 };
 
 struct AMV_EXPORT amv_config {
@@ -80,7 +81,6 @@ struct AMV_EXPORT amv_debug_info {
 
 struct AMV_EXPORT amv_robot_data {
     struct amv_image_pos position;
-    int color[2];// to be deleted
     int identity;
     double angle;
     double certainty;

@@ -101,7 +101,7 @@ void debugImagePatches(Image & img, PatchFinder & area, amv_config *config, amv_
     copy_to(img_patches, debug->debug_patches, config);
 }
 
-void debugTeam(Image& img, const amv_team_data& team, Vec3b primary) {
+void debugTeam(Image& img, amv_team_info& info, const amv_team_data& team, Vec3b primary) {
     const int SIDE = 9;
 
     Vec3b instanceColors[3];
@@ -131,26 +131,26 @@ void debugTeam(Image& img, const amv_team_data& team, Vec3b primary) {
         tmp.y=p.y+front_y-right_side_y;
         debugLine(tmp, angle+M_PI/2, img, 2*SIDE, primary);
 
+        amv_robot_info secondary = info.robot_info[robot.identity];
         // left
         tmp.x=p.x-front_x-right_side_x;
         tmp.y=p.y-front_y-right_side_y;
-        debugLine(tmp, angle, img, 2*SIDE, instanceColors[robot.color[1]]);
+        debugLine(tmp, angle, img, 2*SIDE, instanceColors[secondary.front_color]);
 
         // back
         tmp.x=p.x-front_x+right_side_x;
         tmp.y=p.y-front_y+right_side_y;
-        debugLine(tmp, angle+M_PI*3/2, img, 2*SIDE, instanceColors[robot.color[0]]);
+        debugLine(tmp, angle+M_PI*3/2, img, 2*SIDE, instanceColors[secondary.back_color]);
     }
 }
 
-void debugSecondaryPatches(Image& img, vector<Patch*> patches) {
-    int out[2];
+void debugSecondaryPatches(Image& img, amv_team_info* team, vector<Robot> patches) {
     for (unsigned int i=0; i<patches.size(); i++) {
-        patches[i]->getSecondaryPatches(out, &img);
+        getSecondaryPatches(patches[i].teamPatch, team, &img);
     }
 }
 
-void debugImageRobots(Image& img, PatchFinder & area, const amv_vision_data& robots, amv_config* config, amv_debug_info *debug, std::vector<Patch*> blue, std::vector<Patch*> yellow)
+void debugImageRobots(Image& img, PatchFinder & area, amv_config* config, amv_debug_info *debug, std::vector<Robot> blue, std::vector<Robot> yellow)
 {
     if (!debug->debug_robots)
         return;
@@ -166,8 +166,8 @@ void debugImageRobots(Image& img, PatchFinder & area, const amv_vision_data& rob
             }
         }
 
-    debugSecondaryPatches(img_robots, blue);
-    debugSecondaryPatches(img_robots, yellow);
+    debugSecondaryPatches(img_robots, &config->blue, blue);
+    debugSecondaryPatches(img_robots, &config->yellow, yellow);
 
     copy_to(img_robots, debug->debug_robots, config);
 }
@@ -192,8 +192,8 @@ void debugImageResults(Image& img, amv_vision_data* data, amv_config* config, am
     Image img_robots(img.clone());
 
     //img_robots *= DEBUG_DIM;
-    debugTeam(img_robots, data->blue_team, Vec3b(255, 0, 0));
-    debugTeam(img_robots, data->yellow_team, Vec3b(0, 255, 255));
+    debugTeam(img_robots, config->blue, data->blue_team, Vec3b(255, 0, 0));
+    debugTeam(img_robots, config->yellow, data->yellow_team, Vec3b(0, 255, 255));
 
     for (int i=0; i<4; i++)
         debugLine(data->ball_pos, M_PI*0.5*i, img_robots, 10, Vec3b(0, 0, 255));
