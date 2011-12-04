@@ -171,7 +171,7 @@ bool Patch::add(cv::Point p, cv::Point neighbour) {
 	int dst = this->type->config->same_color_distance;
 	if (PatchFinder::colorDistance(color, img(neighbour)) > dst*dst)
 		return false;
-	if (!is_patch(this->type->config, &this->type->team, hsv(p)))
+	if (!is_patch(this->type->config, &this->type->team, hsv(p), type->is_yellow))
 		return false;
 	moments.add(p);
 	color_sum += color;

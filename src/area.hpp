@@ -59,11 +59,13 @@ public:
     amv_color_info team;
     cv::Vec3b color;
     amv_config* config;
-	PatchType(PatchFinder* pf, amv_color_info team, cv::Vec3b color, amv_config* config) {
+    bool is_yellow;
+	PatchType(PatchFinder* pf, amv_color_info team, cv::Vec3b color, amv_config* config, bool yellow) {
 		this->map = pf;
 	    this->team = team;
 	    this->color = color;
 	    this->config = config;
+	    is_yellow = yellow;
 	}
 	~PatchType();
 
