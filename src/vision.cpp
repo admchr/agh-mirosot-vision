@@ -78,7 +78,7 @@ void amv_config_init(amv_config* config) {
     config->blue.home_team = 1;
     config->yellow.home_team = 1;
 
-    config->minimum_saturation = 60;
+    config->minimum_saturation = 100;
     config->white_cutoff = 125;
     config->black_cutoff = 45;
 
@@ -111,11 +111,11 @@ struct Precompute {
     PatchType* orange;
     amv_config* config;
     PatchType* operator()(Vec3b c){
-        if(is_patch(config, &config->blue.color, c))
+        if(is_patch(config, &config->blue.color, c, false))
             return blue;
-        if(is_patch(config, &config->yellow.color, c))
+        if(is_patch(config, &config->yellow.color, c, true))
             return yellow;
-        if(is_patch(config, &config->orange, c))
+        if(is_patch(config, &config->orange, c, false))
             return orange;
         return 0;
     }
@@ -143,9 +143,9 @@ amv_vision_data amv_find_teams(unsigned char* image, amv_state* state, amv_debug
     PatchFinder area(state);
 
     area.setImages(img, img_hsv);
-    PatchType blue(&area, config->blue.color, Vec3b(255, 0, 0), config);
-    PatchType yellow(&area, config->yellow.color, Vec3b(0, 255, 255), config);
-    PatchType orange(&area, config->orange, Vec3b(0, 128, 255), config);
+    PatchType blue(&area, config->blue.color, Vec3b(255, 0, 0), config, false);
+    PatchType yellow(&area, config->yellow.color, Vec3b(0, 255, 255), config, false);
+    PatchType orange(&area, config->orange, Vec3b(0, 128, 255), config, false);
     Precompute precompute;
     precompute.config = config;
     precompute.blue = &blue;

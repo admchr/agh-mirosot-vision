@@ -6,6 +6,7 @@ di = 'img'
 
 patterns = (
 (di+'/a_*', 'config_a.txt'),
+(di+'/b_*', 'config_b.txt'),
 (di+'/um_*', 'config_um.txt'),
 (di+'/wc_*', 'config_wc.txt'),
 (di+'/si_*', 'config_si.txt'),

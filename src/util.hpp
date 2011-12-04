@@ -4,7 +4,7 @@
 #include <opencv/cv.h>
 #include "amv.h"
 
-inline static bool is_patch(amv_config* config, amv_color_info* color, cv::Vec3b hsv){
+inline static bool is_patch(amv_config* config, amv_color_info* color, cv::Vec3b hsv, bool is_yellow){
     return
             (hsv[2] > config->black_cutoff &&
             hsv[0] > color->hue_min &&
@@ -12,7 +12,7 @@ inline static bool is_patch(amv_config* config, amv_color_info* color, cv::Vec3b
             hsv[1] > config->minimum_saturation) ||
             (
                 hsv[2] > config->white_cutoff &&
-                config->white_is_yellow
+                config->white_is_yellow && is_yellow
             );
 }
 
