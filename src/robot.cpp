@@ -72,8 +72,8 @@ vector<double> getSecondaryPatches(Patch* patch, amv_team_info* team, Image* deb
     for (int i=0; i<team->team_size; i++) {
         PatchMoments front = colors[team->robot_info[i].front_color];
         PatchMoments back = colors[team->robot_info[i].back_color];
-        double radiusFront = sqrt(front.getCount());
-        double radiusBack = sqrt(back.getCount());
+        double radiusFront = sqrt((double)front.getCount());
+        double radiusBack = sqrt((double)back.getCount());
         double distanceX = front.getMean().x - back.getMean().x;
         double distanceY = front.getMean().y - back.getMean().y;
         double distance = distanceX*front_x + distanceY*front_y;

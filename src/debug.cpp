@@ -1,6 +1,7 @@
 #include "debug.hpp"
 #include "linearize.hpp"
 #include "visionstate.hpp"
+#include <algorithm>
 
 using namespace cv;
 
@@ -40,10 +41,36 @@ void debugLine(amv_image_pos p, double angle, Image & img, int len, Vec3b color)
     for(int i = 0;i < len;i++){
         int x = p.x + cos(angle) * i;
         int y = p.y + sin(angle) * i;
-        if(x < 0 || y < 0 || x >= img.cols || y >= img.rows)
-            break;
+        paintPoint(img, Point(x, y), color);
+    }
+}
 
-        img(y, x) = color;
+void debugLine(amv_image_pos p1, amv_image_pos p2, Image & img, Vec3b color)
+{
+    int dx = p2.x - p1.x;
+    int dy = p2.y - p1.y;
+    if (abs(dx) > abs(dy)) {
+        if (p1.x >= p2.x) {
+            dx = -dx;
+            dy = -dy;
+            std::swap(p1, p2);
+        }
+        for(int i = 0;i < dx;i++){
+            int x = p1.x + i;
+            int y = p1.y + i*1.0*dy/dx;
+            paintPoint(img, Point(x, y), color);
+        }
+    } else {
+        if (p1.y >= p2.y) {
+            std::swap(p1, p2);
+            dy = -dy;
+            dx = -dx;
+        }
+        for(int i = 0;i < dy;i++){
+            int x = p1.x + i*1.0*dx/dy;
+            int y = p1.y + i;
+            paintPoint(img, Point(x, y), color);
+        }
     }
 }
 
@@ -198,6 +225,18 @@ void debugImageResults(Image& img, amv_vision_data* data, amv_config* config, am
     for (int i=0; i<4; i++)
         debugLine(data->ball_pos, M_PI*0.5*i, img_robots, 10, Vec3b(0, 0, 255));
 
+    amv_image_pos tl, tr, bl, br;
+    tl = config->field_top_left;
+    br = config->field_bottom_right;
+    tr.x = br.x;
+    tr.y = tl.y;
+    bl.x = tl.x;
+    bl.y = br.y;
+
+    debugLine(tr, tl, img_robots, Vec3b(255, 255, 255));
+    debugLine(tl, bl, img_robots, Vec3b(255, 255, 255));
+    debugLine(bl, br, img_robots, Vec3b(255, 255, 255));
+    debugLine(br, tr, img_robots, Vec3b(255, 255, 255));
     copy_to(img_robots, debug->debug_results, config);
 
 }

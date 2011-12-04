@@ -84,6 +84,11 @@ void amv_config_init(amv_config* config) {
 
 
     config->linearize = 0;
+
+    config->field_top_left.x = 103;
+    config->field_top_left.y = 4;
+    config->field_bottom_right.x = 600;
+    config->field_bottom_right.y = 400;
 }
 
 
