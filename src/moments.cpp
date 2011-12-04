@@ -59,7 +59,7 @@ double PatchMoments::getRegressionSlope() {
         b1 = (var_y - var_x + tmp) / 2 / var_xy;
     else
         b1 = 2 * var_xy / (var_x - var_y + tmp);
-    if (isnan(b1)) {
+    if (b1 != b1) {// Microsoft C++ contains no isnan() function
         // return some predefined value, as we cannot compute it
         // this can occur for:
         // 1. empty set
