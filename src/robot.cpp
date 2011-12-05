@@ -2,6 +2,7 @@
 #include "amv.h"
 #include "debug.hpp"
 #include "util.hpp"
+#include "hsvconverter.hpp"
 #include <set>
 #include <queue>
 
@@ -29,13 +30,15 @@ vector<double> getSecondaryPatches(Patch* patch, amv_team_info* team, Image* deb
     double height_min = 5;
     double height_max = 8;
 
-    amv_config* config = patch->type->config;
     PatchFinder* pf = patch->type->map;
+    amv_config* config = patch->type->config;
     PatchMoments colors[AMV_MAX_SECONDARY_COLORS];
     for (double i=-len_max; i <= len_max; i+=0.5)
         for (double j=height_min; j <= height_max;  j+=0.5) {
             Point q(p.x + front_x*i + side_x*j, p.y + front_y*i + side_y*j);
             if (q.x<0 || q.y <0 || q.x >= pf->img.cols || q.y >= pf->img.rows)
+                continue;
+            if (pf->area_map.get(q.x, q.y))
                 continue;
             if (j + i >= height_min + len_max || j - i >= height_min + len_max)
                 continue;
@@ -48,23 +51,31 @@ vector<double> getSecondaryPatches(Patch* patch, amv_team_info* team, Image* deb
             if (debug)
                 (*debug)(q)+=(*debug)(q);
             int hue = hsv[0];
-            for (int k=0; k<3; k++) {
-                if (in_hue(team->secondary_colors+k, hue))
-                    in_index = k;
+            for (int k=0; k<AMV_MAX_SECONDARY_COLORS; k++) {
+                amv_color_info c = team->secondary_colors[k];
+                if (c.hue_min == c.hue_max) {
+                    if (hsv[2] < config->black_cutoff/2) {
+                        in_index = k;
+                    }
+                } else {
+                    if (in_hue(&c, hue))
+                        in_index = k;
+                }
             }
             if (in_index == -1)
                 continue;
 
             colors[in_index].add(q);
-            // TODO: fix that
-            if (debug) {/*
-                if (in_index==0)
-                    paintPoint(*debug, q, Vec3b(255, 0, 255));
-                if (in_index==1)
-                    paintPoint(*debug, q, Vec3b(0, 255, 0));
-                if (in_index==2)
-                    paintPoint(*debug, q, Vec3b(0, 0, 255));
-                    */
+            if (debug) {
+                amv_color_info c = team->secondary_colors[in_index];
+                int mean_vec = c.hue_max-c.hue_min;
+                if (mean_vec < 0)
+                    mean_vec += 180;
+                int mean = (c.hue_min + mean_vec/2 + 180)%180;
+                Vec3b paint = hsvconverter.getBGR(Vec3b(mean, 255, 255));
+                if (c.hue_min == c.hue_max)
+                    paint = Vec3b(255, 255, 255);
+                paintPoint(*debug, q, paint);
             }
 
         }
@@ -77,9 +88,10 @@ vector<double> getSecondaryPatches(Patch* patch, amv_team_info* team, Image* deb
         double distanceX = front.getMean().x - back.getMean().x;
         double distanceY = front.getMean().y - back.getMean().y;
         double distance = distanceX*front_x + distanceY*front_y;
-        double score = pow(radiusFront + radiusBack, 4) + distance;
-        if (distance < 0)
-            score -=100;
+        double score = pow(radiusFront + radiusBack, 8) + distance;
+        if (distance < 0) {
+            score -=1;
+        }
         if (radiusBack == 0 || radiusFront == 0)
             score = -1e9;
         scores[i] = score;

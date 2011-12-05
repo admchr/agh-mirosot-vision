@@ -15,6 +15,8 @@ public:
     }
 
     void convert(Image from, Image to);
+
+    cv::Vec3b getBGR(cv::Vec3b hsv);
 };
 extern HSVConverter hsvconverter;
 #endif

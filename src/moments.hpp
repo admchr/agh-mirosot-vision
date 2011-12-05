@@ -15,7 +15,7 @@ class PatchMoments {
 public:
     PatchMoments();
     void add(cv::Point p);
-    cv::Point getMean();
+    cv::Point2d getMean();
     int getCount();
     double getXVariance();
     double getYVariance();

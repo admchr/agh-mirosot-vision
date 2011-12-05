@@ -30,7 +30,7 @@ static void get_matrix(Image & mat, unsigned char* buf, amv_config* config) {
 void amv_config_init(amv_config* config) {
     config->px_per_cm = 16/7.5;
 
-    config->meanshift_radius = 3;
+    config->meanshift_radius = 0;
     config->meanshift_threshold = 36;//=0
 
     config->same_color_distance = 250;
@@ -53,11 +53,11 @@ void amv_config_init(amv_config* config) {
     config->blue.team_size = 5;
 
     config->blue.secondary_colors[0].hue_min = 115;
-    config->blue.secondary_colors[0].hue_max = 140;
-    config->blue.secondary_colors[1].hue_min = 70;
-    config->blue.secondary_colors[1].hue_max = 100;
-    config->blue.secondary_colors[2].hue_min = 140;
-    config->blue.secondary_colors[2].hue_max = 53;
+    config->blue.secondary_colors[0].hue_max = 144;
+    config->blue.secondary_colors[1].hue_min = 44;
+    config->blue.secondary_colors[1].hue_max = 87;
+    config->blue.secondary_colors[2].hue_min = 164;
+    config->blue.secondary_colors[2].hue_max = 20;
     for (int i=0; i<AMV_MAX_SECONDARY_COLORS;  i++)
         config->yellow.secondary_colors[i] = config->blue.secondary_colors[i];
 
@@ -80,7 +80,7 @@ void amv_config_init(amv_config* config) {
 
     config->minimum_saturation = 100;
     config->white_cutoff = 125;
-    config->black_cutoff = 45;
+    config->black_cutoff = 70;
 
 
     config->linearize = 0;

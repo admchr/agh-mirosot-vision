@@ -1,6 +1,7 @@
 #include "hsvconverter.hpp"
 #include "defs.hpp"
 
+using namespace cv;
 
 HSVConverter::HSVConverter() {
     Image tmp(1, 1);
@@ -8,8 +9,8 @@ HSVConverter::HSVConverter() {
         for (int g=0;g<256;g++)
             for (int b=0;b<256;b++) {
                 // it's damn slow
-                // ... so what?
-                cv::Vec3b c(b, g, r);
+                // but is done only once
+                Vec3b c(b, g, r);
                 tmp(0, 0) = c;
                 cv::cvtColor(tmp, tmp, CV_BGR2HSV);
                 c = tmp(0, 0);
@@ -25,4 +26,12 @@ void HSVConverter::convert(Image from, Image to) {
             to(y, x) = get(from(y, x));
         }
 }
+
+Vec3b HSVConverter::getBGR(Vec3b hsv) {
+    Image tmp(1, 1);
+    tmp(0, 0) = hsv;
+    cv::cvtColor(tmp, tmp, CV_HSV2BGR);
+    return tmp(0, 0);
+}
+
 HSVConverter hsvconverter;
