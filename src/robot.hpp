@@ -8,7 +8,7 @@ class Patch;
 
 struct Robot {
     Patch* teamPatch;
-    cv::Point pos;
+    cv::Point2d pos;
     double angle;
     double certainty;
 

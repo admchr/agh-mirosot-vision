@@ -11,7 +11,7 @@ BOOST_AUTO_TEST_CASE(test_small_slope) {
     moments.add(Point(400, 200));
     moments.add(Point(200, 100));
 
-    BOOST_CHECK(moments.getMean() == Point(300, 150));
+    BOOST_CHECK(moments.getMean() == Point2d(300, 150));
     BOOST_CHECK_CLOSE_FRACTION(moments.getAngle(), atan(1.0/2.0), 1e-6);
 }
 
@@ -24,13 +24,13 @@ BOOST_AUTO_TEST_CASE(test_undefined_angle) {
 
     moments.add(Point(0, 0));
     BOOST_CHECK_CLOSE_FRACTION(moments.getAngle(), UNDEFINED, 1e-6);
-    BOOST_CHECK(moments.getMean() == Point(0, 0));
+    BOOST_CHECK(moments.getMean() == Point2d(0, 0));
 
     moments.add(Point(0, 1));
     moments.add(Point(1, 0));
     moments.add(Point(1, 1));
     BOOST_CHECK_CLOSE_FRACTION(moments.getAngle(), UNDEFINED, 1e-6);
-    BOOST_CHECK(moments.getMean() == Point(0, 0));
+    BOOST_CHECK(moments.getMean() == Point2d(0, 0));
 
 }
 
@@ -40,7 +40,7 @@ BOOST_AUTO_TEST_CASE(test_large_slope) {
     moments.add(Point(100, 200));
     moments.add(Point(200, 400));
 
-    BOOST_CHECK(moments.getMean() == Point(150, 300));
+    BOOST_CHECK(moments.getMean() == Point2d(150, 300));
     BOOST_CHECK_CLOSE_FRACTION(moments.getAngle(), atan(2.0/1.0), 1e-6);
 }
 
@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE(test_small_slope_neg) {
     moments.add(Point(400, -200));
     moments.add(Point(200, -100));
 
-    BOOST_CHECK(moments.getMean() == Point(300, -150));
+    BOOST_CHECK(moments.getMean() == Point2d(300, -150));
     BOOST_CHECK_CLOSE_FRACTION(moments.getAngle(), -atan(1.0/2.0), 1e-6);
 }
 BOOST_AUTO_TEST_CASE(test_large_slope_neg) {
@@ -57,7 +57,7 @@ BOOST_AUTO_TEST_CASE(test_large_slope_neg) {
     moments.add(Point(100, -200));
     moments.add(Point(200, -400));
 
-    BOOST_CHECK(moments.getMean() == Point(150, -300));
+    BOOST_CHECK(moments.getMean() == Point2d(150, -300));
     BOOST_CHECK_CLOSE_FRACTION(moments.getAngle(), -atan(2.0/1.0), 1e-6);
 }
 
@@ -66,7 +66,7 @@ BOOST_AUTO_TEST_CASE(test_two_vertical) {
     moments.add(Point(100, 200));
     moments.add(Point(100, 400));
 
-    BOOST_CHECK(moments.getMean() == Point(100, 300));
+    BOOST_CHECK(moments.getMean() == Point2d(100, 300));
     BOOST_CHECK_CLOSE_FRACTION(moments.getAngle(), M_PI/2, 1e-6);
 }
 BOOST_AUTO_TEST_CASE(test_two_horizontal) {
@@ -74,6 +74,6 @@ BOOST_AUTO_TEST_CASE(test_two_horizontal) {
     moments.add(Point(200, 200));
     moments.add(Point(100, 200));
 
-    BOOST_CHECK(moments.getMean() == Point(150, 200));
+    BOOST_CHECK(moments.getMean() == Point2d(150, 200));
     BOOST_CHECK_CLOSE_FRACTION(moments.getAngle(), 0, 1e-6);
 }

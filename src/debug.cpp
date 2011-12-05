@@ -44,6 +44,12 @@ void debugLine(amv_image_pos p, double angle, Image & img, int len, Vec3b color)
         paintPoint(img, Point(x, y), color);
     }
 }
+void debugLine(Point p, double angle, Image & img, int len, Vec3b color) {
+    amv_image_pos pos;
+    pos.x = p.x;
+    pos.y = p.y;
+    debugLine(pos, angle, img, len, color);
+}
 
 void debugLine(amv_image_pos p1, amv_image_pos p2, Image & img, Vec3b color)
 {
@@ -173,7 +179,10 @@ void debugTeam(Image& img, amv_team_info& info, const amv_team_data& team, Vec3b
 
 void debugSecondaryPatches(Image& img, amv_team_info* team, vector<Robot> patches) {
     for (unsigned int i=0; i<patches.size(); i++) {
+        Robot& p = patches[i];
         getSecondaryPatches(patches[i].teamPatch, team, &img);
+        debugLine(p.pos, p.teamPatch->getAngle(), img, 15, Vec3b(255, 255, 255));
+        debugLine(p.pos, p.teamPatch->getAngle() + M_PI, img, 10, Vec3b(0, 0, 0));
     }
 }
 
