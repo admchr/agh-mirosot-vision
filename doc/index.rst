@@ -12,6 +12,8 @@
 Dokumentacja interfejsu
 -----------------------
 
+.. image:: ch50.png
+
 Ze względu na wymagania dotyczące wydajności i konieczność współpracy z 
 maksymalnie różnorodnymi środowiskami algorytm rozpoznawania robotów został
 zaimplementowany jako program w języku C++ z interfejsem w C. Taka konfiguracja
