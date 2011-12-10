@@ -42,10 +42,7 @@ public://TODO make some private
     Image img;
     Image img_hsv;
     amv_state* state;
-    PatchFinder(amv_state* state){
-        this->state = state;
-    }
-    void setImages(Image img, Image img_hsv);
+    void setImages(amv_state* state, Image img, Image img_hsv);
     
     bool isIn(int x, int y);
     void meanShift();

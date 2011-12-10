@@ -50,6 +50,26 @@ Vec3b get_white(vector<pair<amv_image_pos, Vec3b> > white_points, amv_image_pos 
     return res;
 }
 
+static void balanceTile(Image& img, Rect roi, double weights[3]) {
+    Point p;
+    int w[3];
+    w[0] = weights[0]*255;
+    w[1] = weights[1]*255;
+    w[2] = weights[2]*255;
+    for (p.y = roi.y; p.y < roi.y + roi.height; p.y++) {
+        uchar* ptr = img.ptr(p.y);
+        ptr+=3*roi.x;
+        for (p.x = roi.width; p.x != 0; --p.x) {
+            *ptr = ((*ptr) * w[0]) >> 8;
+            ptr++;
+            *ptr = ((*ptr) * w[1]) >> 8;
+            ptr++;
+            *ptr = ((*ptr) * w[2]) >> 8;
+            ptr++;
+        }
+    }
+}
+
 void white_balance(Image* img, amv_config* config) {
     
     vector<pair<amv_image_pos, Vec3b> > white_points;
@@ -64,8 +84,6 @@ void white_balance(Image* img, amv_config* config) {
     const int TILE=16;
     const double SHRINK_FACTOR = 0.5;
     Mat mats[3];
-    Mat buf;
-    split(*img, mats);
     for (int i=0;i<img->size().width; i+=TILE)
         for (int j=0;j < img->size().height; j+=TILE) {
             amv_image_pos pos;
@@ -73,12 +91,11 @@ void white_balance(Image* img, amv_config* config) {
             pos.y = j;
             Vec3b color = get_white(white_points, pos);
             int gray = (color[0] + color[1] + color[2])/3;
+            double buf[3];
             for (int k=0;k<3;k++){   
-                buf=mats[k](cv::Rect(i,j,TILE,TILE) & cv::Rect(0, 0, img->size().width, img->size().height));
-                //mats[k].mul(mats[k],);
-                buf*=255.0/((color[k]+gray)/2)*SHRINK_FACTOR;
+                buf[k]=255.0/((color[k]+gray)/2)*SHRINK_FACTOR;
             }
+            balanceTile(*img, cv::Rect(i,j,TILE,TILE) & cv::Rect(0, 0, img->size().width, img->size().height), buf);
         }
     
-    merge(mats, 3, *img);
 } 
