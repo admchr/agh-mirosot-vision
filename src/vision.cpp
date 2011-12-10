@@ -139,15 +139,14 @@ amv_vision_data amv_find_teams(unsigned char* image, amv_state* state, amv_debug
     Image img;
     get_matrix(img, image, config);//1ms
     Image img_hsv(img.clone());//<1ms
-    
     white_balance(&img, config);//6ms
     debugImageWhite(img, config, debug);
 
     ((VisionState*) state->state)->mask.apply(img);//5ms
     hsvconverter.convert(img, img_hsv);//1ms
-    PatchFinder area(state);
+    PatchFinder area;
 
-    area.setImages(img, img_hsv);
+    area.setImages(state, img, img_hsv);
     PatchType blue(&area, config->blue.color, Vec3b(255, 0, 0), config, false);
     PatchType yellow(&area, config->yellow.color, Vec3b(0, 255, 255), config, false);
     PatchType orange(&area, config->orange, Vec3b(0, 128, 255), config, false);
@@ -168,7 +167,6 @@ amv_vision_data amv_find_teams(unsigned char* image, amv_state* state, amv_debug
     fillTeam(yellowTeam, &robots.yellow_team);
     fillTeam(blueTeam, &robots.blue_team);
     fillBall(ball, &robots);
-
     debugImagePatches(img, area, config, debug);
     debugImageRobots(img, area, config, debug, blueTeam, yellowTeam);
     debugImageResults(img, &robots, config, debug);

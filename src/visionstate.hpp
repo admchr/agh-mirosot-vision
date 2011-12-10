@@ -6,6 +6,7 @@
 class VisionState {
 public:
     ImageMask mask;
+    PatchFinder area;
 };
 
 #endif

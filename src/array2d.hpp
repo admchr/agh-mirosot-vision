@@ -46,6 +46,7 @@ Array2d<T>::Array2d(int width, int height) {
 template <typename T>
 Array2d<T>::Array2d() {
 }
+
 template <typename T>
 void Array2d<T>::resize(int width, int height) {
     vec.resize(width*height);
