@@ -44,6 +44,13 @@ void debugLine(amv_image_pos p, double angle, Image & img, int len, Vec3b color)
         paintPoint(img, Point(x, y), color);
     }
 }
+void debugLine(amv_point p, double angle, Image & img, int len, Vec3b color) {
+    amv_image_pos pos;
+    pos.x = p.x;
+    pos.y = p.y;
+    debugLine(pos, angle, img, len, color);
+}
+
 void debugLine(Point p, double angle, Image & img, int len, Vec3b color) {
     amv_image_pos pos;
     pos.x = p.x;
@@ -145,7 +152,9 @@ void debugTeam(Image& img, amv_team_info& info, const amv_team_data& team, Vec3b
 
     for (int i=0; i<team.team_len; i++) {
         amv_robot_data robot = team.team[i];
-        amv_image_pos p = robot.position;
+        amv_image_pos p;
+        p.x = robot.position.x;
+        p.y = robot.position.y;
         amv_image_pos tmp = p;
         double angle = robot.angle;
         double front_x = cos(angle)*SIDE;
@@ -235,8 +244,8 @@ void debugImageResults(Image& img, amv_vision_data* data, amv_config* config, am
         debugLine(data->ball_pos, M_PI*0.5*i, img_robots, 10, Vec3b(0, 0, 255));
 
     amv_image_pos tl, tr, bl, br;
-    tl = config->field_top_left;
-    br = config->field_bottom_right;
+    tl = config->transform.field_top_left;
+    br = config->transform.field_bottom_right;
     tr.x = br.x;
     tr.y = tl.y;
     bl.x = tl.x;

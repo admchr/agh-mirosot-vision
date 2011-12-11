@@ -16,7 +16,7 @@ void teamOutput(amv_team_data* team) {
     cout<<team->team_len<<endl;
     for (int i=0; i<team->team_len; i++) {
         amv_robot_data robot = team->team[i];
-        amv_image_pos p = robot.position;
+        amv_point p = robot.position;
         cout<<p.x<<" "<<p.y<<" "<<robot.angle<<" ["<<robot.identity<<"] "<<robot.certainty<<endl;
     }
 }

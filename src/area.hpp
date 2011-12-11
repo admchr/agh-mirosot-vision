@@ -11,7 +11,6 @@
 
 class Patch;
 class PatchType;
-void fillBall(Patch* ball, amv_vision_data* data);
 
 
 

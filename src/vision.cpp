@@ -85,10 +85,12 @@ void amv_config_init(amv_config* config) {
 
     config->linearize = 0;
 
-    config->field_top_left.x = 103;
-    config->field_top_left.y = 4;
-    config->field_bottom_right.x = 600;
-    config->field_bottom_right.y = 400;
+    config->transform.field_top_left.x = 103;
+    config->transform.field_top_left.y = 4;
+    config->transform.field_bottom_right.x = 600;
+    config->transform.field_bottom_right.y = 400;
+    config->transform.output_scale.x = 10;
+    config->transform.output_scale.y = 10;
 }
 
 
@@ -167,11 +169,15 @@ amv_vision_data amv_find_teams(unsigned char* image, amv_state* state, amv_debug
     fillTeam(yellowTeam, &robots.yellow_team);
     fillTeam(blueTeam, &robots.blue_team);
     fillBall(ball, &robots);
+
     debugImagePatches(img, area, config, debug);
     debugImageRobots(img, area, config, debug, blueTeam, yellowTeam);
     debugImageResults(img, &robots, config, debug);
     debugImageMeanshift(debug, img, config);
 
+    transformTeam(&robots.blue_team, config->transform);
+    transformTeam(&robots.yellow_team, config->transform);
+    transformPosition(&robots.ball_pos, config->transform);
 //*/
 
     return robots;

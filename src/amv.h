@@ -19,6 +19,11 @@ struct AMV_EXPORT amv_image_pos {
     int y;
 };
 
+struct AMV_EXPORT amv_point {
+    double x;
+    double y;
+};
+
 struct AMV_EXPORT amv_color_info {
     int hue_min;
     int hue_max;
@@ -38,6 +43,12 @@ struct AMV_EXPORT amv_team_info {
     amv_color_info secondary_colors[AMV_MAX_SECONDARY_COLORS];
 };
 
+struct amv_transform_info {
+    amv_image_pos field_top_left;
+    amv_image_pos field_bottom_right;
+    amv_point output_scale;
+};
+
 struct AMV_EXPORT amv_config {
     int image_height, image_width;
 
@@ -48,15 +59,13 @@ struct AMV_EXPORT amv_config {
     int mask_points_len;
 
     double px_per_cm;
-    amv_image_pos field_top_left;
-    amv_image_pos field_bottom_right;
-    double output_scale_x;
-    double output_scale_y;
     
     int meanshift_radius;
     int meanshift_threshold;
     int same_color_distance;
     int linearize;
+
+    amv_transform_info transform;
 
     int black_cutoff;
     struct amv_team_info blue;
@@ -80,7 +89,7 @@ struct AMV_EXPORT amv_debug_info {
 };
 
 struct AMV_EXPORT amv_robot_data {
-    struct amv_image_pos position;
+    struct amv_point position;
     int identity;
     double angle;
     double certainty;
@@ -94,7 +103,7 @@ struct AMV_EXPORT amv_team_data {
 struct AMV_EXPORT amv_vision_data {
     struct amv_team_data blue_team;
     struct amv_team_data yellow_team;
-    struct amv_image_pos ball_pos;
+    struct amv_point ball_pos;
 };
 
 struct AMV_EXPORT amv_state {

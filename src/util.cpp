@@ -2,6 +2,7 @@
 
 #include <cmath>
 
+using namespace cv;
 
 double logistic_cdf(double x) {
     return 1/(1+exp(-x));
@@ -37,4 +38,23 @@ bool in_hue(amv_color_info* color, int hue) {
     if (color->hue_min <= color->hue_max)
         return color->hue_min < hue && hue < color->hue_max;
     return color->hue_min < hue || hue < color->hue_max;
+}
+
+void transformPosition(amv_point* pos, amv_transform_info tr) {
+    amv_point size;
+    size.x = tr.field_bottom_right.x - tr.field_top_left.x;
+    size.y = tr.field_bottom_right.y - tr.field_top_left.y;
+
+    // subtract top left
+    pos->x = pos->x - tr.field_top_left.x;
+    pos->y = pos->y - tr.field_top_left.y;
+
+    // rescale to [0,1]
+    pos->x /= size.x;
+    pos->y /= size.y;
+
+    // output scale
+    pos->x *= tr.output_scale.x;
+    pos->y *= tr.output_scale.y;
+
 }
