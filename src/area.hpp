@@ -46,6 +46,7 @@ public://TODO make some private
     
     bool isIn(int x, int y);
     void meanShift();
+    void extendPatch(cv::Point np, cv::Point p, Patch* pt, std::vector<cv::Point>& Q);
     void getSets();
 
     static int colorDistance(cv::Vec3b a, cv::Vec3b b);
