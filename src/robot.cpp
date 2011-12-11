@@ -165,3 +165,18 @@ void fillTeam(vector<Robot> team, amv_team_data* data) {
         data->team_len++;
     }
 }
+
+void fillBall(Patch* ball, amv_vision_data* data) {
+    if (!ball) {
+        data->ball_pos.x = data->ball_pos.y = -1;
+        return;
+    }
+    data->ball_pos.x = ball->getCenter().x;
+    data->ball_pos.y = ball->getCenter().y;
+}
+
+void transformTeam(amv_team_data* robots, amv_transform_info transform) {
+    for (int i=0; i<robots->team_len; i++) {
+        transformPosition(&robots->team[i].position, transform);
+    }
+}
