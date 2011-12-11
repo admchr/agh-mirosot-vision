@@ -179,7 +179,11 @@ latex_paper_size = 'a4'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'agh-mirosot-vision.tex', u'Biblioteka do lokalizacji robotów mobilnych ligi FIRA MiroSot',
+  ('user/userdoc', 'userdoc.tex', u'Biblioteka do lokalizacji robotów mobilnych ligi FIRA MiroSot - dokumentacja użytkownika',
+   u'Adam Chrabąszcz, Konrad Kras', 'manual'),
+  ('arch/archdoc', 'archdoc.tex', u'Biblioteka do lokalizacji robotów mobilnych ligi FIRA MiroSot - dokumentacja techniczna',
+   u'Adam Chrabąszcz, Konrad Kras', 'manual'),
+  ('process/processdoc', 'processdoc.tex', u'Biblioteka do lokalizacji robotów mobilnych ligi FIRA MiroSot - dokumentacja procesowa',
    u'Adam Chrabąszcz, Konrad Kras', 'manual'),
 ]
 
