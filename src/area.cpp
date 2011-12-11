@@ -50,6 +50,25 @@ void PatchFinder::preparePixel(cv::Point p) {
     meanshifted.set(p.x, p.y, true);
 }
 
+void PatchFinder::extendPatch(Point np, Point p, Patch* pt, vector<Point>& Q) {
+    if (area_map.get(np.x, np.y))
+        return;
+    if (!pt->add(np, p)) {
+        if (this->state->config->meanshift_radius == 0) {
+            //this avoids having to redo much of the work
+
+            return;
+        }
+        preparePixel(np);
+        if (!pt->add(np, p))
+            return;
+    }
+    area_map.set(np.x, np.y, pt);
+
+    Q.push_back(np);
+
+}
+
 void PatchFinder::getSets() {
     std::vector<Point> Q;
 
@@ -70,26 +89,14 @@ void PatchFinder::getSets() {
             while (!Q.empty()) {
                 Point p = Q.back();
                 Q.pop_back();
-                const int minx = max(p.x - 1, 0);
-                const int miny = max(p.y - 1, 0);
-                const int maxx = min(p.x + 2, img.cols);
-                const int maxy = min(p.y + 2, img.rows);
-
-                for (int nx = minx; nx < maxx; nx++)
-                    for (int ny = miny; ny < maxy; ny++) {
-                        Point np = Point(nx, ny);
-
-                        if (area_map.get(nx, ny))
-                            continue;
-                        if (!pt->add(np, p)) {
-                            preparePixel(np);
-                            if (!pt->add(np, p))
-                                continue;
-                        }
-                        area_map.set(nx, ny, pt);
-
-                        Q.push_back(np);
-                }
+                if (p.x > 0)
+                        extendPatch(Point(p.x - 1, p.y), p, pt, Q);
+                if (p.y > 0)
+                        extendPatch(Point(p.x, p.y + 1), p, pt, Q);
+                if (p.x + 1 < img.cols)
+                        extendPatch(Point(p.x + 1, p.y), p, pt, Q);
+                if (p.y + 1 > img.rows)
+                        extendPatch(Point(p.x, p.y + 1), p, pt, Q);
             }
         }
     }

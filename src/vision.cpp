@@ -137,13 +137,13 @@ amv_vision_data amv_find_teams(unsigned char* image, amv_state* state, amv_debug
     amv_config* config = state->config;
 
     Image img;
-    get_matrix(img, image, config);//1ms
-    Image img_hsv(img.clone());//<1ms
-    white_balance(&img, config);//6ms
+    get_matrix(img, image, config);
+    Image img_hsv(img.clone());
+    white_balance(&img, config);
     debugImageWhite(img, config, debug);
 
-    ((VisionState*) state->state)->mask.apply(img);//5ms
-    hsvconverter.convert(img, img_hsv);//1ms
+    ((VisionState*) state->state)->mask.apply(img);
+    hsvconverter.convert(img, img_hsv);
     PatchFinder area;
 
     area.setImages(state, img, img_hsv);
@@ -155,9 +155,9 @@ amv_vision_data amv_find_teams(unsigned char* image, amv_state* state, amv_debug
     precompute.blue = &blue;
     precompute.yellow = &yellow;
     precompute.orange = &orange;
-    area.precompute(precompute);//<1ms
+    area.precompute(precompute);
     debugImagePrescreen(img, area, state, debug);
-    area.getSets();//25ms
+    area.getSets();
 
     vector<Robot> yellowTeam, blueTeam;
     yellowTeam = getTeam(&yellow, &config->yellow);
