@@ -11,4 +11,3 @@ Dokumentacja użytkownika
 
     apidoc
     algodoc
-    
