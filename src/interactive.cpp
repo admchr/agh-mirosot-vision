@@ -72,7 +72,7 @@ int main(int argc, char** argv)
         }
         amv_state state;
         cv::Mat_<cv::Vec3b> img(img0.clone());
-        amv_state_new(state, config);
+        amv_state_new(&state, &config);
 
         if (dbg_i == 0)
             dbg_img = img0.clone();

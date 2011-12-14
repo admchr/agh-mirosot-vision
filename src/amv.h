@@ -35,18 +35,18 @@ struct AMV_EXPORT amv_robot_info {
 };
 
 struct AMV_EXPORT amv_team_info {
-    amv_color_info color;
+    struct amv_color_info color;
     int team_size;
 
     int home_team;
     struct amv_robot_info robot_info[AMV_MAX_ROBOTS];
-    amv_color_info secondary_colors[AMV_MAX_SECONDARY_COLORS];
+    struct amv_color_info secondary_colors[AMV_MAX_SECONDARY_COLORS];
 };
 
 struct amv_transform_info {
-    amv_image_pos field_top_left;
-    amv_image_pos field_bottom_right;
-    amv_point output_scale;
+    struct amv_image_pos field_top_left;
+    struct amv_image_pos field_bottom_right;
+    struct amv_point output_scale;
 };
 
 struct AMV_EXPORT amv_config {
@@ -65,7 +65,7 @@ struct AMV_EXPORT amv_config {
     int same_color_distance;
     int linearize;
 
-    amv_transform_info transform;
+    struct amv_transform_info transform;
 
     int black_cutoff;
     struct amv_team_info blue;
@@ -107,7 +107,7 @@ struct AMV_EXPORT amv_vision_data {
 };
 
 struct AMV_EXPORT amv_state {
-    amv_config* config;
+    struct amv_config* config;
     void* state;
 };
 struct amv_vision_data AMV_EXPORT
@@ -120,7 +120,7 @@ struct amv_vision_data AMV_EXPORT
 
 void AMV_EXPORT amv_config_init(struct amv_config* config);
 void AMV_EXPORT amv_debug_init(struct amv_debug_info*);
-void AMV_EXPORT amv_state_new(amv_state& st, struct amv_config& config);
+void AMV_EXPORT amv_state_new(struct amv_state* st, struct amv_config* config);
 
 void AMV_EXPORT amv_state_free(struct amv_state* state);
 

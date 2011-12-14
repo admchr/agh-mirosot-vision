@@ -8,6 +8,7 @@ Dokumentacja użytkownika
 
 
 .. toctree::
-
+    
+    uidoc
     apidoc
     algodoc

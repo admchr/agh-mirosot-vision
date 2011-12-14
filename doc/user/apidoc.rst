@@ -1,14 +1,13 @@
 
 .. highlight:: c
 
+C API 
+-------
 
-Dokumentacja interfejsu
------------------------
+Część obliczeniowa programu została wyodrębniona w postaci biblioteki w 
+języku C. 
 
-Ze względu na wymagania dotyczące wydajności i konieczność współpracy z 
-maksymalnie różnorodnymi środowiskami algorytm rozpoznawania robotów został
-zaimplementowany jako program w języku C++ z interfejsem w C. Taka konfiguracja
-zapewnia maksymalną kompatybilność z dowolnym językiem programowania.
+
 
 Cała istota algorytmu jest zawarta w jednej funkcji:
 
