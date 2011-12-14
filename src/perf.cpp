@@ -48,7 +48,7 @@ int main(int argc, char**argv) {
     Timer t;
     amv_state state;
     t.start();
-    amv_state_new(state, config);
+    amv_state_new(&state, &config);
     std::cout<<t.getTime()<<" ms for mask initialization"<<std::endl;
 
     std::cout<<RUNS<<" iterations "<<std::endl;

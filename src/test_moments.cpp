@@ -30,7 +30,7 @@ BOOST_AUTO_TEST_CASE(test_undefined_angle) {
     moments.add(Point(1, 0));
     moments.add(Point(1, 1));
     BOOST_CHECK_CLOSE_FRACTION(moments.getAngle(), UNDEFINED, 1e-6);
-    BOOST_CHECK(moments.getMean() == Point2d(0, 0));
+    BOOST_CHECK(moments.getMean() == Point2d(0.5, 0.5));
 
 }
 

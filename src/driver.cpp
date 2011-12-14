@@ -70,7 +70,7 @@ int main(int argc, char**argv) {
         config.image_width = img0.size().width;
         config.image_height = img0.size().height;
 
-        amv_state_new(state, config);
+        amv_state_new(&state, &config);
         process(in_fname, out_fname, &state);
     } else {
         int n;
@@ -85,7 +85,7 @@ int main(int argc, char**argv) {
                 cv::Mat_<cv::Vec3b> img0 = cv::imread(in_fname);
                 config.image_width = img0.size().width;
                 config.image_height = img0.size().height;
-                amv_state_new(state, config);
+                amv_state_new(&state, &config);
             }
             process(in_fname, out_fname, &state);
         }

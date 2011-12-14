@@ -82,7 +82,7 @@ void amv_config_init(amv_config* config) {
     config->white_cutoff = 125;
     config->black_cutoff = 70;
 
-
+    config->white_is_yellow = 1;
     config->linearize = 0;
 
     config->transform.field_top_left.x = 103;
@@ -94,15 +94,15 @@ void amv_config_init(amv_config* config) {
 }
 
 
-void amv_state_new(amv_state& state, amv_config& config) {
+void amv_state_new(amv_state* state, amv_config* config) {
     vector<Point> poly;
-    for (int i=0; i<config.mask_points_len; i++) {
-        amv_image_pos pos = config.mask_points[i];
+    for (int i=0; i<config->mask_points_len; i++) {
+        amv_image_pos pos = config->mask_points[i];
         poly.push_back(Point(pos.x, pos.y));
     }
-    state.config = &config;
-    state.state = (void*) new VisionState();
-    ((VisionState*) state.state)->mask.init(poly, Size(config.image_width, config.image_height));
+    state->config = config;
+    state->state = (void*) new VisionState();
+    ((VisionState*) state->state)->mask.init(poly, Size(config->image_width, config->image_height));
 }
 
 void amv_state_free(amv_state* state) {
