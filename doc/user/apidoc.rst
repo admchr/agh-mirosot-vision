@@ -1,8 +1,13 @@
 
 .. highlight:: c
 
+Koszulki, założenia
+Konwencja H = [0, 180)
+S = [0, 255]
+L = [0, 255]
+
 C API 
--------
+-----
 
 Rdzeń obliczeniowy został wyodrębniony w postaci biblioteki w C. Umożliwia to
 wykorzystanie go w aplikacjach wykorzystujących dowolny język programowania.
@@ -88,33 +93,16 @@ Konfiguracja
             int white_cutoff;
         };
 
-    TODO
-    
-Poniżej opisane są poszczególne elementy struktury.
-
-bitmapa
-^^^^^^^
-
-Struktura wejściowa zawiera wskaźnik do obrazka, z którego ma zostać wyciągnięta 
-informacja o robotach. Dane koloru pikseli bitmapy są zapisane jako 3 bajty w 
-formacie BGR, czyli dla wskaźnika ``unsigned char* ptr``::
-
-    B = ptr[0];
-    G = ptr[1];
-    R = ptr[2];
-
-Wartości pikseli obrazka na współrzędnych x i y są określone wzorem 
-``img(x, y) = img_ptr[3*(x + y*width)]``, czyli piksele są upakowane ciasno 
-w przestrzeni adresowej i są przechowywane wierszami.
-
-Alokacją obrazka zajmuje się użytkownik. 
-**Zawartość bitmapy zostaje zamazana po wywołaniu find_teams**
+    Struktura jest inicjalizowana za pomocą funkcji :c:func:`init_config()`. 
+    Poniżej opisane są poszczególne elementy struktury.
 
 inicjalizacja
 ^^^^^^^^^^^^^
-   Przed pierwszym użyciem należy skonfigurować pewne informacje o świecie
-   i warunkach oświetleniowych. Dane na temat samego wyglądu patcha na robocie
-   są aktualnie hardcodowane. 
+
+.. c:member:: double mirosot_vision_config.image_width
+.. c:member:: double mirosot_vision_config.image_height
+
+    Wymiary obrazka w pikselach.
 
 .. c:member:: double mirosot_vision_config.px_per_cm
 .. c:member:: double mirosot_vision_config.robot_size
@@ -122,7 +110,7 @@ inicjalizacja
     Podają odpowiednio rozdzielczość obrazu na powierzchni boiska (w pikselach
     na centymetr) i długość boku robota w centymetrach.
 
-.. c:member:: char mirosot_vision_config.linearize
+.. c:member:: int mirosot_vision_config.linearize
 
     Wartość logiczna określająca, czy przed wszystkimi innymi operacjami ma 
     zostać wykonana konwersja kolorów z sRGB do liniowego RGB.
@@ -173,62 +161,136 @@ inicjalizacja
     żółte obszary mają tendencję do prześwietlania i traktuje takie obszary 
     jako żółte.
 
-.. c:member:: unsigned char *debug_balance.debug_balance
-.. c:member:: unsigned char *debug_balance.debug_prescreen
-.. c:member:: unsigned char *debug_balance.debug_meanshift
-.. c:member:: unsigned char *debug_balance.debug_patches
-.. c:member:: unsigned char *debug_balance.debug_robots
 
-    Jeśli któreś z tych pól zostanie ustawione na bufor zaalokowany przez
-    użytkownika, zostanie on wypełniony kopią obrazka z pola image z 
-    domalowanymi elementami mogącymi wspomóc diagnozowanie problemów z 
-    algorytmem.
-
-
-.. c:type:: struct image_pos
-
-    ::
-        
-        struct image_pos {
-            int x;
-            int y;
-        };
 
     
 Wynik działania
 ***************
 
-.. c:type:: struct vision_data
-    
-    Kontener na dane o drużynach i piłce. Zawartość struktur wydaje się być 
+TODO vision data
+
+.. c:type:: struct amv_debug_info
 
     ::
-        
-        struct vision_data {
-            team_data blue_team;
-            team_data yellow_team;
-            image_pos ball_pos;
-        };
-        
-        struct team_data {
-            int team_len;
-            robot_data team[MAX_ROBOTS];
+
+        struct amv_debug_info {
+            unsigned char *debug_balance;
+            unsigned char *debug_prescreen;
+            unsigned char *debug_meanshift;
+            unsigned char *debug_patches;
+            unsigned char *debug_robots;
+            unsigned char *debug_results;
         };
 
-        struct robot_data {
-            image_pos position;
-            double angle;
+    Jeśli któreś z tych pól zostanie ustawione na bufor zaalokowany przez
+    użytkownika, zostanie on wypełniony obrazkiem diagnostycznym. 
+
+    Obrazki diagnostyczne mają taki sam rozmiar i format, jak obrazek wejściowy.
+
+.. c:member:: unsigned char *debug_balance.debug_balance
+
+    Ramka obrazu po korekcji jasności i barw. 
+
+.. c:member:: unsigned char *debug_balance.debug_prescreen
+
+    Ramka obrazu pokazująca przynależność do zakresów HSV, które definiują 
+    poszczególne kolory obszarów.
+
+.. c:member:: unsigned char *debug_balance.debug_meanshift
+.. c:member:: unsigned char *debug_balance.debug_patches
+.. c:member:: unsigned char *debug_balance.debug_robots
+
+
+
+Struktury pomocnicze
+********************
+
+.. c:type:: struct amv_image_pos
+
+    ::
+
+        struct amv_image_pos {
+            int x;
+            int y;
         };
+
+    Punkt dwuwymiarowy, o współrzędnych całkowitych. 
+    Używany zwykle do oznaczania pozycji piksela na obrazku.
+
+.. c:type:: struct amv_point
+
+    ::
+
+        struct amv_point {
+            double x;
+            double y;
+        };
+
+    Punkt dwuwymiarowy o współrzędnych zmiennoprzecinkowych. Używany do 
+    określenia abstrakcyjnych współrzędnych wyjściowej pozycji robota.
+
+.. c:type:: struct amv_color_info
+
+    ::
+
+        struct amv_color_info {
+            int hue_min;
+            int hue_max;
+        };
+
+    Zakres barw (H) w schemacie kolorów HSV. W tej implememtacji składowa barwy 
+    ma wartość od 0 do 179 (arytmetyka modulo 180). Przedział barw 
+    ``hue_min = 100, hue_max = 50`` jest legalny i oznacza zakres ``0..50,100..179``.
 
 
 Funkcje
 *******
 
-.. c:function:: robot_data find_teams(mirosot_vision_config* config)
+
+.. c:function:: amv_vision_data amv_find_teams(
+        unsigned char* image, struct amv_state* state, 
+        struct amv_debug_info* debug)
 
     Przyjmuje ona dane wizualne i tworzy opis drużyn robotów.
+    TODO
+
+.. c:function:: void amv_config_init(struct amv_config* config)
+
+    Inicjalizuje strukturę konfiguracyjną. Pola parametru zostają ustawione na 
+    legalne zawartości, wskaźniki do struktur zewnętrznych zostają wyzerowane. 
+    Nadpisywane są wszystkie parametry, z wyjątkiem wysokości i szerokości obrazka
+     - te muszą zostać podane oddzielnie.
     
-    Struktury z tej funkcji intensywnie korzystają ze struktury opisującej
-    położenie punktu na płaszczyźnie bitmapy.
+.. c:function:: void amv_debug_init(struct amv_debug_info*)
+    
+    Zeruje wskaźniki do wszystkich ramek diagnostycznych w strukturze.
+
+.. c:function:: void amv_state_new(struct amv_state* st, struct amv_config* config)
+
+    Przepisuje zawartość konfiguracji do zmiennej stanu. Cele pól wskaźnikowych
+    nie są kopiowane, więc nie powinny być zwalniane do momentu zwolnienia struktury stanu.
+
+.. c:function:: void amv_state_free(struct amv_state* state)
+
+    Uwalnia pamięć używaną przez zmienną stanu.
+
+
+bitmapa
+^^^^^^^
+
+Struktura wejściowa zawiera wskaźnik do obrazka, z którego ma zostać wyciągnięta 
+informacja o robotach. Dane koloru pikseli bitmapy są zapisane jako 3 bajty w 
+formacie BGR, czyli dla wskaźnika ``unsigned char* ptr``::
+
+    B = ptr[0];
+    G = ptr[1];
+    R = ptr[2];
+
+Wartości pikseli obrazka na współrzędnych x i y są określone wzorem 
+``img(x, y) = img_ptr[3*(x + y*width)]``, czyli piksele są upakowane ciasno 
+w przestrzeni adresowej i są przechowywane wierszami.
+
+Alokacją obrazka zajmuje się użytkownik. 
+**Zawartość bitmapy zostaje zamazana po wywołaniu find_teams**
 
     
