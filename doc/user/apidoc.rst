@@ -4,74 +4,92 @@
 C API 
 -------
 
-Część obliczeniowa programu została wyodrębniona w postaci biblioteki w 
-języku C. 
+Rdzeń obliczeniowy został wyodrębniony w postaci biblioteki w C. Umożliwia to
+wykorzystanie go w aplikacjach wykorzystujących dowolny język programowania.
+Jedyna zależność kodu obliczeniowego to opencv.
 
+Przykładowy minimalny program wykorzystujący interfejs jest dość prosty::
 
-
-Cała istota algorytmu jest zawarta w jednej funkcji:
-
-.. c:function:: robot_data find_teams(mirosot_vision_config* config)
-
-    Przyjmuje ona dane wizualne i tworzy opis drużyn robotów.
+    struct amv_config config;
+    amv_config_init(&config);
+    config.image_width = WIDTH;
+    config.image_height = HEIGHT;
+    load_config(&config, argv[2]);
     
-    Struktury z tej funkcji intensywnie korzystają ze struktury opisującej
-    położenie punktu na płaszczyźnie bitmapy.
+    struct amv_state state;
+    amv_state_new(&state, &config);
 
-.. c:type:: struct image_pos
+    while(!stop) {
+        unsigned char* frame = grab_frame();
+        struct amv_vision_data data = amv_find_teams(frame, &state, NULL);
+    }
+    amv_state_free(&state);
 
-    ::
-        
-        struct image_pos {
-            int x;
-            int y;
-        };
+Po zainicjalizowaniu konfiguracji funkcją :c:func:`init_config()` jedynymi wartościami, 
+które bezwzględnie muszą zostać wypełnione są wysokość i szerokość obrazka w 
+pikselach. Pozostałe pola zostają wypełnione domyślnymi wartościami, które 
+gwarantują legalne działanie algorytmu. Poszczególne elementy struktur 
+:c:type:`amv_config` i
+:c:type:`amv_vision_data`, a także poprawny format ramki obrazu są opisane poniżej, w 
+dokumentacji odpowiednich pól i funkcji.
+
+Struktura :c:type:`amv_state` przechowuje konfigurację algorytmu wraz z wewnętrznymi
+strukturami pomocniczymi, które mają za zadanie przyspieszyć działanie funkcji 
+:c:type:`amv_find_teams`.
+
+Aby uzyskać obrazki diagnostyczne, należy wykorzystać struturę
+:c:type:`amv_debug_info`::
     
+    unsigned char* debug_frame0 = malloc(3 * WIDTH * HEIGHT);
+    
+    amv_debug_info debug;
+    amv_debug_init(&debug);
+    debug.debug_results = debug_frame0;
+    struct amv_vision_data data = amv_find_teams(frame, &state, debug);
+    
+    view_frame(debug_frame0);
+    free(debug_frame0);
+
+Wskażniki do pamięci w której mają być zapisane ramki diagnostyczne są 
+przyczepiane do odpowiednich pól struktury.
+
 
 Konfiguracja
 ************
 
-.. c:type:: struct mirosot_vision_config
+.. c:type:: struct amv_config
 
     ::
 
-        struct mirosot_vision_config {
-            unsigned char* image;
-            int height, width;
-            
-            image_pos* white_points;
+        struct amv_config {
+            int image_height, image_width;
+
+            struct amv_image_pos* white_points;
             int white_points_len;
             
-            image_pos* mask_points;
+            struct amv_image_pos* mask_points;
             int mask_points_len;
 
             double px_per_cm;
-            double robot_size;
             
             int meanshift_radius;
             int meanshift_threshold;
+            int same_color_distance;
+            int linearize;
+
+            struct amv_transform_info transform;
 
             int black_cutoff;
-            int blue_min;
-            int blue_max;
-            int yellow_min;
-            int yellow_max;
+            struct amv_team_info blue;
+            struct amv_team_info yellow;
+            struct amv_color_info orange;
+            int white_is_yellow;
             int minimum_saturation;
             int white_cutoff;
-            char linearize;
-
-            unsigned char *debug_balance;
-            unsigned char *debug_prescreen;
-            unsigned char *debug_meanshift;
-            unsigned char *debug_patches;
-            unsigned char *debug_robots;
-            void* state;
         };
 
-    Strukturę należy zainicjalizować funkcją ``init_config``, która wypełnia 
-    pola wartościami domyślnymi i przygotowuje zawartość tablic pomocniczych 
-    ukrytych w polu ``state``.
-
+    TODO
+    
 Poniżej opisane są poszczególne elementy struktury.
 
 bitmapa
@@ -166,6 +184,17 @@ inicjalizacja
     domalowanymi elementami mogącymi wspomóc diagnozowanie problemów z 
     algorytmem.
 
+
+.. c:type:: struct image_pos
+
+    ::
+        
+        struct image_pos {
+            int x;
+            int y;
+        };
+
+    
 Wynik działania
 ***************
 
@@ -191,4 +220,15 @@ Wynik działania
             double angle;
         };
 
- 
+
+Funkcje
+*******
+
+.. c:function:: robot_data find_teams(mirosot_vision_config* config)
+
+    Przyjmuje ona dane wizualne i tworzy opis drużyn robotów.
+    
+    Struktury z tej funkcji intensywnie korzystają ze struktury opisującej
+    położenie punktu na płaszczyźnie bitmapy.
+
+    
