@@ -5,6 +5,9 @@ Koszulki, założenia
 Konwencja H = [0, 180)
 S = [0, 255]
 L = [0, 255]
+kąt 
+
+transformacja współrzędnych
 
 C API 
 -----
@@ -96,40 +99,41 @@ Konfiguracja
     Struktura jest inicjalizowana za pomocą funkcji :c:func:`init_config()`. 
     Poniżej opisane są poszczególne elementy struktury.
 
-inicjalizacja
-^^^^^^^^^^^^^
 
-.. c:member:: double mirosot_vision_config.image_width
-.. c:member:: double mirosot_vision_config.image_height
+.. c:member:: int amv_config.image_width
+.. c:member:: int amv_config.image_height
 
     Wymiary obrazka w pikselach.
 
-.. c:member:: double mirosot_vision_config.px_per_cm
-.. c:member:: double mirosot_vision_config.robot_size
+.. c:member:: double amv_config.px_per_cm
 
-    Podają odpowiednio rozdzielczość obrazu na powierzchni boiska (w pikselach
-    na centymetr) i długość boku robota w centymetrach.
+    Rozdzielczość obrazu na powierzchni boiska (w pikselach
+    na centymetr).
 
-.. c:member:: int mirosot_vision_config.linearize
+.. c:member:: int amv_config.linearize
 
-    Wartość logiczna określająca, czy przed wszystkimi innymi operacjami ma 
+    Wartość logiczna określająca, czy przed wszystkimi innymi operacjami ma
     zostać wykonana konwersja kolorów z sRGB do liniowego RGB.
 
-.. c:member:: image_pos *mirosot_vision_config.white_points
-.. c:member:: int *mirosot_vision_config.white_points_len
+.. c:member:: image_pos *amv_config.white_points
+.. c:member:: int amv_config.white_points_len
 
-    Pozycje punktów boiska, które można określić jako białe. Służą do balansu 
-    bieli na obrazku.
+    Pozycje punktów boiska, które można określić jako białe. Służą do balansu
+    bieli na obrazku. ``white_points`` powinno wskazywać na tablicę o 
+    długości ``white_points_len``. ``white_points_len`` równe 0 oznacza 
+    brak przeprowadzania balansu.
 
-.. c:member:: image_pos *mirosot_vision_config.white_points
-.. c:member:: int *mirosot_vision_config.white_points_len
+.. c:member:: image_pos *amv_config.mask_points
+.. c:member:: int amv_config.mask_points_len
 
-    Wierzchołki wielokąta opisującego region zainteresowania. Piksele spoza tego
-    wielokąta są maskowane kolorem czarnym. Maskowanie następuje po balansie 
-    bieli.
+    Punkty opisujące wierzchołki wielokąta regionu zainteresowania. 
+    Piksele spoza tego wielokąta są wyłączone z dalszego przetwarzania -
+    maskowane kolorem czarnym. ``mask_points`` powinno wskazywać na tablicę o 
+    długości ``mask_points_len``. ``mask_points_len`` równe 0 oznacza 
+    brak przeprowadzania maskowania.
 
-.. c:member:: int mirosot_vision_config.meanshift_radius
-.. c:member:: int mirosot_vision_config.meanshift_threshold
+.. c:member:: int amv_config.meanshift_radius
+.. c:member:: int amv_config.meanshift_threshold
 
     Rozmiar okna algorytmu wygładzania powierzchni meanshift i odległość 
     obcięcia koloru. Rozmiar okna może mieć duży wpływ na wydajność.
@@ -137,71 +141,124 @@ inicjalizacja
     Threshold to odległość w normie euklidesowej pikseli, które są uważane za 
     różne.
 
-.. c:member:: int mirosot_vision_config.yellow_min
-.. c:member:: int mirosot_vision_config.yellow_max
-.. c:member:: int mirosot_vision_config.blue_min
-.. c:member:: int mirosot_vision_config.blue_max
+.. c:member:: int amv_config.minimum_saturation
 
-    Zakresy wartości barwy (Hue), w których znajdują się żółte i niebieskie 
-    patche robotów.
+    Minimalne nasycenie koloru będącego częścią obszaru żółtego, pomarańczowego
+    lub niebieskiego.
 
-.. c:member:: int mirosot_vision_config.minimum_saturation
+.. c:member:: int amv_config.white_cutoff
 
-    Minimalne nasycenie koloru będącego częścią obszaru żółtego lub 
-    niebieskiego.
+    Jasność (Lightness), powyżej której piksel uważa się za biały.
 
-.. c:member:: int mirosot_vision_config.black_cutoff
+.. c:member:: int amv_config.black_cutoff
 
-    Minimalna jasność (Lightness) piksela mogącego być przetworzonym. 
-    Ciemniejsze piksele są ignorowane.
-
-.. c:member:: int mirosot_vision_config.white_cutoff
-
-    Jasność, przy której piksel uważa się za prześwietlony. Algorytm zakłada, że
-    żółte obszary mają tendencję do prześwietlania i traktuje takie obszary 
-    jako żółte.
-
-
-
+    Jasność, poniżej której piksel uważa się za zbyt ciemny. Ta wartość jest
+    używana do rozpoznawania kolorów drużynowych.
     
+
+.. c:member:: amv_team_info amv_config.blue
+.. c:member:: amv_team_info amv_config.yellow
+
+    Struktury określające wygląd i skład poszczególnych drużyn.
+    
+.. c:type:: struct amv_transform_info
+    
+    ::
+        
+        struct amv_transform_info {
+            struct amv_image_pos field_top_left;
+            struct amv_image_pos field_bottom_right;
+            struct amv_point output_scale;
+        };
+    
+    Struktura zawiera informacje potrzebne do przeprowadzania transformacji
+    położenia obiektów z współrzędnych obrazka do współrzędnych wynikowych.
+    Dwa punkty określają położenie punktów rogów boiska, skala wyjściowa określa
+    końcowe skalowanie.
+
+.. c:type:: struct amv_team_info
+
+    ::
+        
+        struct AMV_EXPORT amv_team_info {
+            struct amv_color_info color;
+            int team_size;
+
+            int home_team;
+            struct amv_robot_info robot_info[AMV_MAX_ROBOTS];
+            struct amv_color_info secondary_colors[AMV_MAX_SECONDARY_COLORS];
+        };
+    
+    Struktura opisuje drużynę robotów:
+    
+    * ``color`` - specyfikacja zakresu barw koloru drużyny robotów. 
+    * ``team_size`` - ilość robotów na boisku. Algorytm będzie zwracał dokładnie
+        taką ilość pozycji robotów. 
+    * `` home_team`` - czy analizie mają być poddawane orientacja robotów i ich
+        identyfikacja w ramach drużyny.
+    * ``robot_info`` - opis robotów w drużynie (o ile ``home_team`` 
+        :math:`\neq 0` ). Indeksy w tej tablicy posłużą za identyfikatory 
+        robotów.
+    * ``secondary_colors`` - opis dostępnych kolorów pomocniczych, używanych w 
+        opisach ``robot_info``.
+    
+.. c:type:: struct amv_robot_info
+
+    ::
+        
+        struct AMV_EXPORT amv_robot_info {
+            int front_color;
+            int back_color;
+        };
+    
+    Opis dwóch kolorów pomocniczych na danym robocie. Liczby wskazują na 
+    indeksy w tablicy ``secondary_colors``.
+
 Wynik działania
 ***************
 
-TODO vision data
-
-.. c:type:: struct amv_debug_info
+.. c:type:: struct amv_vision_data
 
     ::
-
-        struct amv_debug_info {
-            unsigned char *debug_balance;
-            unsigned char *debug_prescreen;
-            unsigned char *debug_meanshift;
-            unsigned char *debug_patches;
-            unsigned char *debug_robots;
-            unsigned char *debug_results;
+        
+        struct AMV_EXPORT amv_vision_data {
+            struct amv_team_data blue_team;
+            struct amv_team_data yellow_team;
+            struct amv_point ball_pos;
         };
+    
+    Struktura przechowuje wynik rozpoznawania klatki obrazu. 
 
-    Jeśli któreś z tych pól zostanie ustawione na bufor zaalokowany przez
-    użytkownika, zostanie on wypełniony obrazkiem diagnostycznym. 
+.. c:type:: struct amv_team_data
 
-    Obrazki diagnostyczne mają taki sam rozmiar i format, jak obrazek wejściowy.
+    ::
+        
+        struct AMV_EXPORT amv_team_data {
+            int team_len;
+            struct amv_robot_data team[AMV_MAX_ROBOTS];
+        };
+    
+    Opis pozycji robotów danej drużyny. Ilość znalezionych robotów
+    nie przekracza rozmiaru drużyny podanego na wejściu algorytmu. 
 
-.. c:member:: unsigned char *debug_balance.debug_balance
+.. c:type:: struct amv_robot_data
 
-    Ramka obrazu po korekcji jasności i barw. 
-
-.. c:member:: unsigned char *debug_balance.debug_prescreen
-
-    Ramka obrazu pokazująca przynależność do zakresów HSV, które definiują 
-    poszczególne kolory obszarów.
-
-.. c:member:: unsigned char *debug_balance.debug_meanshift
-.. c:member:: unsigned char *debug_balance.debug_patches
-.. c:member:: unsigned char *debug_balance.debug_robots
-
-
-
+    ::
+        
+        struct AMV_EXPORT amv_robot_data {
+            struct amv_point position;
+            int identity;
+            double angle;
+            double certainty;
+        };
+    
+    Opis pozycji znalezionego robota:
+    
+    * ``position`` - pozycja robota w wyjściowym układzie współrzędnych. 
+    * ``identity`` - identyfikator robota w drużynie 
+        (o ile roboty są identyfikowane).
+    * ``angle`` - kąt 
+    
 Struktury pomocnicze
 ********************
 
@@ -238,10 +295,45 @@ Struktury pomocnicze
             int hue_max;
         };
 
-    Zakres barw (H) w schemacie kolorów HSV. W tej implememtacji składowa barwy 
+    Zakres barw (Hue) w schemacie kolorów HSL. W tej implememtacji składowa barwy 
     ma wartość od 0 do 179 (arytmetyka modulo 180). Przedział barw 
     ``hue_min = 100, hue_max = 50`` jest legalny i oznacza zakres ``0..50,100..179``.
 
+Diagnostyka
+***********
+
+.. c:type:: struct amv_debug_info
+
+    ::
+
+        struct amv_debug_info {
+            unsigned char *debug_balance;
+            unsigned char *debug_prescreen;
+            unsigned char *debug_meanshift;
+            unsigned char *debug_patches;
+            unsigned char *debug_robots;
+            unsigned char *debug_results;
+        };
+
+    Jeśli któreś z tych pól zostanie ustawione na bufor zaalokowany przez
+    użytkownika, zostanie on wypełniony obrazkiem diagnostycznym. 
+
+    Obrazki diagnostyczne mają taki sam rozmiar i format, jak obrazek wejściowy.
+
+.. c:member:: unsigned char *debug_balance.debug_balance
+
+    Ramka obrazu po korekcji jasności i barw.
+
+.. c:member:: unsigned char *debug_balance.debug_prescreen
+
+    Ramka obrazu pokazująca przynależność do zakresów HSV, które definiują 
+    poszczególne kolory obszarów.
+
+.. c:member:: unsigned char *debug_balance.debug_meanshift
+.. c:member:: unsigned char *debug_balance.debug_patches
+.. c:member:: unsigned char *debug_balance.debug_robots
+
+TODO
 
 Funkcje
 *******
@@ -252,7 +344,33 @@ Funkcje
         struct amv_debug_info* debug)
 
     Przyjmuje ona dane wizualne i tworzy opis drużyn robotów.
-    TODO
+    
+    Parametry:
+    
+    * ``image`` - bitmapa wejściowej ramki obrazu.
+    * ``state`` - stan konfiguracji algorytmu - nie jest zmieniany w przebiegu
+        algorytmu.
+    * ``debug`` - struktura wskaźników do obrazków diagnostycznych, 
+        NULL oznacza brak diagnostyki.
+
+
+bitmapa
+^^^^^^^
+
+    Struktura wejściowa zawiera wskaźnik do obrazka, z którego ma zostać wyciągnięta 
+    informacja o robotach. Dane koloru pikseli bitmapy są zapisane jako 3 bajty w 
+    formacie BGR, czyli dla wskaźnika ``unsigned char* ptr``::
+
+        B = ptr[0];
+        G = ptr[1];
+        R = ptr[2];
+
+    Wartości pikseli obrazka na współrzędnych x i y są określone wzorem 
+    ``img(x, y) = img_ptr[3*(x + y*width)]``, czyli piksele są upakowane ciasno 
+    w przestrzeni adresowej i są przechowywane wierszami.
+
+    Alokacją obrazka zajmuje się użytkownik. 
+    **Zawartość bitmapy zostaje zamazana po wywołaniu find_teams**
 
 .. c:function:: void amv_config_init(struct amv_config* config)
 
@@ -274,23 +392,3 @@ Funkcje
 
     Uwalnia pamięć używaną przez zmienną stanu.
 
-
-bitmapa
-^^^^^^^
-
-Struktura wejściowa zawiera wskaźnik do obrazka, z którego ma zostać wyciągnięta 
-informacja o robotach. Dane koloru pikseli bitmapy są zapisane jako 3 bajty w 
-formacie BGR, czyli dla wskaźnika ``unsigned char* ptr``::
-
-    B = ptr[0];
-    G = ptr[1];
-    R = ptr[2];
-
-Wartości pikseli obrazka na współrzędnych x i y są określone wzorem 
-``img(x, y) = img_ptr[3*(x + y*width)]``, czyli piksele są upakowane ciasno 
-w przestrzeni adresowej i są przechowywane wierszami.
-
-Alokacją obrazka zajmuje się użytkownik. 
-**Zawartość bitmapy zostaje zamazana po wywołaniu find_teams**
-
-    
