@@ -1,14 +1,6 @@
 
 .. highlight:: c
 
-Koszulki, założenia
-Konwencja H = [0, 180)
-S = [0, 255]
-L = [0, 255]
-kąt 
-
-transformacja współrzędnych
-
 C API 
 -----
 
