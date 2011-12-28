@@ -331,19 +331,15 @@ Funkcje
 *******
 
 
-.. c:function:: amv_vision_data amv_find_teams(
-        unsigned char* image, struct amv_state* state, 
-        struct amv_debug_info* debug)
+.. c:function:: amv_vision_data amv_find_teams(unsigned char* image, struct amv_state* state, struct amv_debug_info* debug)
 
     Przyjmuje ona dane wizualne i tworzy opis drużyn robotów.
     
     Parametry:
     
     * ``image`` - bitmapa wejściowej ramki obrazu.
-    * ``state`` - stan konfiguracji algorytmu - nie jest zmieniany w przebiegu
-        algorytmu.
-    * ``debug`` - struktura wskaźników do obrazków diagnostycznych, 
-        NULL oznacza brak diagnostyki.
+    * ``state`` - stan konfiguracji algorytmu - nie jest zmieniany w przebiegu algorytmu.
+    * ``debug`` - struktura wskaźników do obrazków diagnostycznych, ``NULL`` oznacza brak diagnostyki.
 
 
 bitmapa

@@ -1,12 +1,30 @@
 .. highlight:: c
 
-Koszulki, założenia
-kąt?
+Wiadomości wstępne
+------------------
 
-transformacja współrzędnych
+Koszulki zawodników
+*******************
 
-Konwencje
----------
+W ogólnym przypadku, dla dowolnych koszulek zgodnych z regułami gry nie jest 
+możliwe ustalenie kąta natarcia i identyfikacja poszczególnych robotów. 
+Dla uzyskania takich danych konieczne jest zdecydowanie się na wygląd koszulki, 
+co z kolei determinuje metody określania kąta i identyfikacji robota. 
+
+
+Algorytmy rozpoznawania w programie są dostosowane do jednego schematu barwnego 
+na robotach. Jest on przedstawiony na schemacie:
+
+.. image:: /team.png
+    :width: 320pt
+    :height: 240pt
+
+Koszulka składa się z czarnej ramki i 3 kolorowych trójkątów. Największy jest
+kolorem drużyny (żółty lub niebieski, zgodnie z regułami). Pozostałe dwa obszary
+mogą mieć dowolne dwa różne kolory, ale nie niebieski, żółty ani pomarańczowy.
+Względy praktyczne sugerują, że mają to być kolory o jasności zbliżonej do
+koloru drużyny, różniące się maksymalnie barwą.
+
 
 Przestrzeń kolorów HSL
 **********************
@@ -78,7 +96,24 @@ Barwa (Hue) jest transformowana z zakresu :math:`[0, 360^\circ[` do wartości
         L &= 256 \cdot l
 
 
-Kąty na płaszczyźnie
-********************
+transformacja współrzędnych i kąta
+**********************************
 
-TODO
+
+Przed wysłaniem pozycji robota do programu sterującego możliwa jest zmiana
+układu współrzędnych. Transformację określa para punktów będących lewym górnym 
+i prawym dolnym rogiem boiska :math:`P_1, P_2` i skala wyjściowa 
+:math:`(s_x, s_y)`. :math:`P_1` jest punktem :math:`(0, 0)` we współrzędnych 
+wyjściowych. :math:`P_2` jest transformowany tak, żeby we współrzędnych 
+wyjściowych miał pozycję :math:`(s_x, s_y)`.
+
+.. image:: /transform.png
+    :width: 320pt
+    :height: 240pt
+
+Kąty zwracane jako ustawienie robota są liczone zgodnie z ruchem wskazówek 
+zegara na obrazku, od 0 do :math:`2 \pi`, gdzie 0 to orientacja w prawo.
+
+.. image:: /coords.png
+    :width: 150pt
+    :height: 150pt
