@@ -3,6 +3,36 @@
 Wiadomości wstępne
 ------------------
 
+Opis systemu
+************
+
+
+FIRA MiroSot to dyscyplina sportu, w której drużyny pięciu robotów nie większych
+niż 7.5x7.5cm poruszając się na czarnym boisku mają za zadanie przemieścić
+pomarańczową piłkę golfową do bramki przeciwnika. Do sterowania robotami używa
+się pojedynczego komputera, który mając do dyspozycji obraz z kamery
+zamontowanej centralnie nad boiskiem steruje serwomechanizmami znajdującymi się
+w robotach. 
+
+Opisywany system jest odpowiedzialny za przetworzenie strumienia 
+wideo do postaci współrzędnych piłki i robotów, które mogą być przekazane
+dalej, do programów sterujących. 
+
+
+
+TODO
+
+Wymagania systemowe
+*******************
+
+Do poprawnego działania aplikacja wymaga zainstalowanych:
+
+* kamery zgodnej z systemem Microsoft Windows
+* Microsoft Visual Studio 2008 Redistributable Package
+* Microsoft .NET Framework 2.0
+
+TODO
+
 Koszulki zawodników
 *******************
 
@@ -10,7 +40,6 @@ W ogólnym przypadku, dla dowolnych koszulek zgodnych z regułami gry nie jest
 możliwe ustalenie kąta natarcia i identyfikacja poszczególnych robotów. 
 Dla uzyskania takich danych konieczne jest zdecydowanie się na wygląd koszulki, 
 co z kolei determinuje metody określania kąta i identyfikacji robota. 
-
 
 Algorytmy rozpoznawania w programie są dostosowane do jednego schematu barwnego 
 na robotach. Jest on przedstawiony na schemacie:

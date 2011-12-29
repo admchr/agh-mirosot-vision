@@ -12,4 +12,4 @@ Dokumentacja użytkownika
     generaldoc
     uidoc
     apidoc
-    algodoc
+
