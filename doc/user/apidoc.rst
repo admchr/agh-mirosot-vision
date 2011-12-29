@@ -312,18 +312,18 @@ Diagnostyka
 
     Obrazki diagnostyczne mają taki sam rozmiar i format, jak obrazek wejściowy.
 
-.. c:member:: unsigned char *debug_balance.debug_balance
+.. c:member:: unsigned char *amv_debug_info.debug_balance
 
     Ramka obrazu po korekcji jasności i barw.
 
-.. c:member:: unsigned char *debug_balance.debug_prescreen
+.. c:member:: unsigned char *amv_debug_info.debug_prescreen
 
     Ramka obrazu pokazująca przynależność do zakresów HSV, które definiują 
     poszczególne kolory obszarów.
 
-.. c:member:: unsigned char *debug_balance.debug_meanshift
-.. c:member:: unsigned char *debug_balance.debug_patches
-.. c:member:: unsigned char *debug_balance.debug_robots
+.. c:member:: unsigned char *amv_debug_info.debug_meanshift
+.. c:member:: unsigned char *amv_debug_info.debug_patches
+.. c:member:: unsigned char *amv_debug_info.debug_robots
 
 TODO
 
