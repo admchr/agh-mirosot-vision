@@ -194,7 +194,7 @@ Vec3b Patch::getMeanColor() {
 }
 
 double Patch::getRobotCertainty() {
-    if (abs(getBoundingBox().height - getBoundingBox().width) > 20)
+    if (abs(getBoundingBox().height - getBoundingBox().width) > 9.3*type->config->px_per_cm)
         return 0;
     double result = 1;
     result *= positive_point_certainty(type->getPatchSize(), moments.getCount());
@@ -243,12 +243,12 @@ Point Patch::getCenter() {
     return moments.getMean();
 }
 Point Patch::getRobotCenter() {
-	const int MEAN_OFFSET = 3;
+	int mean_offset = 1.4*type->config->px_per_cm;
     Point p = moments.getMean();
     return p;
     double angle = getAngle() - M_PI*0.5;
-    p.x+=cos(angle)*MEAN_OFFSET;
-    p.y+=sin(angle)*MEAN_OFFSET;
+    p.x+=cos(angle)*mean_offset;
+    p.y+=sin(angle)*mean_offset;
     return p;
 }
 

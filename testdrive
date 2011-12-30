@@ -1,4 +1,13 @@
 #!/bin/sh
 cd src
-make -j driver &&
+make -j driver || exit 1
+
+echo 
+echo home-home
 ./driver ../concept/img/b_all2.png ../concept/config_b.txt out
+echo 
+echo away-home
+./driver ../concept/img/b_all2.png ../concept/config_b.txt out_a ah1
+echo 
+echo big field
+./driver ../b_all2_big.png ../concept/config_empty.txt out_2 hh2
