@@ -1,4 +1,5 @@
 
+
 Struktura systemu
 *****************
 

@@ -156,40 +156,57 @@ void debugTeam(Image& img, amv_team_info& info, const amv_team_data& team, Vec3b
         p.x = robot.position.x;
         p.y = robot.position.y;
         amv_image_pos tmp = p;
-        double angle = robot.angle;
-        double front_x = cos(angle)*SIDE;
-        double front_y = sin(angle)*SIDE;
 
-        double right_side_x = cos(angle+M_PI*0.5)*SIDE;
-        double right_side_y = sin(angle+M_PI*0.5)*SIDE;
-        debugLine(p, angle, img, 20, primary);
+        if (info.home_team) {
+            double angle = robot.angle;
+            double front_x = cos(angle)*SIDE;
+            double front_y = sin(angle)*SIDE;
 
-        //right
-        tmp.x=p.x+front_x+right_side_x;
-        tmp.y=p.y+front_y+right_side_y;
-        debugLine(tmp, angle+M_PI, img, 2*SIDE, primary);
-        // front
-        tmp.x=p.x+front_x-right_side_x;
-        tmp.y=p.y+front_y-right_side_y;
-        debugLine(tmp, angle+M_PI/2, img, 2*SIDE, primary);
+            double right_side_x = cos(angle+M_PI*0.5)*SIDE;
+            double right_side_y = sin(angle+M_PI*0.5)*SIDE;
+            debugLine(p, angle, img, 20, primary);
 
-        amv_robot_info secondary = info.robot_info[robot.identity];
-        // left
-        tmp.x=p.x-front_x-right_side_x;
-        tmp.y=p.y-front_y-right_side_y;
-        debugLine(tmp, angle, img, 2*SIDE, instanceColors[secondary.front_color]);
+            //right
+            tmp.x=p.x+front_x+right_side_x;
+            tmp.y=p.y+front_y+right_side_y;
+            debugLine(tmp, angle+M_PI, img, 2*SIDE, primary);
+            // front
+            tmp.x=p.x+front_x-right_side_x;
+            tmp.y=p.y+front_y-right_side_y;
+            debugLine(tmp, angle+M_PI/2, img, 2*SIDE, primary);
 
-        // back
-        tmp.x=p.x-front_x+right_side_x;
-        tmp.y=p.y-front_y+right_side_y;
-        debugLine(tmp, angle+M_PI*3/2, img, 2*SIDE, instanceColors[secondary.back_color]);
+            amv_robot_info secondary = info.robot_info[robot.identity];
+            // left
+            tmp.x=p.x-front_x-right_side_x;
+            tmp.y=p.y-front_y-right_side_y;
+            debugLine(tmp, angle, img, 2*SIDE, instanceColors[secondary.front_color]);
+
+            // back
+            tmp.x=p.x-front_x+right_side_x;
+            tmp.y=p.y-front_y+right_side_y;
+            debugLine(tmp, angle+M_PI*3/2, img, 2*SIDE, instanceColors[secondary.back_color]);
+        } else {
+            amv_image_pos p1, p2, p3, p4;
+            p1.x = p.x - SIDE;
+            p1.y = p.y - SIDE;
+            p2.x = p.x - SIDE;
+            p2.y = p.y + SIDE;
+            p3.x = p.x + SIDE;
+            p3.y = p.y + SIDE;
+            p4.x = p.x + SIDE;
+            p4.y = p.y - SIDE;
+            debugLine(p1, p2, img, primary);
+            debugLine(p2, p3, img, primary);
+            debugLine(p3, p4, img, primary);
+            debugLine(p4, p1, img, primary);
+        }
     }
 }
 
-void debugSecondaryPatches(Image& img, amv_team_info* team, vector<Robot> patches) {
+void debugSecondaryPatches(Image& img, amv_team_info* team, vector<Robot> patches, amv_config* config) {
     for (unsigned int i=0; i<patches.size(); i++) {
         Robot& p = patches[i];
-        getSecondaryPatches(patches[i].teamPatch, team, &img);
+        getSecondaryPatches(patches[i].teamPatch, team, config->px_per_cm, &img);
         debugLine(p.pos, p.teamPatch->getAngle(), img, 15, Vec3b(255, 255, 255));
         debugLine(p.pos, p.teamPatch->getAngle() + M_PI, img, 10, Vec3b(0, 0, 0));
     }

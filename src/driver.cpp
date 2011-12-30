@@ -65,7 +65,18 @@ int main(int argc, char**argv) {
         in_fname = argv[1];
         config_fname = argv[2];
         out_fname = argv[3];
+
         load_config(&config, config_fname.c_str());
+        if (argc > 4) {
+            string xattrs = argv[4];
+            if (xattrs[0]=='a')
+                config.blue.home_team = 0;
+            if (xattrs[1]=='a')
+                config.yellow.home_team = 0;
+
+            if (xattrs[2]=='2')
+                config.px_per_cm *= 2;
+        }
         cv::Mat_<cv::Vec3b> img0 = cv::imread(in_fname);
         config.image_width = img0.size().width;
         config.image_height = img0.size().height;
