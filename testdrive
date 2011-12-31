@@ -7,7 +7,7 @@ echo home-home
 ./driver ../concept/img/b_all2.png ../concept/config_b.txt out
 echo 
 echo away-home
-./driver ../concept/img/b_all2.png ../concept/config_b.txt out_a ah1
+./driver ../concept/img/b_all2.png ../concept/config_b.txt outa ah1
 echo 
 echo big field
-./driver ../b_all2_big.png ../concept/config_empty.txt out_2 hh2
+./driver ../b_all2_big.png ../concept/config_empty.txt out2 hh2

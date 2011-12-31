@@ -74,8 +74,13 @@ int main(int argc, char**argv) {
             if (xattrs[1]=='a')
                 config.yellow.home_team = 0;
 
-            if (xattrs[2]=='2')
+            if (xattrs[2]=='2') {
                 config.px_per_cm *= 2;
+                config.transform.field_top_left.x *= 2;
+                config.transform.field_top_left.y *= 2;
+                config.transform.field_bottom_right.x *= 2;
+                config.transform.field_bottom_right.y *= 2;
+            }
         }
         cv::Mat_<cv::Vec3b> img0 = cv::imread(in_fname);
         config.image_width = img0.size().width;

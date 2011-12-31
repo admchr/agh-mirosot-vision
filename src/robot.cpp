@@ -15,7 +15,7 @@ bool comparePoint(Point p, Point q) {
     return p.y < q.y;
 }
 
-vector<double> getSecondaryPatches(Patch* patch, amv_team_info* team, double px_per_cm, Image* debug) {
+vector<double> getSecondaryPatches(Patch* patch, amv_team_info* team, Image* debug) {
     std::set<Point, bool(*)(Point, Point)> visited(comparePoint);
     Point p = patch->getCenter();
     double angle = patch->getAngle();
@@ -26,6 +26,7 @@ vector<double> getSecondaryPatches(Patch* patch, amv_team_info* team, double px_
     double side_x = cos(angle);
     double side_y = sin(angle);
 
+    double px_per_cm = patch->type->config->px_per_cm;
     double len_max = 3.28*px_per_cm;
     double height_min = 2.34*px_per_cm;
     double height_max = 3.75*px_per_cm;
