@@ -45,6 +45,7 @@ Algorytmy rozpoznawania w programie są dostosowane do jednego schematu barwnego
 na robotach. Jest on przedstawiony na schemacie:
 
 .. image:: /team.png
+    :align: center
     :width: 320pt
     :height: 240pt
 
@@ -120,7 +121,7 @@ Barwa (Hue) jest transformowana z zakresu :math:`[0, 360^\circ[` do wartości
 .. math::
 
         H &= \frac{h}{2} \\
-        H &\in [0, 256[ \\
+        H &\in [0, 180[ \\
         S &= 256 \cdot s \\
         L &= 256 \cdot l
 
@@ -137,6 +138,7 @@ wyjściowych. :math:`P_2` jest transformowany tak, żeby we współrzędnych
 wyjściowych miał pozycję :math:`(s_x, s_y)`.
 
 .. image:: /transform.png
+    :align: center
     :width: 320pt
     :height: 240pt
 
@@ -144,5 +146,6 @@ Kąty zwracane jako ustawienie robota są liczone zgodnie z ruchem wskazówek
 zegara na obrazku, od 0 do :math:`2 \pi`, gdzie 0 to orientacja w prawo.
 
 .. image:: /coords.png
+    :align: center
     :width: 150pt
     :height: 150pt

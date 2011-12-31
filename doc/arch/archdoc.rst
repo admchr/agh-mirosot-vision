@@ -17,6 +17,7 @@ Tu:
   * można spróbować robić więcej w jednym przebiegu po obrazku, zmniejszyć
     wielkość wszelkich struktur dodatkowych, eliminować alokację
   * poprawić rozpoznawanie orientacji trójkąta, znikające punkty z 3-kąta
+  * delayed white balance - napierw wyliczamy balans, potem z niego korzystamy
   * UI... ... ...
 
 TODO
