@@ -20,6 +20,7 @@ Istnieje możliwość używania dodatkowych informacji na temat przeszłych zdar
 do wspomagania rozpoznawania, ale w obecnym rozwiązaniu nie są one 
 wykorzystywane.
 
+
 Drużyny przeciwnika
 ^^^^^^^^^^^^^^^^^^^
 
@@ -50,7 +51,6 @@ drużynowym, różniące się jedynie kształtem żółtej/niebieskiej plamy, wi
 problem niestandardowych układów na koszulkach nie jest tylko teoretyczny. 
 
 
-
 Sklejanie się robotów
 ^^^^^^^^^^^^^^^^^^^^^
 
@@ -62,12 +62,39 @@ siebie bokami tego samego koloru, zlewając je w jeden obszar.
     :height: 64pt
     :align: center
 
+Można próbować rozwiązywać takie problemy, znając wygląd wszystkich koszulek na
+boisku i próbować je przyporządkować do miejsc największego prawdopodobieństwa
+ich wystąpienia, nie zważając na ciągłość obszarów na obrazku. Takie podejście
+może być zbyt wolne i zbyt skomplikowane w implementacji i użytkowaniu. 
+
+Należy zauważyć pewną różnicę pomiędzy efektami sklejenia się własnych robotów 
+a sklejeniem robotów przeciwnika. Jeśli dwa roboty przeciwnika zostaną rozpoznane jako jeden, 
+w pewnym miejscu może pojawić się informacja o nieistniejącym robocie przeciwnika.
+
 
 Jasność i balans bieli
 ^^^^^^^^^^^^^^^^^^^^^^
 
+Pojęcie koloru rzeczywistego obiektu zależy od czynników, które da się 
+modelować wyłącznie w bardzo niedokładnym przybliżeniu. Na finalne odczucie 
+koloru wpływa:
 
+1. Natężenie fali przypadające na daną częstotliwość 
+2. Ilość odbitego światła danej częstotliwości przez dany punkt obiektu, co 
+   zależy nie tylko od materiału, ale i od kąta źródła i obserwatora
+3. Transformacja spektrum światła na trzy kanały barwne
+4. Skomplikowane przetwarzanie przez obserwatora, zależne między innymi od 
+   koloru otoczenia
 
+Widać więc, że próba rozpoznawania barw w różnych warunkach oświetleniowych nie
+może bazować na dokładnym modelu psychofizycznym.
+
+Pierwszą rzeczą, którą można zaniedbać jest percepcja koloru. Dana drużyna 
+robotów powinna posiadać tylko jeden typ materiału koloru żółtego i 
+niebieskiego. Rozpoznawanie kolorów będzie się wtedy sprowadzać do sprawdzania, 
+czy materiał jest taki sam, jak ten widziany wcześniej, zamiast do wydawania
+ostatecznych sądów na temat tego, który fragment obrazu można określić jako 
+"niebieski" w ogólnym tego słowa znaczeniu. 
 
 
 Zależności
