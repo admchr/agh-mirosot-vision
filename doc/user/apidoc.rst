@@ -172,7 +172,7 @@ Konfiguracja
 
     ::
         
-        struct AMV_EXPORT amv_team_info {
+        struct amv_team_info {
             struct amv_color_info color;
             int team_size;
 
@@ -185,20 +185,20 @@ Konfiguracja
     
     * ``color`` - specyfikacja zakresu barw koloru drużyny robotów. 
     * ``team_size`` - ilość robotów na boisku. Algorytm będzie zwracał dokładnie
-        taką ilość pozycji robotów. 
-    * `` home_team`` - czy analizie mają być poddawane orientacja robotów i ich
-        identyfikacja w ramach drużyny.
+      taką ilość pozycji robotów. 
+    * ``home_team`` - czy analizie mają być poddawane orientacja robotów i ich
+      identyfikacja w ramach drużyny.
     * ``robot_info`` - opis robotów w drużynie (o ile ``home_team`` 
-        :math:`\neq 0` ). Indeksy w tej tablicy posłużą za identyfikatory 
-        robotów.
+      :math:`\neq 0` ). Indeksy w tej tablicy posłużą za identyfikatory 
+      robotów.
     * ``secondary_colors`` - opis dostępnych kolorów pomocniczych, używanych w 
-        opisach ``robot_info``.
+      opisach ``robot_info``.
     
 .. c:type:: struct amv_robot_info
 
     ::
         
-        struct AMV_EXPORT amv_robot_info {
+        struct amv_robot_info {
             int front_color;
             int back_color;
         };
@@ -213,7 +213,7 @@ Wynik działania
 
     ::
         
-        struct AMV_EXPORT amv_vision_data {
+        struct amv_vision_data {
             struct amv_team_data blue_team;
             struct amv_team_data yellow_team;
             struct amv_point ball_pos;
@@ -225,7 +225,7 @@ Wynik działania
 
     ::
         
-        struct AMV_EXPORT amv_team_data {
+        struct amv_team_data {
             int team_len;
             struct amv_robot_data team[AMV_MAX_ROBOTS];
         };
@@ -237,7 +237,7 @@ Wynik działania
 
     ::
         
-        struct AMV_EXPORT amv_robot_data {
+        struct amv_robot_data {
             struct amv_point position;
             int identity;
             double angle;
@@ -248,8 +248,14 @@ Wynik działania
     
     * ``position`` - pozycja robota w wyjściowym układzie współrzędnych. 
     * ``identity`` - identyfikator robota w drużynie 
-        (o ile roboty są identyfikowane).
-    * ``angle`` - kąt 
+      (o ile roboty są identyfikowane).
+    * ``angle`` - kąt obrotu robota
+
+
+.. c:type:: struct amv_state
+    
+    Struktura przechowująca konfigurację algorytmu rozpoznawania robotów 
+    w formie umożliwiającej szybkie wykonanie algorytmu.
     
 Struktury pomocnicze
 ********************
@@ -291,6 +297,7 @@ Struktury pomocnicze
     ma wartość od 0 do 179 (arytmetyka modulo 180). Przedział barw 
     ``hue_min = 100, hue_max = 50`` jest legalny i oznacza zakres ``0..50,100..179``.
 
+
 Diagnostyka
 ***********
 
@@ -322,10 +329,27 @@ Diagnostyka
     poszczególne kolory obszarów.
 
 .. c:member:: unsigned char *amv_debug_info.debug_meanshift
+    
+    Obrazuje wynik filtrowania całego obrazu algorytmem meanshift. 
+    **Wypełnienie tego pola wielokrotnie zwiększa czas działania algorytmu.
+    Jeśli nie jest używane, powinno mieć wartość NULL**
+    
 .. c:member:: unsigned char *amv_debug_info.debug_patches
+
+    Obrazuje wszystkie obszary, które zostały zakwalifikowane jako kandydaci na 
+    kolory drużynowe.
+
 .. c:member:: unsigned char *amv_debug_info.debug_robots
 
-TODO
+    Obrazuje pola drużynowe robotów i klasyfikację kolorów pobocznych przy 
+    każdym z nich.
+
+.. c:member:: unsigned char *amv_debug_info.debug_results
+
+    Obrazuje ostateczny wynik rozpoznania.
+
+..
+    TODO
 
 Funkcje
 *******
@@ -367,7 +391,7 @@ bitmapa
     Nadpisywane są wszystkie parametry, z wyjątkiem wysokości i szerokości obrazka
      - te muszą zostać podane oddzielnie.
     
-.. c:function:: void amv_debug_init(struct amv_debug_info*)
+.. c:function:: void amv_debug_init(struct amv_debug_info* debug)
     
     Zeruje wskaźniki do wszystkich ramek diagnostycznych w strukturze.
 

@@ -75,26 +75,48 @@ w pewnym miejscu może pojawić się informacja o nieistniejącym robocie przeci
 Jasność i balans bieli
 ^^^^^^^^^^^^^^^^^^^^^^
 
-Pojęcie koloru rzeczywistego obiektu zależy od czynników, które da się 
-modelować wyłącznie w bardzo niedokładnym przybliżeniu. Na finalne odczucie 
-koloru wpływa:
+Warunki oświetleniowe dzienne i sztuczne mają bardzo różny zakres jasności 
+i temperatury barwnej. Ludzki system wizyjny nie ma żadnych problemów z
+przetwarzaniem w bardzo różnych warunkach, dlatego efekt ten jest dobrze
+widoczny dopiero przy obserwowaniu zdjęć z kamery. Oprogramowanie obsługujące 
+kamerę może próbować naprawić obraz zmieniając czas migawki i wartości kanałów 
+barwnych, ale musi mieć znać punkt odniesienia. Zazwyczaj kamery próbują 
+wykorzystać statystyki całego obrazu, żeby znależć optymalne ustawienia.
+W przypadku czarnego boiska do gry zajmującego cały kadr jest to podejście 
+skazane ne porażkę, dlatego wszelkie ustawienia automatyczne najlepiej wyłączyć.
 
-1. Natężenie fali przypadające na daną częstotliwość 
-2. Ilość odbitego światła danej częstotliwości przez dany punkt obiektu, co 
-   zależy nie tylko od materiału, ale i od kąta źródła i obserwatora
-3. Transformacja spektrum światła na trzy kanały barwne
-4. Skomplikowane przetwarzanie przez obserwatora, zależne między innymi od 
-   koloru otoczenia
+Przy założeniach dotyczących liniowości przestrzeni kolorów, 
+fizycznego modelu absorbcji (np. 50% szary transfomuje kolor światła
+:math:`(r, g, b)\to \frac{1}{2}(r, g, b)`) i dodatkowych założeniach 
+dotyczących gładkości spektrum długości fali można skonstruować bardzo prosty 
+model korekcji barw.
 
-Widać więc, że próba rozpoznawania barw w różnych warunkach oświetleniowych nie
-może bazować na dokładnym modelu psychofizycznym.
+Wiedząc, że pomalowany na biało przedmiot posiada kolor :math:`(w_r, w_g, w_b)`,
+bardzo łatwo przekolorować bitmapę, by poprawić odwzorowanie kolorów. Wystarczy 
+dla każdego piksela :math:`p` zastosować prostą transformację: 
 
-Pierwszą rzeczą, którą można zaniedbać jest percepcja koloru. Dana drużyna 
-robotów powinna posiadać tylko jeden typ materiału koloru żółtego i 
-niebieskiego. Rozpoznawanie kolorów będzie się wtedy sprowadzać do sprawdzania, 
-czy materiał jest taki sam, jak ten widziany wcześniej, zamiast do wydawania
-ostatecznych sądów na temat tego, który fragment obrazu można określić jako 
-"niebieski" w ogólnym tego słowa znaczeniu. 
+.. math::
+    (p'_r, p'_g, p'_b) = (p_r\cdot\frac{255}{w_r}, p_g\cdot\frac{255}{w_g}, p_b\cdot\frac{255}{w_b})
+
+Taka transformacja przekształca piksel :math:`(w_r, w_g, w_b)` w 
+:math:`(255, 255, 255)`. Tu należy zwrócić uwagę, że jeśli przechowujemy 
+wartości składowych w pojedyńczym bajcie, to możemy obciąć składowe kolorów, 
+które z jakichś względów posiadają składowe większe niż odpowiadające im 
+składowe punktu bieli. W takim wypadku lepiej jest przeskalować wynik działania,
+tracąc nieznacznie (pomijalnie) na precyzji.
+
+.. math::
+    (p'_r, p'_g, p'_b) = (p_r\cdot\frac{128}{w_r}, p_g\cdot\frac{128}{w_g}, p_b\cdot\frac{128}{w_b})
+
+Powyższe wyprowadzenie zakładało, że punkt bieli jest znany i taki sam na całym 
+obrazku. Jeśli mamy pomiary bieli w wielu punktach obrazu, lokalny punkt bieli
+jest wyliczany jako średnia ważona  wagą :math:`\frac{1}{r^2}`, 
+gdzie :math:`r` to odległość piksela z bielą do badanego punktu.
+
+..
+    Mieszanie się kolorów
+    ^^^^^^^^^^^^^^^^^^^^^
+
 
 
 Zależności
