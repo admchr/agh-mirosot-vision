@@ -3,17 +3,19 @@
 Dokumentacja procesowa
 ======================
 
-Tu:
+..
+    Tu:
 
-* wizja
-* koncepcja
+    * wizja
+    * koncepcja
 
-to wszystko jest mało zrozumiałe, bo co tam ma być?
+    to wszystko jest mało zrozumiałe, bo co tam ma być?
 
 Założenia
-=========
+---------
 
-TODO factual accuracy
+..  
+    TODO factual accuracy
 
 W Laboratorium Robotów znajduje się boisko i zestaw ponad 10 robotów 
 umożliwiających rozgrywanie meczy piłki robotycznej zgodnie z regułami ligi 
@@ -26,10 +28,7 @@ miejscu. Jedyne brakujące elementy to:
 
 Nasz projekt dostarcza pierwsze dwa z tych elementów. Głównym celem
 jest skonstruowanie metody rozpoznawania robotów na boisku, jednak dobór barw
- na wierzchu robota ma bardzo duży wpływ na algorytm rozpoznawania. Dlatego 
+na wierzchu robota ma bardzo duży wpływ na algorytm rozpoznawania. Dlatego 
 algorytm rozpoznawania i projekt barw drużyny są w zasadzie nierozerwalne - 
 efektywy algorytm będzie wykorzystywał własności obiektów, które rozpoznaje.
-
-
-
 

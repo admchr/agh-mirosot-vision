@@ -20,7 +20,8 @@ dalej, do programów sterujących.
 
 
 
-TODO
+..  
+    TODO
 
 Wymagania systemowe
 *******************
@@ -31,7 +32,8 @@ Do poprawnego działania aplikacja wymaga zainstalowanych:
 * Microsoft Visual Studio 2008 Redistributable Package
 * Microsoft .NET Framework 2.0
 
-TODO
+..  
+    TODO
 
 Koszulki zawodników
 *******************
