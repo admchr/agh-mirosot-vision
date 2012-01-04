@@ -1,4 +1,5 @@
 
+
 Wprowadzenie
 ------------
 
@@ -113,11 +114,29 @@ obrazku. Jeśli mamy pomiary bieli w wielu punktach obrazu, lokalny punkt bieli
 jest wyliczany jako średnia ważona  wagą :math:`\frac{1}{r^2}`, 
 gdzie :math:`r` to odległość położenia piksela z bielą do badanego punktu.
 
-..
-    Mieszanie się kolorów
-    ^^^^^^^^^^^^^^^^^^^^^
 
+Mieszanie się kolorów
+^^^^^^^^^^^^^^^^^^^^^
 
+Piksele znajdujące się na brzegach kolorowych obszarów mogą przyjmować dowolny 
+kolor pośredni. W przypadku kolorów zielonego i fioletowego znajdujących się 
+obok siebie oznacza to możliwość powstania pomiędzy nimi niebieskiej linii.
+Jako, że kolory drużynowe rozpoznaje się po barwie
+i łączy na podstawie bliskości (sąsiedztwa), niebieskie kreski mogą zostać
+połączone z kolorem drużynowym. Taki artefakt jest w stanie zdestabilizować 
+wynik wyznaczania końcowej orientacji robota. Efektem jest odwrócenie 
+rozpoznanego robota o :math:`180^\circ`, co dodatkowo pociąga za sobą 
+niemożliwość znalezienia kolorów pobocznych i poprawnego zidentyfikowania 
+robota.
+
+.. figure:: /colorblur.png
+    :width: 200pt
+    :height: 200pt
+
+    Piksele na brzegach łączących jednobarwne obszary mogą przyjmować kolory 
+    pośrednie. Na pokazanym przykładzie efekt jest pogłębiony przez użytą 
+    kamerę, która nadaje tę samą barwę grupom pikseli o rozmiarze 
+    :math:`2\times 2`.
 
 Zależności
 **********
@@ -131,12 +150,15 @@ Z OpenCV są wykorzystywane następujące elementy:
 
 * struktura ``cv::Mat``, będąca kontenerem na bitmapy, wraz z operacjami dostępu
   do pikseli, skalowaniem 
-* konwersja współrzędnych przestrzeni kolorów z ``BGR`` do ``HSV`` i z powrotem.
+* konwersja współrzędnych przestrzeni kolorów z ``BGR`` do ``HSL`` i z powrotem.
 * pomocnicze struktury danych jak punkty 2D, dane koloru piksela, prostokątne 
   obszary itp.
 
 Widać, że stopień użycia biblioteki jest dość niewielki i nie stanowiłoby zbyt
 wielkiego trudu zastąpienie funkcjonalności OpenCV własnymi implementacjami.
-Powodem wykorzystania biblioteki była możliwość wykorzystania 
-
+Powodem wykorzystania biblioteki była możliwość szybkiego prototypowania przy
+użyciu ogólnych algorytmów z OpenCV, które w związku z dużymi wymaganiami co do
+wydajności musiały zostać zastąpione własnymi implementacjami. Istotną pomocą 
+były też funkcje czytające pliki graficzne, co pozwoliło stworzyć proste 
+narzędzia testujące.
 

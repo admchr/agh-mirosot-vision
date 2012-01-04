@@ -84,7 +84,6 @@ Konfiguracja
             struct amv_team_info blue;
             struct amv_team_info yellow;
             struct amv_color_info orange;
-            int white_is_yellow;
             int minimum_saturation;
             int white_cutoff;
         };
@@ -105,18 +104,18 @@ Konfiguracja
 
 .. c:member:: int amv_config.linearize
 
-    Wartość logiczna określająca, czy przed wszystkimi innymi operacjami ma
+    Wartość logiczna (0 - fałsz, :math:`\neq 0` - prawda) określająca, czy przed wszystkimi innymi operacjami ma
     zostać wykonana konwersja kolorów z sRGB do liniowego RGB.
 
-.. c:member:: image_pos *amv_config.white_points
+.. c:member:: amv_image_pos *amv_config.white_points
 .. c:member:: int amv_config.white_points_len
 
     Pozycje punktów boiska, które można określić jako białe. Służą do balansu
     bieli na obrazku. ``white_points`` powinno wskazywać na tablicę o 
-    długości ``white_points_len``. ``white_points_len`` równe 0 oznacza 
-    brak przeprowadzania balansu.
+    długości ``white_points_len``. Jeśli ustawimy ``white_points_len==0``, 
+    balans nie będzie przeprowadzany.
 
-.. c:member:: image_pos *amv_config.mask_points
+.. c:member:: amv_image_pos *amv_config.mask_points
 .. c:member:: int amv_config.mask_points_len
 
     Punkty opisujące wierzchołki wielokąta regionu zainteresowania. 
@@ -126,18 +125,20 @@ Konfiguracja
     brak przeprowadzania maskowania.
 
 .. c:member:: int amv_config.meanshift_radius
-.. c:member:: int amv_config.meanshift_threshold
 
-    Rozmiar okna algorytmu wygładzania powierzchni meanshift i odległość 
-    obcięcia koloru. Rozmiar okna może mieć duży wpływ na wydajność.
-    Im większe okno, tym większy obszar jest brany pod uwagę przy wygładzaniu.
-    Threshold to odległość w normie euklidesowej pikseli, które są uważane za 
-    różne.
+    Rozmiar okna algorytmu wygładzania powierzchni meanshift. 
+    Im większe okno, tym większe otoczenie piksela jest brane pod uwagę przy 
+    jego wygładzaniu. Rozmiar okna może mieć duży wpływ na wydajność.
+
+.. c:member:: int amv_config.meanshift_threshold
+    
+    Odległość w normie euklidesowej kolorów, które są uważane za różne podczas
+    wykonywania algorytmu wygładzania meanshift.
 
 .. c:member:: int amv_config.minimum_saturation
 
-    Minimalne nasycenie koloru będącego częścią obszaru żółtego, pomarańczowego
-    lub niebieskiego.
+    Minimalne nasycenie koloru, który może być zakwalifikowany jako żółty, 
+    pomarańczowy lub niebieskiego.
 
 .. c:member:: int amv_config.white_cutoff
 
@@ -188,12 +189,13 @@ Konfiguracja
     * ``team_size`` - ilość robotów na boisku. Algorytm będzie zwracał dokładnie
       taką ilość pozycji robotów z drużyny. 
     * ``home_team`` - czy analizie mają być poddawane orientacja robotów i ich
-      identyfikacja w ramach drużyny.
+      identyfikacja w ramach drużyny (0 - fałsz, :math:`\neq 0` - prawda).
     * ``robot_info`` - opis robotów w drużynie (o ile ``home_team`` 
       :math:`\neq 0` ). Indeksy w tej tablicy posłużą za identyfikatory 
       robotów.
-    * ``secondary_colors`` - opis dostępnych kolorów pomocniczych, używanych w 
-      opisach ``robot_info``.
+    * ``secondary_colors`` - opis wszystkich różnych kolorów pomocniczych, które
+      występują na koszulkach robotów (istotne, o ile ``home_team`` 
+      :math:`\neq 0` ).
     
 .. c:type:: struct amv_robot_info
 
@@ -247,9 +249,9 @@ Wynik działania
     
     Opis pozycji znalezionego robota:
     
-    * ``position`` - pozycja robota w wyjściowym układzie współrzędnych. 
+    * ``position`` - pozycja robota w wyjściowym układzie współrzędnych
     * ``identity`` - identyfikator robota w drużynie 
-      (o ile roboty są identyfikowane).
+      (o ile roboty są identyfikowane)
     * ``angle`` - kąt obrotu robota
 
 
@@ -352,8 +354,8 @@ Diagnostyka
 ..
     TODO
 
-Funkcje
-*******
+Algorytm
+********
 
 
 .. c:function:: amv_vision_data amv_find_teams(unsigned char* image, struct amv_state* state, struct amv_debug_info* debug)
@@ -384,6 +386,10 @@ bitmapa
 
     Alokacją obrazka zajmuje się użytkownik. 
     **Zawartość bitmapy zostaje zamazana po wywołaniu find_teams**
+
+
+Inicjalizacja struktur
+**********************
 
 .. c:function:: void amv_config_init(struct amv_config* config)
 
