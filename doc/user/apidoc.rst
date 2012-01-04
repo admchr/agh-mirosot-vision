@@ -4,8 +4,9 @@
 C API 
 -----
 
-Rdzeń obliczeniowy został wyodrębniony w postaci biblioteki w C. Umożliwia to
-wykorzystanie go w aplikacjach wykorzystujących dowolny język programowania.
+Część obliczeniowa programu została wyodrębniona w postaci biblioteki w C. 
+Umożliwia to użycie jej w aplikacjach wykorzystujących dowolny język
+programowania.
 Jedyna zależność kodu obliczeniowego to opencv.
 
 Przykładowy minimalny program wykorzystujący interfejs jest dość prosty::
@@ -19,7 +20,7 @@ Przykładowy minimalny program wykorzystujący interfejs jest dość prosty::
     struct amv_state state;
     amv_state_new(&state, &config);
 
-    while(!stop) {
+    while (!stop) {
         unsigned char* frame = grab_frame();
         struct amv_vision_data data = amv_find_teams(frame, &state, NULL);
     }
@@ -51,7 +52,7 @@ Aby uzyskać obrazki diagnostyczne, należy wykorzystać struturę
     free(debug_frame0);
 
 Wskażniki do pamięci w której mają być zapisane ramki diagnostyczne są 
-przyczepiane do odpowiednich pól struktury.
+wpisywane do odpowiednich pól struktury.
 
 
 Konfiguracja
@@ -185,7 +186,7 @@ Konfiguracja
     
     * ``color`` - specyfikacja zakresu barw koloru drużyny robotów. 
     * ``team_size`` - ilość robotów na boisku. Algorytm będzie zwracał dokładnie
-      taką ilość pozycji robotów. 
+      taką ilość pozycji robotów z drużyny. 
     * ``home_team`` - czy analizie mają być poddawane orientacja robotów i ich
       identyfikacja w ramach drużyny.
     * ``robot_info`` - opis robotów w drużynie (o ile ``home_team`` 
@@ -325,7 +326,7 @@ Diagnostyka
 
 .. c:member:: unsigned char *amv_debug_info.debug_prescreen
 
-    Ramka obrazu pokazująca przynależność do zakresów HSV, które definiują 
+    Ramka obrazu pokazująca przynależność do zakresów HSL, które definiują 
     poszczególne kolory obszarów.
 
 .. c:member:: unsigned char *amv_debug_info.debug_meanshift

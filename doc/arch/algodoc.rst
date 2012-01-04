@@ -64,8 +64,8 @@ na podstawie ilości pikseli i średniej wartości RGB obszaru.
 Z góry listy odcinanych jest tyle obszarów ile robotów ma być rozpoznanych.
 Za piłkę przyjmuje się najlepszy pomarańczowy obszar.
 
-Kąt natarcia i identyfikacja
-****************************
+Kąt obrotu robota i identyfikacja
+*********************************
 
 ..
     TODO make use of home_team

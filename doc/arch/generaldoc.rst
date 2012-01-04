@@ -111,7 +111,7 @@ tracąc nieznacznie (pomijalnie) na precyzji.
 Powyższe wyprowadzenie zakładało, że punkt bieli jest znany i taki sam na całym 
 obrazku. Jeśli mamy pomiary bieli w wielu punktach obrazu, lokalny punkt bieli
 jest wyliczany jako średnia ważona  wagą :math:`\frac{1}{r^2}`, 
-gdzie :math:`r` to odległość piksela z bielą do badanego punktu.
+gdzie :math:`r` to odległość położenia piksela z bielą do badanego punktu.
 
 ..
     Mieszanie się kolorów
