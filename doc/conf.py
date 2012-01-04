@@ -178,13 +178,14 @@ latex_paper_size = 'a4'
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
+manualstyle = 'manual'
 latex_documents = [
   ('user/userdoc', 'userdoc.tex', u'Biblioteka do lokalizacji robotów mobilnych ligi FIRA MiroSot - dokumentacja użytkownika',
-   u'Adam Chrabąszcz, Konrad Kras', 'manual'),
+   u'Adam Chrabąszcz, Konrad Kras', manualstyle),
   ('arch/archdoc', 'archdoc.tex', u'Biblioteka do lokalizacji robotów mobilnych ligi FIRA MiroSot - dokumentacja techniczna',
-   u'Adam Chrabąszcz, Konrad Kras', 'manual'),
+   u'Adam Chrabąszcz, Konrad Kras', manualstyle),
   ('process/processdoc', 'processdoc.tex', u'Biblioteka do lokalizacji robotów mobilnych ligi FIRA MiroSot - dokumentacja procesowa',
-   u'Adam Chrabąszcz, Konrad Kras', 'manual'),
+   u'Adam Chrabąszcz, Konrad Kras', manualstyle),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -202,7 +203,7 @@ latex_use_parts = False
 #latex_show_urls = False
 
 # Additional stuff for the LaTeX preamble.
-#latex_preamble = ''
+latex_preamble = '\setcounter{tocdepth}{3}'
 
 # Documents to append as an appendix to all manuals.
 #latex_appendices = []
