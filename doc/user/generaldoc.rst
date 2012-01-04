@@ -39,7 +39,7 @@ Koszulki zawodników
 *******************
 
 W ogólnym przypadku, dla dowolnych koszulek zgodnych z regułami gry nie jest 
-możliwe ustalenie kąta natarcia i identyfikacja poszczególnych robotów. 
+możliwe ustalenie kąta obrotu i identyfikacja poszczególnych robotów. 
 Dla uzyskania takich danych konieczne jest zdecydowanie się na wygląd koszulki, 
 co z kolei determinuje metody określania kąta i identyfikacji robota. 
 
@@ -128,7 +128,7 @@ Barwa (Hue) jest transformowana z zakresu :math:`[0, 360^\circ[` do wartości
         L &= 256 \cdot l
 
 
-transformacja współrzędnych i kąta
+Transformacja współrzędnych i kąta
 **********************************
 
 
