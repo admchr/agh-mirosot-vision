@@ -86,6 +86,28 @@ wykorzystać statystyki całego obrazu, żeby znależć optymalne ustawienia.
 W przypadku czarnego boiska do gry zajmującego cały kadr jest to podejście 
 skazane ne porażkę, dlatego wszelkie ustawienia automatyczne najlepiej wyłączyć.
 
+Na korekcję jasności i barw wpływ może mieć również specyficzna dla danego 
+urządzenia wyjściowa przestrzeń kolorów. Najbardziej popularną ustandaryzowaną
+przestrzenią jest sRGB, w której wartość piksela zależy w sposób mocno 
+nieliniowy od jego jasności. 
+
+W użytym przez nas modelu kamery nie znaleźliśmy nieliniowości wymuszających 
+korekcję (patrz rysunek).
+
+.. _white-figure
+
+.. figure :: /white.png
+    :width: 400pt
+    :height: 400pt
+
+    Za pomocą wydrukowanych wzorów zatrzymujących 25, 50, 75, 100% światła 
+    odbijanego od kartki sprawdziliśmy liniowość przestrzeni kolorów dla 
+    testowej kamery. 
+    Otrzymane wartości pikseli są zbliżone do liniowego odwzorowania.
+    Dla porównania w przestrzeni sRGB ciemne obszary mają dużo większą wartość
+    składowych, niż przy prostym liniowym RGB.
+
+
 Przy założeniach dotyczących liniowości przestrzeni kolorów, 
 fizycznego modelu absorbcji (np. 50% szary transfomuje kolor światła
 :math:`(r, g, b)\to \frac{1}{2}(r, g, b)`) i dodatkowych założeniach 
