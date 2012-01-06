@@ -34,6 +34,9 @@ Do poprawnego działania aplikacja wymaga zainstalowanych:
 ..  
     TODO
 
+..  _koszulki:
+
+    
 Koszulki zawodników
 *******************
 
