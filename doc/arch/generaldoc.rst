@@ -137,6 +137,16 @@ jest wyliczany jako średnia ważona  wagą :math:`\frac{1}{r^2}`,
 gdzie :math:`r` to odległość położenia piksela z bielą do badanego punktu.
 
 
+.. figure:: /balance.png
+    :width: 400pt
+    :height: 200pt
+    
+    Obraz przed i po przeprowadzeniu balansu bieli. Czerwonymi plusami oznaczono
+    punkty bieli. Zgodnie z zamierzeniami kolor plam został zmieniony na szary 
+    50%. Zmiana barwy powierzchni wokół punktów bieli pozwala zobaczyć zakres 
+    oddziaływania każdego z nich -- widzimy łagodne przejścia między strefami 
+    oddziaływania. 
+
 Mieszanie się kolorów
 ^^^^^^^^^^^^^^^^^^^^^
 
