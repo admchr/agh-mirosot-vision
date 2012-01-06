@@ -15,4 +15,4 @@ Dokumentacja użytkownika
     generaldoc
     uidoc
     apidoc
-
+    xmldoc

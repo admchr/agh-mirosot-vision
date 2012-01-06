@@ -87,10 +87,17 @@ rozgrywkach.
 
 Dodatkowymi celami są:
 
+* Możliwość łatwej kalibracji parametrów algorytmu w czasie działania
 * Możliwość współpracy z istniejącymi systemami sterującymi robotami
 * Możliwość przekazywania danych o pozycji robotów do dwóch programów 
   sterujących drużynami jednocześnie
 * Możliwość użycia aplikacji w warunkach oświetleniowych niezgodnych z regułami 
   gry, w tym w zmiennych warunkach oświetleniowych
 * Możliwość użycia aplikacji na boisku o wymiarach niezgodnych z regułami gry 
-  i z kamerą w odległości niezgodnej z regułami gry
+  i z kamerą w odległości od boiska niezgodnej z regułami gry
+
+
+Weryfikacja
+-----------
+
+
