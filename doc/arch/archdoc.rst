@@ -27,3 +27,7 @@ Dokumentacja techniczna
     generaldoc
     algodoc
 
+.. [Hao] Cui Hao, Denghua Li, Shuhua Peng, "Research on Designing of Soccer Robot's Color Tag and Identifying Algorithm", Intelligent Human-Machine Systems and Cybernetics, 2009. IHMSC '09. International Conference on 2009
+
+.. [Jiang] Jiang H, Q Peng, HA Lee, EL C Teoh, HL Sng, "Colour Vision and Robot Ball Identification for a Large Field Soccer Robot System", 2nd International Conference on Autonomous Robots and Agents, 2004
+
