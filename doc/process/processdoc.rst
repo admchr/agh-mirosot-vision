@@ -57,36 +57,42 @@ Motywacja
 
 W Laboratorium Robotów znajduje się boisko i zestaw ponad 10 robotów 
 umożliwiających rozgrywanie meczy piłki robotycznej zgodnie z regułami ligi 
-FIRA MiroSot. Niemal wszystkie elementy niezbędne do rozegrania meczu znajdują się na 
-miejscu. Jedyne brakujące elementy to:
+FIRA MiroSot. Niemal wszystkie elementy niezbędne do rozegrania meczu znajdują
+się na miejscu. Jedyne brakujące elementy to:
 
 * zgodne z regułami FIRA kolorowe nakładki na roboty
 * program rozpoznający drużyny robotów i piłkę na obrazie z kamery
 * program decydujący o rozkazach dla robotów (AI)
 
 Nasz projekt dostarcza pierwsze dwa z tych elementów. Głównym celem
-jest skonstruowanie metody rozpoznawania robotów na boisku, jednak dobór barw
+jest skonstruowanie aplikacji rozpoznającej roboty na boisku, jednak dobór barw
 na wierzchu robota ma bardzo duży wpływ na algorytm rozpoznawania. W związku z 
 tym konieczne jest również znalezienie wzoru koszulek dla zawodników.
 
 W Laboratorium Robotów wykorzystywany był już system wizyjny oparty na kamerze 
 znajdującej się nad boiskiem. Wykorzystywał on jednak koszulki niezgodne z 
 regulaminem ligi i był bardzo podatny na wszelkie zmiany oświetlenia i 
-otoczenie boiska.. System ten komunikował się z elementami sterującymi robotami 
-za pomocą pakietów multicastowych UDP. Taki sposób komunikacji powinien zostać
-zachowany.
-
-
-Wizja
------
+otoczenie boiska. System ten wykorzystywał własną bibliotekę komunikacji z 
+kamerą i komunikował się z elementami sterującymi robotami 
+za pomocą pakietów multicastowych UDP. Sposób komunikacji z kamerą i programami
+sterującymi powinny zostać zachowane.
 
 Głównym celem projektu jest skonstruowanie aplikacji rozpoznającej pozycję 
 robotów zgodnie z regułami ligi FIRA MiroSot i w warunkach dostępnych w 
 Laboratorium Robotów w sposób umożliwiający użycie jej w rzeczywistych 
-rozgrywkach.
+rozgrywkach. 
+
+Zakres funcjonalności
+---------------------
+
+..
+    TODO WTF
+
 
 Dodatkowymi celami są:
 
+* Duża 
+* Współpraca z kamerami internetowymi w możliwie ogólny sposób
 * Możliwość łatwej kalibracji parametrów algorytmu w czasie działania
 * Możliwość współpracy z istniejącymi systemami sterującymi robotami
 * Możliwość przekazywania danych o pozycji robotów do dwóch programów 
@@ -95,6 +101,10 @@ Dodatkowymi celami są:
   gry, w tym w zmiennych warunkach oświetleniowych
 * Możliwość użycia aplikacji na boisku o wymiarach niezgodnych z regułami gry 
   i z kamerą w odległości od boiska niezgodnej z regułami gry
+
+Wymaganiami niefunkcjonalnymi są:
+
+* Praca z szybkością 30fps przy możliwie niewielkim wykorzystaniu procesora. 
 
 
 Weryfikacja
