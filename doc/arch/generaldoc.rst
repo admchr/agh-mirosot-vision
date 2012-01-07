@@ -56,6 +56,8 @@ Koszulki
 ^^^^^^^^
 
 .. figure:: /team.png
+    :width: 320pt
+    :height: 240pt
 
     Projekt koszulek.
     
