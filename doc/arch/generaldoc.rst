@@ -252,7 +252,11 @@ W wielu aspektach algorytm zachowuje się nieidealnie:
   zmienia ciemny obraz o odcieniu niebieskim w obraz o odcieniu pomarańczowym
 * algorytm ujednoznaczniania kąta obrotu robota na podstawie ilości pikseli po 
   obu stronach regresji nie zawsze działa ze 100% skutecznością
-* wydajność algorytmu można zwiększyć, łącząc kilka przebiegów po pamięci z
+* Wydajność algorytmu można zwiększyć, łącząc kilka przebiegów po pamięci z
   obrazem w jeden - przykładowo można połączyć liczenie transformacji do HSV
-  i klasyfikację pikseli w jeden etap
+  i klasyfikację pikseli w jedną pętlę.
+* Czarne obramowanie wokół kolorów pobocznych nie jest konieczne, gdyż w obecnym
+  kształcie algorytm nie potrzebuje izolować obszarów kolorów innych niż 
+  drużynowe. Usunięcie ramek zwiększa powierzchnię koloru możliwą do 
+  rozpoznania.
 
