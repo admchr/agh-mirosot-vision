@@ -52,6 +52,53 @@ drużynowym, różniące się jedynie kształtem żółtej/niebieskiej plamy, wi
 problem niestandardowych układów na koszulkach nie jest tylko teoretyczny. 
 
 
+Koszulki
+^^^^^^^^
+
+.. figure:: /team.png
+
+    Projekt koszulek.
+    
+Wzór koszulki dla robotów miał spełniać zadania:
+
+* posiadać łatwo rozpoznawalne cechy pozwalające na znalezienie kąta obrotu
+  robota
+* posiadać łatwo rozpoznawalne cechy pozwalające na identyfikację robota
+* być odporny na sklejanie się jednokolorowych powierzchni
+
+Najprostszym rozwiązaniem problemu sklejania się robotów jest dodanie czarnego 
+marginesu na brzegu robota, tak więc zostało to zrobione.
+
+Problem obrotów i identyfikacji można rozwiązać za pomocą modyfikacji kształtu
+figury w kolorze drużynowym lub poprzez dodanie nowych kolorowych powierzchni.
+
+Podejście opierające się wyłacznie na dodatkowych kolorach pociąga za sobą duże
+komplikacje: trzeba brać pod uwagę spójnośc dodatkowych kolorowych plam wokół 
+obrazu robota i przyporządkowywać plamy do konkretnych robotów. Ta czynność może
+stać się bardzo skomplikowana w sytuacji, kiedy kilka robotów styka się ze sobą.
+
+
+Z drugiej strony opieranie się wyłącznie na kształcie wymagałoby zakodowania 
+kąta i identyfikatora robota (liczby od 0 do 4) w jednokolorowym kształcie, 
+na co nie znaleźliśmy dobrego (odpornego na zakłócenia) sposobu.
+
+W przypadku większości drużyn dominuje podejście pośrednie. W [Hao]_ znajduje 
+się dyskusja wad i zalet różnych rodzajów koszulek, z których wybrany zostaje 
+wzór składający się z wydłużonego prostokąta w kolorze drużynowym z dodatkowymi
+kolorami po bokach. Ten sam wzór koszulki opisują autorzy [Jiang]_. Metoda 
+rozpoznawania takiego kształtu opiera się na znalezieniu prostej minimalizującej
+sumę kwadratów odległości
+(regresja Deminga http://en.wikipedia.org/wiki/Deming_regression ), która 
+znajduje kąt obrotu z dokładnością do :math:`180^\circ`. Ujednoznacznienie kąta 
+i identyfikacja następuje na podstawie kolorów pobocznych. 
+
+Nasze rozwiązanie używa regresji do wyznaczenia kąta trójkąta drużynowego, po
+czym ujednoznacznia kąt, licząc piksele po obu stronach regresji. 
+Mając dane o pozycji robota możemy przewidzieć położenie dodatkowych barwnych
+trójkątów. 
+
+
+
 Sklejanie się robotów
 ^^^^^^^^^^^^^^^^^^^^^
 
@@ -193,4 +240,17 @@ użyciu ogólnych algorytmów z OpenCV, które w związku z dużymi wymaganiami 
 wydajności musiały zostać zastąpione własnymi implementacjami. Istotną pomocą 
 były też funkcje czytające pliki graficzne, co pozwoliło stworzyć proste 
 narzędzia testujące.
+
+Możliwości poprawy
+******************
+
+W wielu aspektach algorytm zachowuje się nieidealnie:
+
+* na mocno zabarwionych obrazach balans bieli ma tendencję do przedobrzania - 
+  zmienia ciemny obraz o odcieniu niebieskim w obraz o odcieniu pomarańczowym
+* algorytm ujednoznaczniania kąta obrotu robota na podstawie ilości pikseli po 
+  obu stronach regresji nie zawsze działa ze 100% skutecznością
+* wydajność algorytmu można zwiększyć, łącząc kilka przebiegów po pamięci z
+  obrazem w jeden - przykładowo można połączyć liczenie transformacji do HSV
+  i klasyfikację pikseli w jeden etap
 
