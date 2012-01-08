@@ -29,6 +29,7 @@ Celem projektu jest
 dostarczenie systemu umożliwiającego rozpoznawanie w czasie rzeczywistym
 pozycji robotów oraz piłki na obrazie z kamery nad boiskiem gry zgodnie z
 regułami ligi FIRA MiroSot Small League.
+
 Liga FIRA MiroSot Small League określa zbiór zasad gry, w której drużyny
 składające się z pięciu 7.5cm robotów poruszających się po prostokątnym boisku
 220cm na 180cm próbują umieścić piłkę golfową w bramce przeciwnika. Roboty danej
@@ -62,7 +63,8 @@ wydajnościowego.
 %   oraz najważniejsze wymagania funkcjonalne i niefunkcjonalne.}
 
 System ma być dostrajany przez operatora i komunikować się z programami
-sterującymi robotami (które mogą znaj.
+sterującymi robotami (które mogą znajdować się na innych 
+komputerach w sieci).
 
 Wymagania funkcjonalne:
 \begin{enumerate}
@@ -105,7 +107,7 @@ obrazu działającego w czasie rzeczywistym. Implementacja została wyodrębnion
 w postaci biblioteki z uwagi na niezależność od pozostałych aspektów systemu --
 algorytm przyjmuje obraz wejściowy i przetwarza go na zestaw współrzędnych
 położenia obiektów zainteresowania. Biblioteka do lokalizacji zależy jedynie od 
-biblioteki OpenCV \cite{opencv}, która wykorzystywana jest do przeprowadzania 
+OpenCV \cite{opencv}, która wykorzystywana jest do przeprowadzania 
 elementarnych operacji na fragmentach obrazu. Biblioteka nie posiada żadnych 
 zależności od systemu Windows, a jej API w języku C zapewnia komunikację z 
 dowolnym środowiskiem programistycznym.
@@ -119,11 +121,13 @@ posiadał większe pola przeznaczone na kolory identyfikacyjne.
 
 Fragment systemu odpowiedzialny za komunikację z kamerą, użytkownikiem 
 nadzorującym precę systemu i konsumentami danych 
-wyjściowych algorytmu rozpoznawania napisany został jako aplikacja systemu 
-Windows (.NET). 
+wyjściowych algorytmu rozpoznawania napisany został jako aplikacja systemu
+Windows (.NET). Program używa odziedziczonej biblioteki do pobierania ramek
+obrazu z kamery. Wyniki rozpoznania są wysyłane jako pakiety UDP zgodnie z
+formatem używanym przez poprzedni system rozpoznawania.
 
 
-\cite{mshift}
+% \cite{mshift}
 
 
 
@@ -132,27 +136,36 @@ Windows (.NET).
 \section{Organizacja pracy}
 %\section{Work organization}
 \label{sec:organizacja-pracy}
+% 
+% \emph{Struktura zespołu (role poszczególnych osób), krótki opis i
+%   uzasadnienie przyjętej metodyki i/lub kolejności prac, planowane i
+%   zrealizowane etapy prac ze wskazaniem udziału poszczególnych
+%   członków zespołu, wykorzystane praktyki i narzędzia w zarządzaniu
+%   projektem.}
 
-\emph{Struktura zespołu (role poszczególnych osób), krótki opis i
-  uzasadnienie przyjętej metodyki i/lub kolejności prac, planowane i
-  zrealizowane etapy prac ze wskazaniem udziału poszczególnych
-  członków zespołu, wykorzystane praktyki i narzędzia w zarządzaniu
-  projektem.}
+\begin{enumerate}
+\item Rozpoznanie podejść, wyszukiwanie atrykułów i projektów związanych z
+tematem. (Adam Chrabąszcz)
+\item Przygotowanie prototypu algorytmu rozpoznawania pozycji robotów,
+analiza wyników balansu bieli i klasyfikacji barw na dostępnych zdjęciach z 
+kamery. (Adam Chrabąszcz)
+\item Przygotowanie projektu koszulek dla robotów, dobór odpowiedniego papieru
+kolorowego do wykonania pól barwnych, wykonanie zdjęć egzemplarzy koszulek 
+kamerą internetową. (Konrad Kras)
+\item Walidacja podejścia za pomocą wcześniej wykonanych zdjęć.
+\end{enumerate}
+
 
 \section{Wyniki projektu}
 %\section{Project results}
 
 \label{sec:wyniki-projektu}
-
-\emph{Najważniejsze wyniki (co konkretnie udało się uzyskać:
-  oprogramowanie, dokumentacja, raporty z testów/wdrożenia, itd.)
-  i ocena ich użyteczności (jak zostało to zweryfikowane --- np.\ wnioski
-  klienta/użytkownika, zrealizowane testy wydajnościowe, itd.),
-  istniejące ograniczenia i propozycje dalszych prac.}
-
-% o ile to mozliwe prosze uzywac odwolan \cite w konkretnych miejscach a nie \nocite
-
-\nocite{artykul2011,ksiazka2011,narzedzie2011,projekt2011}
+% 
+% \emph{Najważniejsze wyniki (co konkretnie udało się uzyskać:
+%   oprogramowanie, dokumentacja, raporty z testów/wdrożenia, itd.)
+%   i ocena ich użyteczności (jak zostało to zweryfikowane --- np.\ wnioski
+%   klienta/użytkownika, zrealizowane testy wydajnościowe, itd.),
+%   istniejące ograniczenia i propozycje dalszych prac.}
 
 \bibliography{bibliografia}
 
