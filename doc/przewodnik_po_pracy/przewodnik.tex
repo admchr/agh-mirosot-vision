@@ -48,11 +48,11 @@ W trakcie poszukiwania materiałów nie znaleźliśmy projektów udostępniając
 kod gotowych rozwiązań problemu. Jedyny projekt, który znaleźliśmy dotyczył
 innego zestawu reguł gry i nie mógł zostać zastosowany. 
 
-Możliwość stworzenia produktu spełniającego oczekiwania nie może być 
-kwestionowana -- w rozgrywkach ligi FIRA uczestniczy wiele drużyn, z których wiele
-posiada adekwatne systemy wizyjne. Problemem może być wybór odpowiednich metod 
-przetwarzania obrazu oraz spełnienie kryterium wydajnościowego. 
-
+Możliwość stworzenia produktu spełniającego oczekiwania nie może być
+kwestionowana -- w rozgrywkach ligi FIRA uczestniczy wiele drużyn, z których
+większość posiada adekwatne systemy wizyjne. Problemem może być wybór
+odpowiednich metod przetwarzania obrazu oraz spełnienie kryterium
+wydajnościowego.
 
 \section{Zakres funkcjonalności}
 %\section{Functional scope}
@@ -60,12 +60,34 @@ przetwarzania obrazu oraz spełnienie kryterium wydajnościowego.
 % 
 % \emph{Kontekst użytkowania produktu (aktorzy, współpracujące systemy)
 %   oraz najważniejsze wymagania funkcjonalne i niefunkcjonalne.}
-Poprzedni system wizyjny komunikował się z drużynami za
-pomocą pakietów UDP, których format powinien pozostać bez zmian w nowym systemie. 
 
-System powinien posiadać interfejs pozwalający użytkownikowi na bierząco śledzić wyniki
-rozpoznania, diagnozować problemy i poprawiać parametry.
+System ma być dostrajany przez operatora i komunikować się z programami
+sterującymi robotami (które mogą znaj.
 
+Wymagania funkcjonalne:
+\begin{enumerate}
+\item zachowanie sposobu komunikacji z programami sterującymi --- poprzedni
+system wizyjny komunikował się z drużynami za pomocą pakietów UDP, których
+format powinien pozostać bez zmian w nowym systemie
+\item współpraca z kamerami, które były używane w poprzednim systemie
+\item możliwość obserwowania sposobu i wyników działania algorytmu w czasie
+rzeczywistym i wprowadzania poprawek
+\item możliwość pracy dla jednej lub dwóch drużyn --- oprócz trybu meczu, w 
+którym jedna z drużyn posiada nieznany kolorowy wzór na robotach system powinien
+udostępniać tryb sparingu, w którym obydwie drużyny są znane i dostają 
+informacje o położeniu z tego samego źródła
+\item możliwość pracy w warunkach oświetleniowych niezgodnych z regułami ligi 
+FIRA, w tym w zmiennych warunkach oświetleniowych
+\item możliwość użycia systemu na boisku o wymiarach niezgodnych z regułami gry
+i/lub z kamerą umieszczoną na nieprzepisowej wysokości
+
+\end{enumerate}
+Wymagania niefunkcjonalne:
+\begin{enumerate}
+\item wydajność systemu powinna pozwalać na przetwarzanie z minimalną
+częstotliwością 30 klatek na sekundę, przy możliwie najmniejszym wykorzystaniu
+procesora
+\end{enumerate}
 
 
 
@@ -73,15 +95,39 @@ rozpoznania, diagnozować problemy i poprawiać parametry.
 %\section{Selected realization aspects}
 \label{sec:wybrane-aspekty-realizacji}
 
-\cite{opencv}
-\cite{colortag}
-\cite{exemplary}
-\cite{largeleague}
+
+% \emph{Przyjęte założenia, struktura i zasada działania systemu,
+%   wykorzystane rozwiązania technologiczne wraz z krótkim uzasadnieniem
+%   ich wyboru.}
+
+Głównym celem projektu jest stworzenie implementacji algorytmu rozpoznawania
+obrazu działającego w czasie rzeczywistym. Implementacja została wyodrębniona
+w postaci biblioteki z uwagi na niezależność od pozostałych aspektów systemu --
+algorytm przyjmuje obraz wejściowy i przetwarza go na zestaw współrzędnych
+położenia obiektów zainteresowania. Biblioteka do lokalizacji zależy jedynie od 
+biblioteki OpenCV \cite{opencv}, która wykorzystywana jest do przeprowadzania 
+elementarnych operacji na fragmentach obrazu. Biblioteka nie posiada żadnych 
+zależności od systemu Windows, a jej API w języku C zapewnia komunikację z 
+dowolnym środowiskiem programistycznym.
+
+W konstrukcji samego algorytmu wykorzystane zostały artykuły opisujące 
+implementacje podobnych systemów w \cite{largeleague} \cite{exemplary}
+\cite{colortag}. Główne elementy konstrukcji algorytmu, takie jak wykorzystanie
+reprezentacji kolorów HSL i regresji Deminga zostały z nich zapożyczone. Własny
+był natomiast projekt wzoru identyfikacyjnego umieszczanego na robotach, który
+posiadał większe pola przeznaczone na kolory identyfikacyjne.
+
+Fragment systemu odpowiedzialny za komunikację z kamerą, użytkownikiem 
+nadzorującym precę systemu i konsumentami danych 
+wyjściowych algorytmu rozpoznawania napisany został jako aplikacja systemu 
+Windows (.NET). 
+
+
 \cite{mshift}
 
-\emph{Przyjęte założenia, struktura i zasada działania systemu,
-  wykorzystane rozwiązania technologiczne wraz z krótkim uzasadnieniem
-  ich wyboru.}
+
+
+
 
 \section{Organizacja pracy}
 %\section{Work organization}
