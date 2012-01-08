@@ -22,16 +22,52 @@
 \section{Cel prac i wizja produktu}
 %\section{Project goals and vision}
 \label{sec:cel-wizja}
-\emph{Charakterystyka problemu, motywacja projektu (w tym przegląd
-  istniejących rozwiązań prowadząca do uzasadnienia celu prac), ogólna
-  wizja produktu, krótkie studium wykonalności i analiza zagrożeń.}
+% \emph{Charakterystyka problemu, motywacja projektu (w tym przegląd
+%   istniejących rozwiązań prowadząca do uzasadnienia celu prac), ogólna
+%   wizja produktu, krótkie studium wykonalności i analiza zagrożeń.}
+Celem projektu jest
+dostarczenie systemu umożliwiającego rozpoznawanie w czasie rzeczywistym
+pozycji robotów oraz piłki na obrazie z kamery nad boiskiem gry zgodnie z
+regułami ligi FIRA MiroSot Small League.
+Liga FIRA MiroSot Small League określa zbiór zasad gry, w której drużyny
+składające się z pięciu 7.5cm robotów poruszających się po prostokątnym boisku
+220cm na 180cm próbują umieścić piłkę golfową w bramce przeciwnika. Roboty danej
+drużyny sterowane są za pomocą jednego komputera, który uzyskuje informacje
+o sytuacji na boisku przy pomocy kamery znajdującej się centralnie nad boiskiem.
+W Laboratorium Robotów Katedry Informatyki znajdują się wszelkie fizyczne zasoby
+niezbędne do rozegrania meczu zgodnie z zasadami ligi: zestaw robotów, 
+odpowiednie boisko oraz kamera. Rozgrywanie meczy uniemożliwia brak 
+odpowiedniego oprogramowania sterującego robotami. W skład takiego 
+oprogramowania musi wchodzić system rozpoznający obraz z kamery. 
+
+Aktualnie w laboratorium działa system rozpoznawania robotów. Ma on jednak kilka
+wad, z których najstotniejszymi są konieczność umieszczenia na robotach
+(swoich i przeciwnika) wzoru niezgodnego z regułami ligi
+i słaba odporność na zmiany oświetlenia.
+W trakcie poszukiwania materiałów nie znaleźliśmy projektów udostępniających
+kod gotowych rozwiązań problemu. Jedyny projekt, który znaleźliśmy dotyczył
+innego zestawu reguł gry i nie mógł zostać zastosowany. 
+
+Możliwość stworzenia produktu spełniającego oczekiwania nie może być 
+kwestionowana -- w rozgrywkach ligi FIRA uczestniczy wiele drużyn, z których wiele
+posiada adekwatne systemy wizyjne. Problemem może być wybór odpowiednich metod 
+przetwarzania obrazu oraz spełnienie kryterium wydajnościowego. 
+
 
 \section{Zakres funkcjonalności}
 %\section{Functional scope}
 \label{sec:zakres-funkcjonalnosci}
+% 
+% \emph{Kontekst użytkowania produktu (aktorzy, współpracujące systemy)
+%   oraz najważniejsze wymagania funkcjonalne i niefunkcjonalne.}
+Poprzedni system wizyjny komunikował się z drużynami za
+pomocą pakietów UDP, których format powinien pozostać bez zmian w nowym systemie. 
 
-\emph{Kontekst użytkowania produktu (aktorzy, współpracujące systemy)
-  oraz najważniejsze wymagania funkcjonalne i niefunkcjonalne.}
+System powinien posiadać interfejs pozwalający użytkownikowi na bierząco śledzić wyniki
+rozpoznania, diagnozować problemy i poprawiać parametry.
+
+
+
 
 \section{Wybrane aspekty realizacji}
 %\section{Selected realization aspects}
