@@ -143,17 +143,46 @@ formatem używanym przez poprzedni system rozpoznawania.
 %   członków zespołu, wykorzystane praktyki i narzędzia w zarządzaniu
 %   projektem.}
 
+Projekt został podzielony na część algorytmiczną (biblioteka z interfejsem w C)
+i część komunikacyjną (aplikacja graficzna, odbieranie ramek z kamery i 
+wysyłanie wyników rozpoznania. 
+Częścią algorytmiczną zajmował się Adam Chrabąszcz, częścią komunikacyjną 
+Konrad Kras.
+
+Szczegółowy wykaz prac w kolejności ich wykonywania:
 \begin{enumerate}
 \item Rozpoznanie podejść, wyszukiwanie atrykułów i projektów związanych z
 tematem. (Adam Chrabąszcz)
 \item Przygotowanie prototypu algorytmu rozpoznawania pozycji robotów,
-analiza wyników balansu bieli i klasyfikacji barw na dostępnych zdjęciach z 
+analiza wyników balansu bieli i klasyfikacji barw na dostępnych zdjęciach z
 kamery. (Adam Chrabąszcz)
 \item Przygotowanie projektu koszulek dla robotów, dobór odpowiedniego papieru
-kolorowego do wykonania pól barwnych, wykonanie zdjęć egzemplarzy koszulek 
+kolorowego do wykonania pól barwnych, wykonanie zdjęć egzemplarzy koszulek
 kamerą internetową. (Konrad Kras)
-\item Walidacja podejścia za pomocą wcześniej wykonanych zdjęć.
+\item Powstaje biblioteka w C++ do rozpoznawania pozycji robotów. Efektywność
+rozpoznania i wydajność jest weryfikowana przy pomocy wcześniej wykonanych 
+zdjęć. (Adam Chrabąszcz)
+\item Kod komunikacj z kamerą i graficzny interfejs, potrzebny do testowania
+systemu w rzeczywistym śridowisku użytkowania. (Konrad)
+\item Kod identyfikujący poszczególne roboty w drużynie. (Adam Chrabąszcz)
+\item Poprawa wydajności. Najdłużej wykonujące się fragmenty algorytmu 
+przepisane do formy minimalizującej ilość operacji procesora. (Adam Chrabąszcz)
+\item Ustalenie ostatecznego interfejsu biblioteki w C. (Adam Chrabąszcz)
+\item Poprawki do interfejsu graficznego. Wczytywanie konfiguracji z pliku XML.
+Wysyłanie wyników rozpoznawania w postaci pakietów UDP. (Konrad Kras)
 \end{enumerate}
+Z uwagi na jednokierunkowy przepływ danych (obraz $\to$ współrzędne) było 
+stosunkowo prosto stworzyć środowisko testowania algorytmu off-line. Do 
+podstawowej walidacji algorytmu wystarczyły zdjęcia z kamery. W ramach 
+algorytmu istniały również zależności 
+sekwencyjne: identyfikacja robotów w ramach drużyny wymagała wcześniejszego 
+rozpoznania pozycji robotów. Interfejs 
+graficzny pojawił się później. 
+
+Do zarządzania kodem został wykorzystany system Mercurial
+(\url{http://mercurial.selenic.com/}). 
+W repozytorium znajdował się kod źródłowy, pliki obrazów testowych, programy
+pomocnicze i dokumentacja w formacie Sphinx (\url{http://sphinx.pocoo.org/}).
 
 
 \section{Wyniki projektu}
@@ -166,6 +195,19 @@ kamerą internetową. (Konrad Kras)
 %   i ocena ich użyteczności (jak zostało to zweryfikowane --- np.\ wnioski
 %   klienta/użytkownika, zrealizowane testy wydajnościowe, itd.),
 %   istniejące ograniczenia i propozycje dalszych prac.}
+
+W przebiegu projektu powstała biblioteka realizująca 
+rozpoznawanie pozycji robotów oraz wykorzystująca ją aplikacja przeprowadzająca
+lokalizację w czasie rzeczywistym. Stworzenie algorytmu rozpoznawania wymagało
+zrozumienia wielu aspektów problemu. Szczegółowy opis algorytmu i motywacje 
+kryjące się za jego konstrukcją zostały opisane w dokumentacji technicznej. 
+
+W dokumentacji użytkownika znajduje się opis interfesu 
+
+Propozycje poprawy:
+
+
+
 
 \bibliography{bibliografia}
 

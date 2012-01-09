@@ -185,7 +185,7 @@ latex_documents = [
   ('arch/archdoc', 'archdoc.tex', u'Biblioteka do lokalizacji robotów mobilnych ligi FIRA MiroSot - dokumentacja techniczna',
    u'Adam Chrabąszcz, Konrad Kras', manualstyle),
   ('process/processdoc', 'processdoc.tex', u'Biblioteka do lokalizacji robotów mobilnych ligi FIRA MiroSot - dokumentacja procesowa',
-   u'Adam Chrabąszcz, Konrad Kras', manualstyle),
+   u'Adam Chrabąszcz, Konrad Kras', 'howto'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
