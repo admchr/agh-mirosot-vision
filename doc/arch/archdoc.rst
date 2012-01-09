@@ -25,8 +25,8 @@ Dokumentacja techniczna
 
 .. toctree::
 
-    generaldoc
     algodoc
+    generaldoc
 
 .. [Hao] Cui Hao, Denghua Li, Shuhua Peng, "Research on Designing of Soccer Robot's Color Tag and Identifying Algorithm", Intelligent Human-Machine Systems and Cybernetics, 2009. IHMSC '09. International Conference on 2009
 

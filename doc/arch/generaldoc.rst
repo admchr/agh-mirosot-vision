@@ -1,10 +1,34 @@
 
 
-Wprowadzenie
-------------
-
 Opis rozwiązania
-****************
+----------------
+
+Zależności
+**********
+
+Zależności kodu obliczeniowego skompilowanej biblioteki ograniczają się do 
+linkowania z biblioteką OpenCV (http://opencv.willowgarage.com/wiki/). Nagłówki
+OpenCV są potrzebne tylko do kompilacji biblioteki, nagłówek ``amv.h`` nie 
+zawiera żadnych odniesień do zewnętrznych symboli.
+
+Z OpenCV są wykorzystywane następujące elementy:
+
+* struktura ``cv::Mat``, będąca kontenerem na bitmapy, wraz z operacjami dostępu
+  do pikseli, skalowaniem 
+* konwersja współrzędnych przestrzeni kolorów z ``BGR`` do ``HSL`` i z powrotem.
+* pomocnicze struktury danych jak punkty 2D, dane koloru piksela, prostokątne 
+  obszary itp.
+
+Widać, że stopień użycia biblioteki jest dość niewielki i nie stanowiłoby zbyt
+wielkiego trudu zastąpienie funkcjonalności OpenCV własnymi implementacjami.
+Powodem wykorzystania biblioteki była możliwość szybkiego prototypowania przy
+użyciu ogólnych algorytmów z OpenCV, które w związku z dużymi wymaganiami co do
+wydajności musiały zostać zastąpione własnymi implementacjami. Istotną pomocą 
+były też funkcje czytające pliki graficzne, co pozwoliło stworzyć proste 
+narzędzia testujące.
+
+Opis algorytmu
+**************
 
 Z rozwiązania wydzielony został element odpowiedzialny za faktyczne obliczenia.
 Jest nim biblioteka z interfejsem w C, w której znajduje się funkcja 
@@ -219,38 +243,14 @@ robota.
     kamerę, która nadaje tę samą barwę grupom pikseli o rozmiarze 
     :math:`2\times 2`.
 
-Zależności
-**********
-
-Zależności kodu obliczeniowego skompilowanej biblioteki ograniczają się do 
-linkowania z biblioteką OpenCV (http://opencv.willowgarage.com/wiki/). Nagłówki
-OpenCV są potrzebne tylko do kompilacji biblioteki, nagłówek ``amv.h`` nie 
-zawiera żadnych odniesień do zewnętrznych symboli.
-
-Z OpenCV są wykorzystywane następujące elementy:
-
-* struktura ``cv::Mat``, będąca kontenerem na bitmapy, wraz z operacjami dostępu
-  do pikseli, skalowaniem 
-* konwersja współrzędnych przestrzeni kolorów z ``BGR`` do ``HSL`` i z powrotem.
-* pomocnicze struktury danych jak punkty 2D, dane koloru piksela, prostokątne 
-  obszary itp.
-
-Widać, że stopień użycia biblioteki jest dość niewielki i nie stanowiłoby zbyt
-wielkiego trudu zastąpienie funkcjonalności OpenCV własnymi implementacjami.
-Powodem wykorzystania biblioteki była możliwość szybkiego prototypowania przy
-użyciu ogólnych algorytmów z OpenCV, które w związku z dużymi wymaganiami co do
-wydajności musiały zostać zastąpione własnymi implementacjami. Istotną pomocą 
-były też funkcje czytające pliki graficzne, co pozwoliło stworzyć proste 
-narzędzia testujące.
-
 Możliwości poprawy
 ******************
 
 W wielu aspektach algorytm zachowuje się nieidealnie:
 
-* na mocno zabarwionych obrazach balans bieli ma tendencję do przedobrzania - 
+* Na mocno zabarwionych obrazach balans bieli ma tendencję do przedobrzania - 
   zmienia ciemny obraz o odcieniu niebieskim w obraz o odcieniu pomarańczowym
-* algorytm ujednoznaczniania kąta obrotu robota na podstawie ilości pikseli po 
+* Algorytm ujednoznaczniania kąta obrotu robota na podstawie ilości pikseli po 
   obu stronach regresji nie zawsze działa ze 100% skutecznością
 * Wydajność algorytmu można zwiększyć, łącząc kilka przebiegów po pamięci z
   obrazem w jeden - przykładowo można połączyć liczenie transformacji do HSV
@@ -259,4 +259,7 @@ W wielu aspektach algorytm zachowuje się nieidealnie:
   kształcie algorytm nie potrzebuje izolować obszarów kolorów innych niż 
   drużynowe. Usunięcie ramek zwiększa powierzchnię koloru możliwą do 
   rozpoznania.
-
+* Balans bieli oparty na brzegach boiska jest w stanie dokładnie kontrolować
+  jasność jedynie w pobliżu brzegów boiska. Jeśli oświetlenie znajduje się 
+  centralnie nad boiskiem, to algorytm nie może zniwelować efektu zwiększenia
+  jasności na środku obrazu.

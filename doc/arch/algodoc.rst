@@ -2,7 +2,19 @@
 Dokładny opis algorytmu
 -----------------------
 
-Regulacja balansu bieli
+Algorytm rozpoznawania składa się z sekwencji następujących po sobie operacji 
+na obrazie:
+
+* regulacja jasności/balans bieli
+* maskowanie nieistotnych obszarów
+* transformacja koloru z reprezentacji RGB do HSL
+* klasyfikacja kolorów
+* podział klas kolorów na spójne obszary
+* wyznaczanie obszarów należących do robotów z największym prawdopodobieństwem
+* wyznaczenie kąta obrotu i identyfikacji robota w drużynie (tylko w przypadku
+  własnej drużyny)
+
+Regulacja jasności/balansu bieli
 ***********************
 
 ..
@@ -19,18 +31,29 @@ punktach pośrednich jest wyliczana jest jako średnia ważona  wagą :math:`\fr
 gdzie :math:`r` to odległość piksela z bielą do badanego punktu.
 
 
+Maskowanie
+**********
+
+Podane przez użytkownika punkty :math:`(P_0, P_1, \ldots, P_n)` określają
+pojedynczy wielokąt, w który ogranicza pole istotne dla rozpoznania.
+Piksele z poza tego wielokąta są zamieniane w kolor czarny (zerowane).
+Zadaniem maskowania jest usuwanie tła poza kontrolą reguł gry, zawierającego
+kolorowe obiekty i ludzi, którzy mogą skutecznie destabilizować algorytm.
+Poza tym elementem maska nie posiada żadnego znaczenia we właściwym algorytmie.
+
+
 Transformacja do HSL
 ********************
 
 Dla każdej klatki obrazu jest przygotowywana jej kopia przetransformowana do
-przestrzeni HSL. Jako, że ilość operacji arytmetycznych koniecznych do wykonania
+reprezentacji HSL. Jako, że ilość operacji arytmetycznych koniecznych do wykonania
 transformacji jest zbyt duża, konieczne jest korzystanie ze ztablicowanych 
 wyników. Ilość pamięci potrzebnej do skonstruowania takiej tablicy wynosi 
 :math:`3\mathrm{B}\times 256^3 = 48 \mathrm{MiB}`, co nie jest dużym kosztem
 pamięciowym. Dodatkowo wymusza to narzut kilku sekund na przygotowanie tablicy 
 przy starcie aplikacji.
 
-Nazwa "HSL" nie określa jednoznacznie przestrzeni kolorów. Istnieje wiele 
+Nazwa "HSL" nie określa jednoznacznie reprezentacji kolorów. Istnieje wiele 
 sposobów definiowania jasności, barwy i nasycenia. Sposób wyliczania tych 
 wartości w programie wygląda następująco:
 
