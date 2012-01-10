@@ -80,7 +80,7 @@ void amv_config_init(amv_config* config) {
 
     config->minimum_saturation = 100;
     config->white_cutoff = 125;
-    config->black_cutoff = 70;
+    config->black_cutoff = 60;
 
     config->white_is_yellow = 1;
     config->linearize = 0;

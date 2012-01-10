@@ -6,7 +6,9 @@ Dokumentacja techniczna
 ..
     Tu:
 
-    * Phillips spc1300NC
+    W przypadku dostępnej nam kamery (Phillips spc1300NC) wystąpiła dodatkowa
+    komplikacja: zmiana długości migawki nie działa w systemie innym
+    niż Windows XP. 
     * opis przepływu danych w algorytmie
     * można dużo mówić, dlaczego coś zostało zrobione tak, jak zostało
     * problemy z balansem bieli, z kolorami, z jasnością, ze sklejaniem się robotów,
