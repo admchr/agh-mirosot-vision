@@ -31,6 +31,7 @@ Do poprawnego działania aplikacja wymaga zainstalowanych:
 * Microsoft Visual Studio 2008 Redistributable Package
 * Microsoft .NET Framework 2.0
 
+
 ..  
     TODO
 

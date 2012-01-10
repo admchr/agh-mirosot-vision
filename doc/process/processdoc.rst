@@ -77,10 +77,10 @@ kamerą i komunikował się z elementami sterującymi robotami
 za pomocą pakietów multicastowych UDP. Sposób komunikacji z kamerą i programami
 sterującymi powinny zostać zachowane.
 
-Głównym celem projektu jest skonstruowanie aplikacji rozpoznającej pozycję 
-robotów zgodnie z regułami ligi FIRA MiroSot i w warunkach dostępnych w 
-Laboratorium Robotów w sposób umożliwiający użycie jej w rzeczywistych 
-rozgrywkach. 
+Głównym celem projektu jest skonstruowanie aplikacji rozpoznającej pozycję
+robotów zgodnie z regułami ligi FIRA MiroSot i w warunkach dostępnych w
+Laboratorium Robotów w sposób umożliwiający użycie jej w rzeczywistych
+rozgrywkach.
 
 Zakres funcjonalności
 ---------------------
@@ -89,25 +89,57 @@ Zakres funcjonalności
     TODO WTF
 
 
-Dodatkowymi celami są:
+Wymaganiami funkcjonalnymi są:
 
-* Duża 
 * Współpraca z kamerami internetowymi w możliwie ogólny sposób
 * Możliwość łatwej kalibracji parametrów algorytmu w czasie działania
 * Możliwość współpracy z istniejącymi systemami sterującymi robotami
-* Możliwość przekazywania danych o pozycji robotów do dwóch programów 
+* Możliwość przekazywania danych o pozycji robotów do dwóch programów
   sterujących drużynami jednocześnie
-* Możliwość użycia aplikacji w warunkach oświetleniowych niezgodnych z regułami 
+* Możliwość użycia aplikacji w warunkach oświetleniowych niezgodnych z regułami
   gry, w tym w zmiennych warunkach oświetleniowych
 * Możliwość użycia aplikacji na boisku o wymiarach niezgodnych z regułami gry 
   i z kamerą w odległości od boiska niezgodnej z regułami gry
 
+
+
 Wymaganiami niefunkcjonalnymi są:
 
-* Praca z szybkością 30fps przy możliwie niewielkim wykorzystaniu procesora. 
+* Praca z szybkością 30fps przy możliwie niewielkim wykorzystaniu procesora
 
 
 Weryfikacja
 -----------
 
+..
+    Identyfikator       Nazwa przypadku użycia .
+    Opis    Opis słowny działań podejmowanych przez przypadek testowych.
+    Warunki wstępne Warunki wstępne konieczne do przeprowadzenia testu.
+    Procedura testowa       1. Krok pierwszy testu
+    2. Krok drugi testu
+    3. Nie należy wdawać się w szczegóły kodowania.
+    Oczekiwane rezultaty    Wystąpienie wyjątku lub realizacja celu opisanego w Opisie. 
 
+W toku prac zostały przeprowadzone następujące testy:
+
+* test efektywności --- przy pomocy zdjęć z kamery (w liczbie 40, 10
+  robotów widocznych na każdym) zbadano efektywność algorytmu lokalizacji.
+  Istniały ustawienia parametrów, dla których rozpoznanie pozycji i
+  kąta robotów wyniosło 99.75%,rozpoznanie piłki 100%
+  bez widocznych błędów w identyfikacji poszczególnych robotów w drużynie.
+* test wydajności --- algorytm został uruchomiony na przykładowym
+  obrazku w pętli 1000 razy.
+  Na procesorze ``Intel(R) Core(TM) i5-2410M CPU @ 2.30GHz`` (przy użyciu
+  jednego rdzenia): około 9ms na pojedynczy przebieg.
+* test kompatybilności z kamerą --- aplikacja lokalizująca została 
+  skomunikowana z kamerą dostępną w Laboratorium Robotów bez przeprowadzania 
+  dodatkowych czynności.
+* test przystosowania do różnych warunków oświetleniowych --- sprawdzono 
+  działanie algorytmu przy różnej barwie i jasności światła. Dopóki sensory 
+  kamery nie zostają prześwietlone/niedoświetlone, aplikacja nie zmienia 
+  negatywnie swojej charakterystyki.
+* test efektywności --- uruchomiono aplikację do lokalizacji w 
+  Laboratorium Robotów. W zależności od 
+* test wydajności on-line --- zmierzono wydajność działania całości systemu
+  za pomocą zegara wbudowanego w aplikację, na komputerze znajdującym się w 
+  Laboratorium Robotów. Wydajność osiągnęła około 20fps.
