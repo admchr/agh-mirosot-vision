@@ -154,7 +154,32 @@ Parametry rozpoznawania - analogiczne do pól w :c:type:`amv_config`.
                     
 Definicje nazw kolorów używanych w sekcji ``teams``. Wartości ``min`` i ``max``
 oznaczają minimalną i maksymalną wartość barwy (Hue).
-                    
+                                        
+::
+    
+    .
+                    <coordinate_transformation>
+                        <scale>
+                                <point>
+                                        <x>1.0</x>
+                                        <y>1.0</y>
+                                </point>
+                        </scale>
+                        <play_field_boundary>
+                                <point>
+                                        <x>0</x>
+                                        <y>0</y>
+                                </point>
+                                <point>
+                                        <x>640</x>
+                                        <y>480</y>
+                                </point>
+                        </play_field_boundary>
+                    </coordinate_transformation>
+
+Pozycja lewego górnego i prawego dolnego brzegu boiska na obrazku, a także 
+skala wyjściowa (znaczenie opisane w sekcji :ref:`wsp`).
+
 ::
 
     .

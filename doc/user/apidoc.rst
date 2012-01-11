@@ -4,10 +4,10 @@
 C API
 -----
 
-Część obliczeniowa programu została wyodrębniona w postaci biblioteki w C. 
+Część obliczeniowa programu została wyodrębniona w postaci biblioteki w C.
 Umożliwia to użycie jej w aplikacjach wykorzystujących dowolny język
 programowania.
-Jedyna zależność kodu obliczeniowego to opencv.
+Jedyna zależność kodu obliczeniowego to OpenCV ( http://opencv.willowgarage.com/wiki/ ).
 
 Przykładowy minimalny program wykorzystujący interfejs jest dość prosty::
 
@@ -26,7 +26,7 @@ Przykładowy minimalny program wykorzystujący interfejs jest dość prosty::
     }
     amv_state_free(&state);
 
-Po zainicjalizowaniu konfiguracji funkcją :c:func:`init_config()` jedynymi wartościami, 
+Po zainicjalizowaniu konfiguracji funkcją :c:func:`amv_config_init()` jedynymi wartościami, 
 które bezwzględnie muszą zostać wypełnione są wysokość i szerokość obrazka w 
 pikselach. Pozostałe pola zostają wypełnione domyślnymi wartościami, które 
 gwarantują legalne działanie algorytmu. Poszczególne elementy struktur 
