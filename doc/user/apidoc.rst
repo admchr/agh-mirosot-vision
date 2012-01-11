@@ -1,7 +1,7 @@
 
 .. highlight:: c
 
-C API 
+C API
 -----
 
 Część obliczeniowa programu została wyodrębniona w postaci biblioteki w C. 

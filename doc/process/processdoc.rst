@@ -122,24 +122,94 @@ Weryfikacja
 
 W toku prac zostały przeprowadzone następujące testy:
 
-* test efektywności --- przy pomocy zdjęć z kamery (w liczbie 40, 10
-  robotów widocznych na każdym) zbadano efektywność algorytmu lokalizacji.
-  Istniały ustawienia parametrów, dla których rozpoznanie pozycji i
-  kąta robotów wyniosło 99.75%,rozpoznanie piłki 100%
-  bez widocznych błędów w identyfikacji poszczególnych robotów w drużynie.
-* test wydajności --- algorytm został uruchomiony na przykładowym
-  obrazku w pętli 1000 razy.
-  Na procesorze ``Intel(R) Core(TM) i5-2410M CPU @ 2.30GHz`` (przy użyciu
-  jednego rdzenia): około 9ms na pojedynczy przebieg.
-* test kompatybilności z kamerą --- aplikacja lokalizująca została 
-  skomunikowana z kamerą dostępną w Laboratorium Robotów bez przeprowadzania 
-  dodatkowych czynności.
-* test przystosowania do różnych warunków oświetleniowych --- sprawdzono 
-  działanie algorytmu przy różnej barwie i jasności światła. Dopóki sensory 
-  kamery nie zostają prześwietlone/niedoświetlone, aplikacja nie zmienia 
-  negatywnie swojej charakterystyki.
-* test efektywności --- uruchomiono aplikację do lokalizacji w 
-  Laboratorium Robotów. W zależności od 
-* test wydajności on-line --- zmierzono wydajność działania całości systemu
-  za pomocą zegara wbudowanego w aplikację, na komputerze znajdującym się w 
-  Laboratorium Robotów. Wydajność osiągnęła około 20fps.
+.. tabularcolumns:: |l|J|
+
+======  ========================================================================
+Nazwa   Test efektywności lokalizacji
+======  ========================================================================
+Opis    Na zebranych 40 zdjęciach z kamery można sprawdzić jakość lokalizacji
+        robotów i piłki. Na każdym zdjęciu znajdowało się 10 robotów.
+
+Wyniki  Istniały ustawienia parametrów, dla których rozpoznanie pozycji i
+        kąta robotów wyniosło 99.75%, a rozpoznanie piłki 100%,
+        bez widocznych błędów w identyfikacji poszczególnych robotów w drużynie.
+======  ========================================================================
+
+.. tabularcolumns:: |l|J|
+
+======  ========================================================================
+Nazwa   Syntetyczny test wydajności
+======  ========================================================================
+Opis    Algorytm lokalizacji został uruchomiony na przykładowym obrazku w pętli
+        1000 razy.
+
+Wyniki  Podczas ostatniego testu, przeprowadzanego na komputerze z procesorem 
+        ``Intel Core i5-2410M 2.30GHz`` wydajność wyniosła  około 9ms na 
+        pojedynczą klatkę obrazu.
+======  ========================================================================
+
+.. tabularcolumns:: |l|J|
+
+======  ========================================================================
+Nazwa   Kompatybilność z kamerą
+======  ========================================================================
+Opis    Aplikacja powinna współpracować bezoroblemowo z kamerą dostępną w 
+        Laboratorium Robotów (Phillips spc1300NC)
+
+Wyniki  Program połączył się z kamerą natychmiast po włączeniu, nie było 
+        konieczne przeprowadzanie żadnej dodatkowej konfiguracji
+======  ========================================================================
+
+.. tabularcolumns:: |l|J|
+
+======  ========================================================================
+Nazwa   Odporność na zmianę oświetlenia
+======  ========================================================================
+Opis    Algorytm powinien działać poprawnie w różnych warunkach oświetleniowych
+        (przy różnej kombinacji zapalonych lamp).
+
+Wyniki  Zmiana jasności i barwy oświetlenia w niewielkim zakresie nie wpływa 
+        na zdolność lokalizacji robotów. Zmiana w zakresie wywołującym 
+        prześwietlenie lub niedoświetlenie obrazu wymaga interwencji w postaci
+        zmiany długości czasu naświetlania w sterowniku kamery.
+======  ========================================================================
+
+.. tabularcolumns:: |l|J|
+
+======  ========================================================================
+Nazwa   Odporność na lokalne zmiany oświetlenia
+======  ========================================================================
+Opis    Osoby przechodzące obok boiska mogą rzucać cienie, które mogą wpływać na
+        przebieg lokalizacji. Należy sprawdzić ten wpływ.
+
+Wyniki  Osoby znajdujące się przy krawędzi boiska nie mają wpływu na wynik 
+        lokalizacji.
+======  ========================================================================
+
+.. tabularcolumns:: |l|J|
+
+======  ========================================================================
+Nazwa   Test wydajności w warunkach rzeczywistych
+======  ========================================================================
+Opis    Wydajność aplikacji została sprawdzona w Laboratorium Robotów, przy 
+        użyciu znajdującego się tam komputera.
+
+Wyniki  Czas przetwarzania pojedynczej klatki wynosi około 50ms (co daje 20 
+        klatek na sekundę). 
+======  ========================================================================
+
+
+.. tabularcolumns:: |l|J|
+
+======  ========================================================================
+Nazwa   Test efektywności w warunkach rzeczywistych
+======  ========================================================================
+Opis    Sprawdzono jakość lokalizacji w Laboratorium Robotów.
+
+Wyniki  Poprawność rozpoznawania pozycji robotów jest praktycznie stuprocentowa.
+        Wyznaczanie kąta obrotu jest mniej efektywne -- zdarzają się niepoprawne
+        rozpoznania. Błędy nie występują zawsze, ale mogą pojawiać się roboty, 
+        które będąc w specyficznej pozycji co pewną liczbę klatek otrzymują 
+        błędny kąt obrotu. Błędy w rozpoznaniu można redukować dokładniejszym 
+        doborem parametrów algorytmu.
+======  ========================================================================
