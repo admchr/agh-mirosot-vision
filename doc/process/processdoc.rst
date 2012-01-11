@@ -46,7 +46,7 @@ temat warunków oświetleniowych.
 
 System współpracuje z:
 
-* biblioteką do współpracy z kamerą internetową --- jest to biblioteka napisana 
+* biblioteką do obsługi kamery internetowej --- jest to biblioteka napisana 
   na potrzeby poprzedniego systemu lokalizacji robotów. Biblioteka jest
   wkompilowywana do aplikacji.
 * programami sterującymi robotami, które są konsumentami informacji. Protokół 
