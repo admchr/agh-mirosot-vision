@@ -26,32 +26,31 @@
 %   istniejących rozwiązań prowadząca do uzasadnienia celu prac), ogólna
 %   wizja produktu, krótkie studium wykonalności i analiza zagrożeń.}
 Celem projektu jest
-dostarczenie systemu umożliwiającego rozpoznawanie w czasie rzeczywistym
+dostarczenie systemu umożliwiającego lokalizację w czasie rzeczywistym
 pozycji robotów oraz piłki na obrazie z kamery nad boiskiem gry zgodnie z
-regułami ligi FIRA MiroSot Small League.
+regułami ligi FIRA MiroSot Middle League.
 
-Liga FIRA MiroSot Small League określa zbiór zasad gry, w której drużyny
+Liga FIRA MiroSot Middle League określa zbiór zasad gry, w której drużyny
 składające się z pięciu 7.5cm robotów poruszających się po prostokątnym boisku
 220cm na 180cm próbują umieścić piłkę golfową w bramce przeciwnika. Roboty danej
 drużyny sterowane są za pomocą jednego komputera, który uzyskuje informacje
 o sytuacji na boisku przy pomocy kamery znajdującej się centralnie nad boiskiem.
+
 W Laboratorium Robotów Katedry Informatyki znajdują się wszelkie fizyczne zasoby
 niezbędne do rozegrania meczu zgodnie z zasadami ligi: zestaw robotów, 
-odpowiednie boisko oraz kamera. Rozgrywanie meczy uniemożliwia brak 
-odpowiedniego oprogramowania sterującego robotami. W skład takiego 
-oprogramowania musi wchodzić system rozpoznający obraz z kamery. 
+odpowiednie boisko oraz kamera. Rozgrywanie meczy uniemożliwia brak
+odpowiedniego oprogramowania sterującego robotami. W skład takiego
+oprogramowania musi wchodzić system rozpoznający obraz z kamery.
 
-Aktualnie w laboratorium działa system rozpoznawania robotów. Ma on jednak kilka
+Aktualnie w laboratorium działa system lokalizacji robotów. Ma on jednak kilka
 wad, z których najstotniejszymi są konieczność umieszczenia na robotach
 (swoich i przeciwnika) wzoru niezgodnego z regułami ligi
-i słaba odporność na zmiany oświetlenia.
-W trakcie poszukiwania materiałów nie znaleźliśmy projektów udostępniających
-kod gotowych rozwiązań problemu. Jedyny projekt, który znaleźliśmy dotyczył
-innego zestawu reguł gry i nie mógł zostać zastosowany. 
+i słaba odporność na zmiany oświetlenia. 
 
-Możliwość stworzenia produktu spełniającego oczekiwania nie może być
-kwestionowana -- w rozgrywkach ligi FIRA uczestniczy wiele drużyn, z których
-większość posiada adekwatne systemy wizyjne. Problemem może być wybór
+W powyższym kontekście widać potrzebę stworzenia nowego systemu lokalizacji 
+robotów. Techniczna możliwość stworzenia produktu spełniającego oczekiwania nie
+może być kwestionowana -- w rozgrywkach ligi FIRA uczestniczy wiele drużyn, 
+z których większość posiada adekwatne systemy wizyjne. Problemem może być wybór
 odpowiednich metod przetwarzania obrazu oraz spełnienie kryterium
 wydajnościowego.
 
@@ -63,27 +62,30 @@ wydajnościowego.
 %   oraz najważniejsze wymagania funkcjonalne i niefunkcjonalne.}
 
 System ma być dostrajany przez operatora i komunikować się z programami
-sterującymi robotami (które mogą znajdować się na innych 
-komputerach w sieci).
+sterującymi robotami, które mogą znajdować się na innych 
+komputerach w sieci.
 
 Wymagania funkcjonalne:
 \begin{enumerate}
-\item zachowanie sposobu komunikacji z programami sterującymi --- poprzedni
+\item Znajdowanie pozycji piłki i wszystkich robotów na boisku
+\item Znajdowanie kąta obrotu i ientyfikacja poszczególnych robotów
+we własnej drużynie
+\item Zachowanie sposobu komunikacji z programami sterującymi --- poprzedni
 system wizyjny komunikował się z drużynami za pomocą pakietów UDP, których
 format powinien pozostać bez zmian w nowym systemie
-\item współpraca z kamerami, które były używane w poprzednim systemie
-\item możliwość obserwowania sposobu i wyników działania algorytmu w czasie
+\item Wykorzystanie kamer dostępnych w Laboratorium Robotów
+\item Możliwość obserwowania sposobu i wyników działania algorytmu w czasie
 rzeczywistym i wprowadzania poprawek
-\item możliwość pracy dla jednej lub dwóch drużyn --- oprócz trybu meczu, w 
+\item Możliwość pracy dla jednej lub dwóch drużyn --- oprócz trybu meczu, w
 którym jedna z drużyn posiada nieznany kolorowy wzór na robotach system powinien
 udostępniać tryb sparingu, w którym obydwie drużyny są znane i dostają 
 informacje o położeniu z tego samego źródła
-\item możliwość pracy w warunkach oświetleniowych niezgodnych z regułami ligi 
+\item Możliwość pracy w warunkach oświetleniowych niezgodnych z regułami ligi
 FIRA, w tym w zmiennych warunkach oświetleniowych
-\item możliwość użycia systemu na boisku o wymiarach niezgodnych z regułami gry
+\item Możliwość użycia systemu na boisku o wymiarach niezgodnych z regułami gry
 i/lub z kamerą umieszczoną na nieprzepisowej wysokości
-
 \end{enumerate}
+
 Wymagania niefunkcjonalne:
 \begin{enumerate}
 \item wydajność systemu powinna pozwalać na przetwarzanie z minimalną
@@ -112,19 +114,18 @@ elementarnych operacji na fragmentach obrazu. Biblioteka nie posiada żadnych
 zależności od systemu Windows, a jej API w języku C zapewnia komunikację z 
 dowolnym środowiskiem programistycznym.
 
-W konstrukcji samego algorytmu wykorzystane zostały artykuły opisujące 
-implementacje podobnych systemów w \cite{largeleague} \cite{exemplary}
-\cite{colortag}. Główne elementy konstrukcji algorytmu, takie jak wykorzystanie
-reprezentacji kolorów HSL i regresji Deminga zostały z nich zapożyczone. Własny
-był natomiast projekt wzoru identyfikacyjnego umieszczanego na robotach, który
-posiadał większe pola przeznaczone na kolory identyfikacyjne.
+W konstrukcji samego algorytmu wykorzystane zostały artykuły opisujące
+implementacje podobnych systemów\cite{colortag,largeleague,exemplary}. 
+Niektóre elementy algorytmu, takie jak wykorzystanie
+reprezentacji kolorów HSL i regresji liniowej zostały z nich zapożyczone. Inny
+był natomiast projekt wzoru identyfikacyjnego umieszczanego na robotach.
 
-Fragment systemu odpowiedzialny za komunikację z kamerą, użytkownikiem 
-nadzorującym precę systemu i konsumentami danych 
-wyjściowych algorytmu rozpoznawania napisany został jako aplikacja systemu
+Gotowa aplikacja musi być odpowiedzialna za komunikację z kamerą, 
+konsumentami danych lokalizacyjnych i użytkownikiem nadzorującym pracę systemu
+rozpoznawania. Napisana została jako aplikacja systemu
 Windows (.NET). Program używa odziedziczonej biblioteki do pobierania ramek
 obrazu z kamery. Wyniki rozpoznania są wysyłane jako pakiety UDP zgodnie z
-formatem używanym przez poprzedni system rozpoznawania.
+formatem używanym przez poprzedni system lokalizacji.
 
 
 % \cite{mshift}
@@ -145,15 +146,14 @@ formatem używanym przez poprzedni system rozpoznawania.
 
 Projekt został podzielony na część algorytmiczną (biblioteka z interfejsem w C)
 i część komunikacyjną (aplikacja graficzna, odbieranie ramek z kamery i
-wysyłanie wyników rozpoznania.
+wysyłanie wyników lokalizacji).
 
 Z uwagi na jednokierunkowy przepływ danych (obraz $\to$ współrzędne) było 
 stosunkowo prosto stworzyć środowisko testowania algorytmu off-line. Do 
 podstawowej walidacji algorytmu wystarczyły zdjęcia z kamery. W ramach 
 algorytmu istniały również zależności 
 sekwencyjne: identyfikacja robotów w ramach drużyny wymagała wcześniejszego 
-rozpoznania pozycji robotów. Interfejs 
-graficzny pojawił się później. 
+rozpoznania pozycji robotów. Interfejs graficzny pojawił się później. 
 
 Do zarządzania kodem został wykorzystany system Mercurial
 (\url{http://mercurial.selenic.com/}). 
@@ -164,27 +164,26 @@ pomocnicze i dokumentacja w formacie Sphinx (\url{http://sphinx.pocoo.org/}).
 Adam Chrabąszcz:
 \begin{enumerate}
 \item Rozpoznanie podejść, wyszukiwanie atrykułów i projektów związanych z
-tematem.
+tematem
 \item Przygotowanie prototypu algorytmu rozpoznawania pozycji robotów,
 analiza wyników balansu bieli i klasyfikacji barw na dostępnych zdjęciach z
-kamery.
+kamery
 \item Biblioteka w C++ do rozpoznawania pozycji robotów. Efektywność
 rozpoznania i wydajność jest weryfikowana przy pomocy wcześniej wykonanych 
 zdjęć.
-\item Kod identyfikujący poszczególne roboty w drużynie.
+\item Kod identyfikujący poszczególne roboty w drużynie
 \item Poprawa wydajności. Najdłużej wykonujące się fragmenty algorytmu 
 przepisane do formy minimalizującej ilość operacji procesora.
-\item Ustalenie ostatecznego interfejsu biblioteki w C.
+\item Ustalenie ostatecznego interfejsu biblioteki w C
 \end{enumerate}
 Konrad Kras:
 \begin{enumerate}
 \item Przygotowanie projektu koszulek dla robotów, dobór odpowiedniego papieru
 kolorowego do wykonania pól barwnych, wykonanie zdjęć egzemplarzy koszulek
 kamerą internetową.
-\item Kod komunikacj z kamerą i graficzny interfejs, potrzebny do testowania
-systemu w rzeczywistym środowisku użytkowania.
+\item Aplikacja z graficznym interfejsem użytkownika
 \item Integracja z zewnętrznymi systemami. Wczytywanie konfiguracji z pliku XML.
-Wysyłanie wyników rozpoznawania w postaci pakietów UDP.
+Wysyłanie wyników lokalizacji w postaci pakietów UDP.
 \end{enumerate}
 
 \section{Wyniki projektu}
@@ -198,18 +197,34 @@ Wysyłanie wyników rozpoznawania w postaci pakietów UDP.
 %   klienta/użytkownika, zrealizowane testy wydajnościowe, itd.),
 %   istniejące ograniczenia i propozycje dalszych prac.}
 
-Stworzenie algorytmu rozpoznawania wymagało
+Stworzenie algorytmu lokalizacji wymagało
 zrozumienia wielu aspektów problemu. Szczegółowy opis algorytmu i motywacje 
 kryjące się za jego konstrukcją zostały opisane w dokumentacji technicznej. 
-
 W dokumentacji użytkownika znajduje się opis interfesu biblioteki, a także opis
-aplikacji ją wykorzystującego. Dla użytkownika aplikacji przeznaczone są 
+aplikacji ją wykorzystującej. Dla użytkownika aplikacji przeznaczone są 
 podstawowe informacje na temat parametrów, które muszą zostać dopasowane w 
 programie, opis interfejsu graficznego i formatu konfiguracji XML.
 
 W przebiegu projektu powstała biblioteka realizująca
 rozpoznawanie pozycji robotów oraz wykorzystująca ją aplikacja przeprowadzająca
 lokalizację w czasie rzeczywistym. 
+
+Wydajność aplikacji zmierzono na komputerze znajdującym się w Laboratorium 
+Robotów. Wynikiem było około 20
+klatek na sekundę. Oznacza to o połowę większe średnie czasy pomiędzy kolejnymi
+odczytami, niż zakładano. Taki wynik został uzyskany po wielokrotnych
+działaniach przyspieszających implementację. Pomimo wyeliminowania największych
+nieefektywności z implementacji, istnieje pole do dalszych usprawnień. Z drugiej
+strony, przeprowadzanie samej lokalizacji zajmowało na innnym
+komputerze ok. 9ms (110fps), więc różnice w szybkości procesora są tu bardzo 
+istotne.
+
+Efektywność rozpoznania znajduje się na dobrym poziomie. Poprawność 
+rozpoznawania pozycji robotów jest praktycznie stuprocentowa. Wyznaczanie kąta 
+obrotu jest mniej efektywne -- zdarzają się niepoprawne rozpoznania. Błędy nie 
+występują zawsze, ale mogą pojawiać się roboty, które będąc w specyficznej 
+pozycji co pewną liczbę klatek otrzymują błędny kąt obrotu. Błędy w rozpoznaniu
+można redukować dokładniejszym doborem parametrów algorytmu.
 
 Przykładowe elementy, które można poprawić:
 \begin{enumerate}
@@ -219,13 +234,14 @@ sposób wyznaczania kąta może wykrywać wartość przesuniętą o $180^\circ$.
 Poprawić sytuację mógłoby zmodyfikowanie sposobu normalizacji jasności/balansu 
 bieli, przez wykonanie procedury balansu przed meczem, z wykorzystaniem np.
 białych kartek papieru kładzionych na boisku.
-\item Wydajność algorytmu można zwiększyć, łącząc niektóre przebiegi agorytmu
-w jeden
+\item Wydajność algorytmu można zwiększyć, łącząc oddzielne fazy agorytmu,  
+co zminimalizuje ilość dostępów do pamięci
 \end{enumerate}
 
 
 
-
+\bibliographystyle{plain}
 \bibliography{bibliografia}
+
 
 \end{document}
