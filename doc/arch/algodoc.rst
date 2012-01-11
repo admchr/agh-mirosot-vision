@@ -17,24 +17,29 @@ na obrazie:
 Regulacja jasności/balansu bieli
 ********************************
 
+Dla podanych przez użytkownika punktów na obrazku wyznaczane są wartości 
+RGB mediany ich otoczenia :math:`3\times 3`. Ta wartość jest zapisywana jako
+punkt bieli w danym miejscu na obrazku.
 
-Mając do dyspozycji punkt bieli w danym miejscu wyliczany jest zbalansowany 
+Jeśli do dyspozycji jest kilka punktów bieli w różnych miejscach, biel w 
+punktach pośrednich wyliczana jest jako ich średnia ważona  wagą :math:`\frac{1}{r^2}`, 
+gdzie :math:`r` to odległość euklidesowa pozycji piksela z bielą do badanego punktu.
+
+Mając do dyspozycji punkt bieli :math:`(w_r, w_g, w_b)` w danym miejscu wyliczany jest zbalansowany 
 kolor dla piksela :math:`p`:
 
 .. math::
     (p'_r, p'_g, p'_b) = (p_r\cdot\frac{128}{w_r}, p_g\cdot\frac{128}{w_g}, p_b\cdot\frac{128}{w_b})
 
-Jeśli do dyspozycji jest kilka punktów bieli w różnych miejscach, biel w 
-punktach pośrednich wyliczana jest jako średnia ważona  wagą :math:`\frac{1}{r^2}`, 
-gdzie :math:`r` to odległość pozycji piksela z bielą do badanego punktu.
 
 
 Maskowanie
 **********
 
-Podane przez użytkownika punkty :math:`(P_0, P_1, \ldots, P_n)` określają
+Podany przez użytkownika ciąg punktów na obrazku określa
 pojedynczy wielokąt, który ogranicza piksele istotne dla rozpoznania.
-Piksele z poza tego wielokąta są zamieniane w kolor czarny (zerowane).
+Wielokąt nie musi być wypukły.
+Piksele z poza obszaru ograniczonego tym  wielokątem są zamieniane w kolor czarny (zerowane).
 Zadaniem maskowania jest usuwanie części obrazu poza kontrolą reguł gry, zawierającego
 kolorowe obiekty (np. ludzi), które mogą skutecznie destabilizować algorytm.
 Poza tym elementem maska nie posiada żadnego innego znaczenia w algorytmie.
@@ -94,7 +99,7 @@ wartości w programie wygląda następująco:
 
 4. Wyniki są skalowane do wartości mieszczących się w typie ``unsigned char``.
 Barwa (Hue) jest transformowana z zakresu :math:`[0, 360^\circ[` do wartości
-``0..179``, jasność i nasycenie wypełniaja wszystkie wartości ``0..255``.
+``0..179``, jasność i nasycenie wypełniają wszystkie wartości ``0..255``.
     
 .. math::
 
@@ -107,22 +112,21 @@ Barwa (Hue) jest transformowana z zakresu :math:`[0, 360^\circ[` do wartości
 Przynależność do klas kolorów
 *****************************
 
-Żeby rozpoznać pozycję robotów, w obecności robotów przeciwnika można polegać 
-jedynie na obecności kolorów żółtego i niebieskiego - wszelkie inne barwy mogą 
-pochodzić z koszulek drużyny przeciwnika, które są nieprzewidywalne.
+Żeby rozpoznać pozycję robotów na boisku, przy założeniu obecności robotów przeciwnika (koszulki przeciwnika są nieprzewidywalne) możemy polegać jedynie 
+na rozpoznawaniu kolorów żółtego i niebieskiego, które to zgodnie z regulaminem
+muszą zawierać się w obszarze każdej koszulki robota z drużyny.
 
 Piksele na tym etapie są dzielone na klasy:
 
 * żółty
 * niebieski
 * pomarańczowy (piłka)
-* żaden z pozostałych (nieklasyfikowany)
+* żaden z powyższych
 
 Przyporządkowanie koloru piksela do klasy jest wykonywane na podstawie jego 
 współrzędnych w przestrzeni HSL. Najpierw eliminowane są piksele o zbyt małej
 jasności (Lightness) lub nasyceniu (Saturation). 
-Pozostałe są klasyfikowane na podstawie barwy (Hue) do jednego  z trzech 
-przedziałów.
+Pozostałe są klasyfikowane na podstawie barwy (Hue) do jednej z powyższych klas.
 
 
 Spójne obszary
@@ -130,10 +134,10 @@ Spójne obszary
 
 Piksele tej samej klasy muszą zostać podzielone na spójne obszary.
 Piksele sąsiadujące ze sobą bokami zostają przydzielone do tych samych spójnych
-składowych. Każdy z obszarów ma na tym etapie wyliczane statystyki, które będą 
-wykorzystane w następnym kroku.
+składowych. Każdy z obszarów ma na tym etapie wyliczane statystyki: liczność 
+obszaru i średnią wartość RGB obszaru.
 
-Po skompletowaniu listy obszarów danego koloru ustala się je listę rankingową
+Po skompletowaniu listy obszarów danego koloru ustala się je w listę rankingową
 na podstawie ilości pikseli i średniej wartości RGB obszaru.
 Z góry listy odcinanych jest tyle obszarów ile robotów powinno znajdować się 
 na boisku.
@@ -146,7 +150,7 @@ Kąt obrotu robota i identyfikacja
     TODO make use of home_team
 
 Jeśli drużyna robotów jest uznawana za drużynę przeciwnika, to poprzednie kroki
-kończą rozpoznawanie. Do sterowania drużyną niezbędne są informacje na temat 
+kończą rozpoznawanie. Do sterowania robotami niezbędne są informacje na temat 
 orientacji i identyfikacji robotów w drużynie. 
 
 Na drużynowych obszarach wyznaczana jest linia minimalizująca
