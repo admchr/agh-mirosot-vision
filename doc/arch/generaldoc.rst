@@ -59,7 +59,7 @@ mogą:
 
 * posiadać dowolne obszary koloru czarnego, uniemożliwiające znalezienie obrysu
   robota
-* nie posiadać żadnych dodatkowych kolorów, niż czarny i kolor drużyny
+* nie posiadać żadnych dodatkowych kolorów, poza czarnym i kolorem drużyny
 * posiadać symetrię radialną
 * posiadać różne rozmiary koloru drużynowego
 * zgodnie z regułami mogą nie być prostokątne
@@ -93,7 +93,7 @@ Wzór koszulki dla robotów miał spełniać zadania:
 * być odporny na sklejanie się jednokolorowych powierzchni
 
 Najprostszym rozwiązaniem problemu sklejania się robotów jest dodanie czarnego 
-marginesu na brzegu robota, tak więc zostało to zrobione.
+marginesu na brzegu robota, co też zostało zrobione.
 
 Problem obrotów i identyfikacji można rozwiązać za pomocą modyfikacji kształtu
 figury w kolorze drużynowym lub poprzez dodanie nowych kolorowych powierzchni.
@@ -157,7 +157,7 @@ i temperatury barwnej. Ludzki system wizyjny nie ma żadnych problemów z
 przetwarzaniem w bardzo różnych warunkach, dlatego efekt ten jest dobrze
 widoczny dopiero przy obserwowaniu zdjęć z kamery. Oprogramowanie obsługujące 
 kamerę może próbować naprawić obraz zmieniając czas migawki i wartości kanałów 
-barwnych, ale musi mieć znać punkt odniesienia. Zazwyczaj kamery próbują 
+barwnych, ale musi znać punkt odniesienia. Zazwyczaj kamery próbują 
 wykorzystać statystyki całego obrazu, żeby znależć optymalne ustawienia.
 W przypadku czarnego boiska do gry zajmującego cały kadr jest to podejście 
 skazane ne porażkę, dlatego wszelkie ustawienia automatyczne najlepiej wyłączyć.
