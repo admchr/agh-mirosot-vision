@@ -60,6 +60,7 @@ mogą mieć dowolne dwa różne kolory, ale nie niebieski, żółty ani pomarań
 Względy praktyczne sugerują, że mają to być kolory o jasności zbliżonej do
 koloru drużyny, różniące się maksymalnie barwą, np. czerwony, zielony i fioletowy.
 
+.. _hsl:
 
 Przestrzeń kolorów HSL
 **********************
@@ -89,13 +90,13 @@ Transformacja współrzędnych i kąta
 
 Przed zwróceniem pozycji robotów i piłki z funkcji rozpoznającej możliwa jest zmiana
 układu współrzędnych. Transformację określają dwa punkty obrazka (lewy górny i
-prawy dolny róg boiska) i skala wejściowa.
+prawy dolny róg boiska) i skala wyjściowa.
 
 Oznaczmy:
 
 * :math:`(s_x, s_y)` - skala wyjściowa
-* :math:`P_1` - pozycja piksela na obrazku będącego prawym górnym rogiem obrazu
-* :math:`P_2` - pozycja piksela na obrazku będącego lewym dolnym rogiem obrazu
+* :math:`P_1` - pozycja piksela na obrazku będącego lewym górnym rogiem obrazu
+* :math:`P_2` - pozycja piksela na obrazku będącego prawym dolnym rogiem obrazu
 
 Wtedy: 
 
