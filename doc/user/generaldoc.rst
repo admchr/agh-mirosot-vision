@@ -47,7 +47,7 @@ Dla uzyskania takich danych konieczne jest zdecydowanie się na wygląd koszulki
 co z kolei determinuje metody określania kąta i identyfikacji robota. 
 
 Algorytmy rozpoznawania w programie są dostosowane do jednego schematu barwnego 
-na robotach. Jest on przedstawiony na schemacie:
+na robotach. Jest on przedstawiony na rysunku:
 
 .. image:: /team.png
     :align: center
@@ -58,7 +58,7 @@ Koszulka składa się z czarnej ramki i 3 kolorowych trójkątów. Największy j
 kolorem drużyny (żółty lub niebieski, zgodnie z regułami). Pozostałe dwa obszary
 mogą mieć dowolne dwa różne kolory, ale nie niebieski, żółty ani pomarańczowy.
 Względy praktyczne sugerują, że mają to być kolory o jasności zbliżonej do
-koloru drużyny, różniące się maksymalnie barwą.
+koloru drużyny, różniące się maksymalnie barwą, np. czerwony, zielony i fioletowy.
 
 
 Przestrzeń kolorów HSL
@@ -82,17 +82,28 @@ Opis koloru w przestrzeni HSL składa się z 3 liczb:
   Kolory w pełni nasycone mają jasność w granicach 85-170.
 
 
+.. _wsp:
+
 Transformacja współrzędnych i kąta
 **********************************
 
 Przed zwróceniem pozycji robotów i piłki z funkcji rozpoznającej możliwa jest zmiana
-układu współrzędnych. Transformację określa:
+układu współrzędnych. Transformację określają dwa punkty obrazka (lewy górny i
+prawy dolny róg boiska) i skala wejściowa.
+
+Oznaczmy:
 
 * :math:`(s_x, s_y)` - skala wyjściowa
-* :math:`P_1` - pozycja piksela na obrazku będącego punktem o współrzędnych 
-  :math:`(0, 0)`  w układzie wyjściowym (prawy górny róg)
-* :math:`P_1` - pozycja piksela na obrazku będącego punktem o współrzędnych 
-  :math:`(s_x, s_y)` w układzie wyjściowym (lewy dolny róg)
+* :math:`P_1` - pozycja piksela na obrazku będącego prawym górnym rogiem obrazu
+* :math:`P_2` - pozycja piksela na obrazku będącego lewym dolnym rogiem obrazu
+
+Wtedy: 
+
+* :math:`P_1` - ma współrzędne :math:`(0, 0)`  w układzie wyjściowym
+* :math:`P_2` - ma współrzędne :math:`(s_x, s_y)`  w układzie wyjściowym
+
+Na rysunku widać transformację współrzędnych z współrzędnych obrazka (czerwony)
+do współrzędnych wynikowych (niebieski).
 
 .. image:: /transform.png
     :align: center
