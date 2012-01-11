@@ -13,6 +13,8 @@ Dokumentacja użytkownika
 .. toctree::
     
     generaldoc
-    uidoc
     apidoc
     xmldoc
+
+..
+    uidoc

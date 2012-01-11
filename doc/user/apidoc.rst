@@ -15,7 +15,7 @@ Przykładowy minimalny program wykorzystujący interfejs jest dość prosty::
     amv_config_init(&config);
     config.image_width = WIDTH;
     config.image_height = HEIGHT;
-    load_config(&config, argv[2]);
+    fill_the_config_fields(&config);
     
     struct amv_state state;
     amv_state_new(&state, &config);
