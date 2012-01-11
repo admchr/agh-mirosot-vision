@@ -3,59 +3,13 @@
 Dokumentacja procesowa
 ======================
 
-..
-    Tu:
-
-    \section{Cel prac i wizja produktu}
-    \label{sec:cel-wizja}
-    \emph{Charakterystyka problemu, motywacja projektu (w tym przegląd
-      istniejących rozwiązań prowadząca do uzasadnienia celu prac), ogólna
-      wizja produktu, krótkie studium wykonalności i analiza zagrożeń.}
-
-    \section{Zakres funkcjonalności}
-    %\section{Functional scope}
-    \label{sec:zakres-funkcjonalnosci}
-
-    \emph{Kontekst użytkowania produktu (aktorzy, współpracujące systemy)
-      oraz najważniejsze wymagania funkcjonalne i niefunkcjonalne.}
-
-    \section{Wybrane aspekty realizacji}
-    %\section{Selected realization aspects}
-    \label{sec:wybrane-aspekty-realizacji}
-
-    \emph{Przyjęte założenia, struktura i zasada działania systemu,
-      wykorzystane rozwiązania technologiczne wraz z krótkim uzasadnieniem
-      ich wyboru.}
-
-    \section{Organizacja pracy}
-    %\section{Work organization}
-    \label{sec:organizacja-pracy}
-
-    \emph{Struktura zespołu (role poszczególnych osób), krótki opis i
-      uzasadnienie przyjętej metodyki i/lub kolejności prac, planowane i
-      zrealizowane etapy prac ze wskazaniem udziału poszczególnych
-      członków zespołu, wykorzystane praktyki i narzędzia w zarządzaniu
-      projektem.}
-
-    \section{Wyniki projektu}
-    %\section{Project results}
-
-    \label{sec:wyniki-projektu}
-
-    \emph{Najważniejsze wyniki (co konkretnie udało się uzyskać:
-      oprogramowanie, dokumentacja, raporty z testów/wdrożenia, itd.)
-      i ocena ich użyteczności (jak zostało to zweryfikowane --- np.\ wnioski
-      klienta/użytkownika, zrealizowane testy wydajnościowe, itd.),
-      istniejące ograniczenia i propozycje dalszych prac.}
-
-
 Motywacja
 ---------
 
 ..  
     TODO Laboratorium Robotów - tak to się zwie?
 
-W Laboratorium Robotów znajduje się boisko i zestaw ponad 10 robotów 
+W Laboratorium Robotów znajduje się boisko i zestaw robotów 
 umożliwiających rozgrywanie meczy piłki robotycznej zgodnie z regułami ligi 
 FIRA MiroSot. Niemal wszystkie elementy niezbędne do rozegrania meczu znajdują
 się na miejscu. Jedyne brakujące elementy to:
@@ -85,11 +39,22 @@ rozgrywkach.
 Zakres funcjonalności
 ---------------------
 
-..
-    TODO WTF
+Użytkownikiem produktu będzie operator, którego zadaniem po uruchomieniu
+programu jest ustawienie parametrów rozpoznawania. W skład parametrów algorytmu
+wchodzą informacje na temat ilości i typu robotów w drużynach i informacje na 
+temat warunków oświetleniowych. 
+
+System współpracuje z:
+
+* biblioteką do współpracy z kamerą internetową --- jest to biblioteka napisana 
+  na potrzeby poprzedniego systemu lokalizacji robotów. Biblioteka jest
+  wkompilowywana do aplikacji.
+* programami sterującymi robotami, które są konsumentami informacji. Protokół 
+  komunikacyjny jest oparty na UDP i jest odziedziczony po poprzednim systemie
+  lokalizacji robotów. 
 
 
-Wymaganiami funkcjonalnymi są:
+Wymaganiami funkcjonalnymi systemu są:
 
 * Współpraca z kamerami internetowymi w możliwie ogólny sposób
 * Możliwość łatwej kalibracji parametrów algorytmu w czasie działania

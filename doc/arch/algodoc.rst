@@ -2,7 +2,7 @@
 Dokładny opis algorytmu
 -----------------------
 
-Algorytm rozpoznawania składa się z sekwencji następujących po sobie operacji 
+Algorytm lokalizacji składa się z sekwencji następujących po sobie operacji 
 na obrazie:
 
 * regulacja jasności/balans bieli
@@ -15,10 +15,8 @@ na obrazie:
   własnej drużyny)
 
 Regulacja jasności/balansu bieli
-***********************
+********************************
 
-..
-    TODO tu krótkie streszczenie samego wyliczenia
 
 Mając do dyspozycji punkt bieli w danym miejscu wyliczany jest zbalansowany 
 kolor dla piksela :math:`p`:
@@ -27,19 +25,19 @@ kolor dla piksela :math:`p`:
     (p'_r, p'_g, p'_b) = (p_r\cdot\frac{128}{w_r}, p_g\cdot\frac{128}{w_g}, p_b\cdot\frac{128}{w_b})
 
 Jeśli do dyspozycji jest kilka punktów bieli w różnych miejscach, biel w 
-punktach pośrednich jest wyliczana jest jako średnia ważona  wagą :math:`\frac{1}{r^2}`, 
-gdzie :math:`r` to odległość piksela z bielą do badanego punktu.
+punktach pośrednich wyliczana jest jako średnia ważona  wagą :math:`\frac{1}{r^2}`, 
+gdzie :math:`r` to odległość pozycji piksela z bielą do badanego punktu.
 
 
 Maskowanie
 **********
 
 Podane przez użytkownika punkty :math:`(P_0, P_1, \ldots, P_n)` określają
-pojedynczy wielokąt, w który ogranicza pole istotne dla rozpoznania.
+pojedynczy wielokąt, który ogranicza piksele istotne dla rozpoznania.
 Piksele z poza tego wielokąta są zamieniane w kolor czarny (zerowane).
-Zadaniem maskowania jest usuwanie tła poza kontrolą reguł gry, zawierającego
-kolorowe obiekty i ludzi, którzy mogą skutecznie destabilizować algorytm.
-Poza tym elementem maska nie posiada żadnego znaczenia we właściwym algorytmie.
+Zadaniem maskowania jest usuwanie części obrazu poza kontrolą reguł gry, zawierającego
+kolorowe obiekty (np. ludzi), które mogą skutecznie destabilizować algorytm.
+Poza tym elementem maska nie posiada żadnego innego znaczenia w algorytmie.
 
 
 Transformacja do HSL
@@ -47,8 +45,8 @@ Transformacja do HSL
 
 Dla każdej klatki obrazu jest przygotowywana jej kopia przetransformowana do
 reprezentacji HSL. Jako, że ilość operacji arytmetycznych koniecznych do wykonania
-transformacji jest zbyt duża, konieczne jest korzystanie ze ztablicowanych 
-wyników. Ilość pamięci potrzebnej do skonstruowania takiej tablicy wynosi 
+transformacji jest bardzo duża, konieczne jest korzystanie ze ztablicowanych 
+wyników. Ilość pamięci potrzebnej do skonstruowania tablicy wynosi 
 :math:`3\mathrm{B}\times 256^3 = 48 \mathrm{MiB}`, co nie jest dużym kosztem
 pamięciowym. Dodatkowo wymusza to narzut kilku sekund na przygotowanie tablicy 
 przy starcie aplikacji.
@@ -65,7 +63,7 @@ wartości w programie wygląda następująco:
     r &= \frac{R}{256} \\
     g &= \frac{G}{256} \\
     b &= \frac{B}{256} \\
-    
+
 
 2. Z przeskalowanych wartości wyliczana jest wartość maksymalna i chromatyczność:
 
@@ -117,13 +115,13 @@ Piksele na tym etapie są dzielone na klasy:
 
 * żółty
 * niebieski
-* pomarańczowy
-* żaden z pozostałych
+* pomarańczowy (piłka)
+* żaden z pozostałych (nieklasyfikowany)
 
 Przyporządkowanie koloru piksela do klasy jest wykonywane na podstawie jego 
 współrzędnych w przestrzeni HSL. Najpierw eliminowane są piksele o zbyt małej
-jasności (L) lub nasyceniu (S). 
-Pozostałe są klasyfikowane na podstawie barwy (H) do jednego  z trzech 
+jasności (Lightness) lub nasyceniu (Saturation). 
+Pozostałe są klasyfikowane na podstawie barwy (Hue) do jednego  z trzech 
 przedziałów.
 
 
@@ -137,7 +135,8 @@ wykorzystane w następnym kroku.
 
 Po skompletowaniu listy obszarów danego koloru ustala się je listę rankingową
 na podstawie ilości pikseli i średniej wartości RGB obszaru.
-Z góry listy odcinanych jest tyle obszarów ile robotów ma być rozpoznanych.
+Z góry listy odcinanych jest tyle obszarów ile robotów powinno znajdować się 
+na boisku.
 Za piłkę przyjmuje się najlepszy pomarańczowy obszar.
 
 Kąt obrotu robota i identyfikacja
@@ -156,15 +155,20 @@ wyznaczamy kąt obrotu robota z dokładnością do  :math:`180^\circ`.
 Zdeterminowanie, która z dwóch orientacji jest prawdziwa polega na policzeniu 
 różnicy ilości pikseli po jednej i drugiej stronie prostej regresji.
 
-Mając pozycję i kąt obrotu koloru drużynowego, można wyznaczyć obszar, w którym
-znajdują się kolory poboczne. Przydział obszaru do odpowiadających mu kolorów 
-pobocznych następuje wyłącznie na podstawie barwy (H) pikseli. 
-Każde z możliwych ustawień kolorów pobocznych próbuje się dopasować do obszaru.
-Dopasowaniu odpowiada jakość, która określana jest na podstawie ilości pikseli 
-zakwalifikowanych do kolorów tworzących ustawienie i tego, czy środki ciężkości
-pikseli są ustawione względem siebie tak, jak kolory z rozpatrywanego 
-ustawienia. 
+Następnie należy rozpoznać dwa pola barwne znajdujące się obok koloru drużynowego.
+Mając pozycję i kąt obrotu robota wiemy, gdzie się one znajdują. Należy tylko 
+stwierdzić, jakie kolory się na nich znajdują. Przyporządkowanie klas kolorów 
+pikselom odbywa się wyłącznie na podstawie ich barwy (Hue).
 
-Mając jakości dopasowania dla wszystkich par identyfikacja-robot, algorytm 
-zachłannie wybiera dopasowania maksymalizujące jakość aż do dopasowania 
-wszystkich robotów.
+Żeby jak najlepiej dopasować identyfikacje robotów, dla każdej pary
+(robot, identyfikacja) tworzy się liczbową jakość, odpowiadającą na pytanie (przykładowo):
+
+    Jak bardzo rozpatrywany robot pasuje do identyfikatora czerwony-zielony?
+
+Mając jakości wszystkich dopasowań identyfikacji do robotów na boisku chcemy 
+znaleźć dopasowanie o jak najlepszej sumie jakości. Problem ten odpowiada
+skojarzeniu o maksymalnej wadze w pełnym grafie dwudzielnym. Rozwiązywany
+jest on przy pomocy algorytmu zachłannego: dodawane jest za każdym 
+razem dopasowanie o największej jakości, którego wierzchołki są 
+jeszcze nieprzyporządkowane. Rozwiązanie nie jest teoretycznie optymalne, ale
+w praktyce wystarczające.
