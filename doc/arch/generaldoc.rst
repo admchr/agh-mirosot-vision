@@ -144,6 +144,9 @@ może być zbyt wolne i zbyt skomplikowane w implementacji i użytkowaniu.
 Należy zauważyć pewną różnicę pomiędzy efektami sklejenia się własnych robotów 
 a sklejeniem robotów przeciwnika. Jeśli dwa roboty przeciwnika zostaną rozpoznane jako jeden, 
 w pewnym miejscu może pojawić się informacja o nieistniejącym robocie przeciwnika.
+W przypadku własnych robotów informacje mogą bezpośrednio wpływać na rozkazy 
+wydawane robotom. W skrajnych wypadkach programy sterujące mogą przestawać 
+wydawać polecenia i zaciąć się w sklejonej pozycji.
 
 
 Jasność i balans bieli
@@ -162,9 +165,8 @@ skazane ne porażkę, dlatego wszelkie ustawienia automatyczne najlepiej wyłąc
 Na korekcję jasności i barw wpływ może mieć również specyficzna dla danego 
 urządzenia wyjściowa przestrzeń kolorów. Najbardziej popularną ustandaryzowaną
 przestrzenią jest sRGB, w której wartość piksela zależy w sposób mocno 
-nieliniowy od jego jasności. 
-
-W użytym przez nas modelu kamery nie znaleźliśmy nieliniowości wymuszających 
+nieliniowy od jego jasności. W użytym przez nas modelu kamery nie znaleźliśmy 
+jednak nieliniowości wymuszających 
 korekcję (patrz rysunek).
 
 .. _white-figure
@@ -195,10 +197,9 @@ dla każdego piksela :math:`p` zastosować prostą transformację:
     (p'_r, p'_g, p'_b) = (p_r\cdot\frac{255}{w_r}, p_g\cdot\frac{255}{w_g}, p_b\cdot\frac{255}{w_b})
 
 Taka transformacja przekształca piksel :math:`(w_r, w_g, w_b)` w 
-:math:`(255, 255, 255)`. Tu należy zwrócić uwagę, że jeśli przechowujemy 
-wartości składowych w pojedyńczym bajcie, to możemy obciąć składowe kolorów, 
-które z jakichś względów posiadają składowe większe niż odpowiadające im 
-składowe punktu bieli. W takim wypadku lepiej jest przeskalować wynik działania,
+:math:`(255, 255, 255)`. Tu pojawia się niebezpieczeństwo przekroczenia zakresu 
+jednego bajtu: jeśli punkt bieli jest ciemniejszy od danego piksela, dostaniemy 
+błędny wynik. W takim wypadku lepiej jest przeskalować wynik działania,
 tracąc nieznacznie (pomijalnie) na precyzji.
 
 .. math::
@@ -255,11 +256,13 @@ W wielu aspektach algorytm zachowuje się nieidealnie:
 * Wydajność algorytmu można zwiększyć, łącząc kilka przebiegów po pamięci z
   obrazem w jeden - przykładowo można połączyć liczenie transformacji do HSV
   i klasyfikację pikseli w jedną pętlę.
-* Czarne obramowanie wokół kolorów pobocznych nie jest konieczne, gdyż w obecnym
+* Czarne obramowanie wokół kolorów pobocznych na koszulkach nie jest konieczne, gdyż w obecnym
   kształcie algorytm nie potrzebuje izolować obszarów kolorów innych niż 
   drużynowe. Usunięcie ramek zwiększa powierzchnię koloru możliwą do 
   rozpoznania.
 * Balans bieli oparty na brzegach boiska jest w stanie dokładnie kontrolować
   jasność jedynie w pobliżu brzegów boiska. Jeśli oświetlenie znajduje się 
   centralnie nad boiskiem, to algorytm nie może zniwelować efektu zwiększenia
-  jasności na środku obrazu.
+  jasności na środku obrazu. Poprawić sytuację mógłoby zmodyfikowanie sposobu normalizacji jasności/balansu 
+  bieli, przez wykonanie procedury balansu przed meczem, z wykorzystaniem np.
+  białych kartek papieru kładzionych na boisku.
