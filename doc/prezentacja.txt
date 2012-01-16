@@ -1,0 +1,19 @@
+
+* tytuł
+* liga: co, jak, zasady, boisko, kamera, roboty, światło
+* wybór koszulek
+* co jest w pracowni (zdjęcie), poprzedni system i jego wady
+* cele: realtime, UDP, odoporność na światło,...
+* problemy: światło, odblaskowe boisko, dobór kolorów, trójkąt -> strzałka, kamera/kompresja, migawka(XP)
+* próby poradzenia sobie: studiowanie kolorów, balans bieli, nierówność jasności
+  (jasny środek boiska)
+* obcinanie boiska, artefakty
+* co powstało: biblioteka, konfiguracja XML, program do wyświetlania, UDP
+* dokumentacja
+* wyniki:
+  - co działa: odporność na światło, na całym boisku działa, skalowanie boiska
+  - co nie działa: wydajność w pracowni, problemy z orientacją
+  - jak szybko
+
+Zasady nie wszystkie, emfaza na cel i motywację
+
