@@ -6,9 +6,9 @@ Aplikacja graficzna
 Opis programu i wymagania systemowe
 ***********************************
 
-Aplikacja graficzna do obsługi biblioteki rozpoznającej została zaimplementowana w środowisku Windows(.NET) w języku Visual C++. Oprócz środowiska .NET podczas implementacji aplikacji wykożystano także biblioteki:
+Aplikacja graficzna do obsługi biblioteki rozpoznającej została zaimplementowana w środowisku Windows(.NET) w języku Visual C++. Oprócz środowiska .NET podczas implementacji aplikacji wykorzystano także biblioteki:
 
-* Xerces ( http://xerces.apache.org/xerces-c/ ) jako biblioteke obsługującą operacje na zapisanej w formacie XML konfiguracij
+* Xerces ( http://xerces.apache.org/xerces-c/ ) jako biblioteke obsługującą operacje na zapisanej w formacie XML konfiguracji
 * OpenCV jako zależność dla biblioteki rozpoznającej oraz wsparcie dla podstawowych operacji na ramkach obrazu (kopiowanie, zapis)
 * Odziedziczoną bibliotekę do pobierania obrazu z kamery
 
@@ -24,7 +24,7 @@ Opis działania aplikacji
 Uruchamianie
 ^^^^^^^^^^^^
 
-Pierwszym krokiem po uruchomieniu aplikacji jest wybór kamery. Jeśli w systemie dostepne jest wiecej niż jedno odpowiednie urządzenie pojawia się okno pozwalające na wybór właściwej kamery. Okno to jest pokazane na poniższym rysunku. Jeśli w syetemie jest dostępne tylko jedno urządzenie do akwizycji obrazu wyświetlenie oka wyboru kamery zostanie pominiete. Jeśli w systemie nie ma dostępnej kamery, zostanie wyświetlony odpowiedni komunikat a aplikacja zakończy swoje działanie.
+Pierwszym krokiem po uruchomieniu aplikacji jest wybór kamery. Jeśli w systemie dostepne jest wiecej niż jedno odpowiednie urządzenie pojawia się okno pozwalające na wybór właściwej kamery. Okno to jest pokazane na poniższym rysunku. Jeśli w systemie jest dostępne tylko jedno urządzenie do akwizycji obrazu wyświetlenie okna wyboru kamery zostanie pominięte. Jeśli w systemie nie ma dostępnej kamery, zostanie wyświetlony odpowiedni komunikat a aplikacja zakończy swoje działanie.
 
 .. image:: /cameraChoice.png
     :align: center
@@ -50,14 +50,14 @@ Sterowanie wykonaniem programu
     :width: 353pt
     :height: 211pt
 
-Po zatwierdzeniu opcji kamery pojawia się główne okno aplikacji. Na tym etapie można uruchomić algorytm rozpoznawania robotów z użyciem domyślnie załadowanych przez aplikację opcji. Uruchomienie rozpoznawania robotów powoduje równocześnie rozgłaszanie wyników rozpoznawania na adres multicastowy za pomocą pakietów UDP. Do rozpoczęcia/ wstrzymania rozpoznawania służy para przycisków "Start" i "Stop". W tej samej grupie przycisków dostępne mamy rownież: "Restet Camera", "Capture Image" oraz "Save Config" i "Load Config". Za ich pomocą możemy odpowiednio zmienić kamerę/opcje kamery, pobrać i zapisać jako plik graficzny pojedynczą ramkę obrazu z aktualnie podłączonego urządzenia, zapisać aktualą konfigurację algorytmu jako plik XML lub wczytać wcześniej przygotowaną/zapisaną konfiguracje z pliku XML.
+Po zatwierdzeniu opcji kamery pojawia się główne okno aplikacji. Na tym etapie można uruchomić algorytm rozpoznawania robotów z użyciem domyślnie załadowanych przez aplikację opcji. Uruchomienie rozpoznawania robotów powoduje równocześnie rozgłaszanie wyników rozpoznawania na adres multicastowy za pomocą pakietów UDP. Do rozpoczęcia/wstrzymania rozpoznawania służy para przycisków "Start" i "Stop". W tej samej grupie przycisków dostępne mamy rownież: "Restet Camera", "Capture Image" oraz "Save Config" i "Load Config". Za ich pomocą możemy odpowiednio zmienić kamerę/opcje kamery, pobrać i zapisać jako plik graficzny pojedynczą ramkę obrazu z aktualnie podłączonego urządzenia, zapisać aktualną konfigurację algorytmu jako plik XML lub wczytać wcześniej przygotowaną/zapisaną konfiguracje z pliku XML.
 
 .. image:: /controlButtons.png
     :align: center
     :width: 237pt
     :height: 52pt
     
-Do zmiany adresu multicast i portu, na który rozgłaszane są wyniki działania algorytmu, służą dwa pola tekstowe w prawym górnym rogu okna programu opisane odopwiednio:
+Do zmiany adresu multicast i portu, na który rozgłaszane są wyniki działania algorytmu, służą dwa pola tekstowe w prawym górnym rogu okna programu opisane odpowiednio:
 
 * Multicast address
 * Multicsat port
@@ -65,15 +65,15 @@ Do zmiany adresu multicast i portu, na który rozgłaszane są wyniki działania
 Prezentacja wyników
 ^^^^^^^^^^^^^^^^^^^
 
-Poza rozsyłaniem wyników na adres multicastowy aplikacja wyświetla bierzące wyniki rozpoznawania. Używa do tego celu następującego zestawu kontrolek:
+Poza rozsyłaniem wyników na adres multicastowy aplikacja wyświetla bieżące wyniki rozpoznawania. Używa do tego celu następującego zestawu kontrolek:
 
 .. image:: /resultsArea.png
     :width: 325pt
     :height: 273pt
 
-* Robots found - oznacza ilość znalezionych robotów w każdej z drużyn
-* Na znajdujących się poniżej listach są wyświetlane pozycje i kąty obrotu kolejnych znalezionych w danej ramce obrazu robotów
-* Ball position - prezentuje aktualną pozycję piłki na boisku
+* Robots found - oznacza ilość znalezionych robotów w każdej z drużyn.
+* Na znajdujących się poniżej listach są wyświetlane pozycje i kąty obrotu kolejnych znalezionych w danej ramce obrazu robotów.
+* Ball position - prezentuje aktualną pozycję piłki na boisku.
 * Last frame processing time(s) - jest to czas(w sekundach) jaki zabrało przetworzenie ostatniej ramki obrazu przez algorytm rozpoznawania.
 
 Prezentacja wyników częściowych
@@ -94,9 +94,9 @@ Aby obserwować obraz boiska w trakcie działania algorytmu rozpoznawania i osza
 * Robots - Na tym obrazie zaznaczone będą kolory drużynowe robotów oraz dla robotów o znanym wzorze koszulki klasyfikacja kolorów pobocznych.
 * Results - Obraz będzie przedstawiał wyniki rozpoznawania:
 
-    * Każdy robot będzie reprezentowany za pomocą ramki odpowiednich kolorów, roboty z dróżyny o znanych koszulkach będą miały zaznaczone kolory poboczne jako krawędzie ramki
+    * Każdy robot będzie reprezentowany za pomocą ramki odpowiednich kolorów, roboty z drużyny o znanych koszulkach będą miały zaznaczone kolory poboczne jako krawędzie ramki
     * piłka zostanie oznaczona jako pomarańczowy krzyżyk
-    * za pomocą białego prostokątu zostanie zaznaczony obszar który chcemy aby algorytm przyjął jako układ współrzędnych dla wyznaczanych współrzędnych robotów i piłki
+    * za pomocą białego prostokąta zostanie zaznaczony obszar, który wyznacza wyjściowy układ współrzędnych robotów i piłki
     
 Dla obrazków: Color classes, Meanshift, Patches, Robots oraz Results obszary poza wielokątem zainteresowania algorytmu są zaczernione.
 
@@ -138,7 +138,7 @@ Ważnymi dla klafyfikacji kolorów obrazu są także parametry:
 * Minimum lightness - Jasność, poniżej której piksel uważa się za zbyt ciemny. Ta wartość jest używana do rozpoznawania kolorów drużynowych.
 * Maximum lightness - Jasność, powyżej której piksel uważa się za biały.
 * Minimum saturation - Minimalne nasycenie koloru, który może być zakwalifikowany jako żółty, pomarańczowy lub niebieskiego.
-* Same color distance - odległość(Euklidesowa) barwy koloru poniżej której dwa kolory zostaną zaklasyfikowane jako ten sam kolor podczas wyznaczania spójnych obszarów tego samego koloru.
+* Same color distance - odległość (euklidesowa) barwy koloru poniżej której dwa kolory zostaną zaklasyfikowane jako ten sam kolor podczas wyznaczania spójnych obszarów tego samego koloru.
 
 Zmiana parametrów wykonania algorytmu - obszary przetwarzania
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -148,7 +148,7 @@ Zmiana parametrów wykonania algorytmu - obszary przetwarzania
     :width: 145pt
     :height: 86pt
 
-Powyższe opcje można zmieniać wyłącznie kiedy algorytm nie jest uruchomiony. Przyciśnięcie któregoś z wyżej wymienionych przycisków zpowoduje pobranie i wyświetlenie aktualnej ramki obrazu z kamery i umożliwi zaznaczanie kursorem punktów na obszarze zdjęcia. Aby zakonczyć zaznaczanie punktów na obszarze obrazka należy ponownie wcisnąć wybrany przycisk.
+Powyższe opcje można zmieniać wyłącznie kiedy algorytm nie jest uruchomiony. Przyciśnięcie któregoś z wyżej wymienionych przycisków spowoduje pobranie i wyświetlenie aktualnej ramki obrazu z kamery i umożliwi zaznaczanie kursorem punktów na obszarze zdjęcia. Aby zakonczyć zaznaczanie punktów na obszarze obrazka należy ponownie wcisnąć wybrany przycisk.
 
 * Choose field scale boundary - wybranie tej opcji pozwoli na zaznaczenie narożników układu współrzednych boiska. Należy zaznaczyć dokładnie dwa punkty: Pierwszy będzie wskazywał wynikową współrzędną (0.0, 0.0) zaś drugi bedzie oznaczał przeciwległy róg boiska, a jego współrzędne zostaną określone zgodnie z wartościami pól:
 
