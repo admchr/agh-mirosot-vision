@@ -18,20 +18,6 @@ wideo do postaci współrzędnych piłki i robotów, które mogą być przekazan
 dalej, do programów sterujących. 
 
 
-
-..  
-    TODO
-
-Wymagania systemowe
-*******************
-
-Do poprawnego działania aplikacja wymaga zainstalowanych:
-
-* kamery zgodnej z systemem Microsoft Windows
-* Microsoft Visual Studio 2008 Redistributable Package
-* Microsoft .NET Framework 2.0
-
-
 ..  
     TODO
 
@@ -47,7 +33,7 @@ Dla uzyskania takich danych konieczne jest zdecydowanie się na wygląd koszulki
 co z kolei determinuje metody określania kąta i identyfikacji robota. 
 
 Algorytmy rozpoznawania w programie są dostosowane do jednego schematu barwnego 
-na robotach. Jest on przedstawiony na rysunku:
+na robotach. Jest on przedstawiony na schemacie:
 
 .. image:: /team.png
     :align: center
@@ -58,9 +44,8 @@ Koszulka składa się z czarnej ramki i 3 kolorowych trójkątów. Największy j
 kolorem drużyny (żółty lub niebieski, zgodnie z regułami). Pozostałe dwa obszary
 mogą mieć dowolne dwa różne kolory, ale nie niebieski, żółty ani pomarańczowy.
 Względy praktyczne sugerują, że mają to być kolory o jasności zbliżonej do
-koloru drużyny, różniące się maksymalnie barwą, np. czerwony, zielony i fioletowy.
+koloru drużyny, różniące się maksymalnie barwą.
 
-.. _hsl:
 
 Przestrzeń kolorów HSL
 **********************
@@ -83,28 +68,17 @@ Opis koloru w przestrzeni HSL składa się z 3 liczb:
   Kolory w pełni nasycone mają jasność w granicach 85-170.
 
 
-.. _wsp:
-
 Transformacja współrzędnych i kąta
 **********************************
 
 Przed zwróceniem pozycji robotów i piłki z funkcji rozpoznającej możliwa jest zmiana
-układu współrzędnych. Transformację określają dwa punkty obrazka (lewy górny i
-prawy dolny róg boiska) i skala wyjściowa.
-
-Oznaczmy:
+układu współrzędnych. Transformację określa:
 
 * :math:`(s_x, s_y)` - skala wyjściowa
-* :math:`P_1` - pozycja piksela na obrazku będącego lewym górnym rogiem obrazu
-* :math:`P_2` - pozycja piksela na obrazku będącego prawym dolnym rogiem obrazu
-
-Wtedy: 
-
-* :math:`P_1` - ma współrzędne :math:`(0, 0)`  w układzie wyjściowym
-* :math:`P_2` - ma współrzędne :math:`(s_x, s_y)`  w układzie wyjściowym
-
-Na rysunku widać transformację współrzędnych z współrzędnych obrazka (czerwony)
-do współrzędnych wynikowych (niebieski).
+* :math:`P_1` - pozycja piksela na obrazku będącego punktem o współrzędnych 
+  :math:`(0, 0)`  w układzie wyjściowym (prawy górny róg)
+* :math:`P_1` - pozycja piksela na obrazku będącego punktem o współrzędnych 
+  :math:`(s_x, s_y)` w układzie wyjściowym (lewy dolny róg)
 
 .. image:: /transform.png
     :align: center

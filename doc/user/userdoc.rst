@@ -14,6 +14,7 @@ Dokumentacja użytkownika
     
     generaldoc
     apidoc
+    aplication
     xmldoc
 
 ..
