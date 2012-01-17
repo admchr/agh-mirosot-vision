@@ -8,7 +8,8 @@
 Biblioteka do lokalizacji robotów mobilnych ligi FIRA MiroSot
 =============================================================
 
-TODO pytania, 
+..
+    TODO pytania, 
 
 .. toctree::
 

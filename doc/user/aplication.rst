@@ -47,8 +47,8 @@ Sterowanie wykonaniem programu
 
 .. image:: /aplicationWindow.png
     :align: center
-    :width: 530pt
-    :height: 316pt
+    :width: 353pt
+    :height: 211pt
 
 Po zatwierdzeniu opcji kamery pojawia się główne okno aplikacji. Na tym etapie można uruchomić algorytm rozpoznawania robotów z użyciem domyślnie załadowanych przez aplikację opcji. Uruchomienie rozpoznawania robotów powoduje równocześnie rozgłaszanie wyników rozpoznawania na adres multicastowy za pomocą pakietów UDP. Do rozpoczęcia/ wstrzymania rozpoznawania służy para przycisków "Start" i "Stop". W tej samej grupie przycisków dostępne mamy rownież: "Restet Camera", "Capture Image" oraz "Save Config" i "Load Config". Za ich pomocą możemy odpowiednio zmienić kamerę/opcje kamery, pobrać i zapisać jako plik graficzny pojedynczą ramkę obrazu z aktualnie podłączonego urządzenia, zapisać aktualą konfigurację algorytmu jako plik XML lub wczytać wcześniej przygotowaną/zapisaną konfiguracje z pliku XML.
 
@@ -68,7 +68,6 @@ Prezentacja wyników
 Poza rozsyłaniem wyników na adres multicastowy aplikacja wyświetla bierzące wyniki rozpoznawania. Używa do tego celu następującego zestawu kontrolek:
 
 .. image:: /resultsArea.png
-    :align: center
     :width: 325pt
     :height: 273pt
 
@@ -83,7 +82,6 @@ Prezentacja wyników częściowych
 Aby obserwować obraz boiska w trakcie działania algorytmu rozpoznawania i oszacować jakość rozpoznawania robotów w okno programu został wkomponowany obszar do wyswietlania zdjęć. Wyboru aktualnie wyświetlanego zdjęcia możemy dokonać zaznaczjąc odpowiedni radiobutton. Poniższa lista przedstawia znaczenie poszczególnych obrazów.
 
 .. image:: /radiobuttons.png
-    :align: center
     :width: 89pt
     :height: 173pt
 
@@ -95,6 +93,7 @@ Aby obserwować obraz boiska w trakcie działania algorytmu rozpoznawania i osza
 * Patches - Na tym obrazie zaznaczone będą obszary klasyfikowane jako spójny obszar jednego koloru
 * Robots - Na tym obrazie zaznaczone będą kolory drużynowe robotów oraz dla robotów o znanym wzorze koszulki klasyfikacja kolorów pobocznych.
 * Results - Obraz będzie przedstawiał wyniki rozpoznawania:
+
     * Każdy robot będzie reprezentowany za pomocą ramki odpowiednich kolorów, roboty z dróżyny o znanych koszulkach będą miały zaznaczone kolory poboczne jako krawędzie ramki
     * piłka zostanie oznaczona jako pomarańczowy krzyżyk
     * za pomocą białego prostokątu zostanie zaznaczony obszar który chcemy aby algorytm przyjął jako układ współrzędnych dla wyznaczanych współrzędnych robotów i piłki
@@ -133,7 +132,6 @@ Przypomnijmy że skalę kolorów traktujemy cyklicznie modulo 180 stąd poprawny
 Ważnymi dla klafyfikacji kolorów obrazu są także parametry:
 
 .. image:: /otherControlsColors.png
-    :align: center
     :width: 195pt
     :height: 126pt
 
@@ -153,11 +151,11 @@ Zmiana parametrów wykonania algorytmu - obszary przetwarzania
 Powyższe opcje można zmieniać wyłącznie kiedy algorytm nie jest uruchomiony. Przyciśnięcie któregoś z wyżej wymienionych przycisków zpowoduje pobranie i wyświetlenie aktualnej ramki obrazu z kamery i umożliwi zaznaczanie kursorem punktów na obszarze zdjęcia. Aby zakonczyć zaznaczanie punktów na obszarze obrazka należy ponownie wcisnąć wybrany przycisk.
 
 * Choose field scale boundary - wybranie tej opcji pozwoli na zaznaczenie narożników układu współrzednych boiska. Należy zaznaczyć dokładnie dwa punkty: Pierwszy będzie wskazywał wynikową współrzędną (0.0, 0.0) zaś drugi bedzie oznaczał przeciwległy róg boiska, a jego współrzędne zostaną określone zgodnie z wartościami pól:
+
 	* Field scale X
 	* Field scale Y
 	
 .. image:: /fieldScale.png
-    :align: center
     :width: 194pt
     :height: 49pt
     
@@ -168,7 +166,6 @@ Zmiana parametrów wykonania algorytmu - pozostałe parametry
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. image:: /otherControlsMeanshift.png
-    :align: center
     :width: 197pt
     :height: 126pt
     
