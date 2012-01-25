@@ -119,11 +119,13 @@ vector<Robot> getTeam(PatchType* patchType, amv_team_info* teami) {
         Patch* patch = team.top().second;
         team.pop();
 
-        r.pos = patch->getRobotCenter();
-        if (teami->home_team)
+        if (teami->home_team) {
+            r.pos = patch->getRobotCenter();
             r.angle = patch->getRobotAngle();
-        else
+        } else {
+            r.pos = patch->getCenter();
             r.angle = 0;
+        }
         r.certainty = patch->getRobotCertainty();
         r.teamPatch = patch;
         r.identityCertainities = getSecondaryPatches(patch, teami);
@@ -157,7 +159,13 @@ vector<Robot> getTeam(PatchType* patchType, amv_team_info* teami) {
     return out;
 }
 
+static bool compare_robot_identity(const Robot& a, const Robot& b) {
+    return a.identity < b.identity;
+}
+
 void fillTeam(vector<Robot> team, amv_team_data* data) {
+    sort(team.begin(), team.end(), compare_robot_identity);
+
     data->team_len = 0;
     amv_robot_data* robot = data->team;
     for (unsigned int i = 0; i<team.size(); i++) {

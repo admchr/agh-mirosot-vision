@@ -33,7 +33,7 @@ for i in range(0, 1000):
     for (vec, ch) in ((vb, b), (vg, g), (vr, r), (vh, h), (vs, s), (vv, v)):
         vec.append(ch)
     
-    hues[int(h/10)]+=s*v
+    hues[int(h/10)%18]+=s*v
     vch.append(s*v/256)
     vl.append((r+g+b)/3)
     cv.Set2D(img, y, x, (255, 255, 255))

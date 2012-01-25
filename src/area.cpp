@@ -242,10 +242,10 @@ double Patch::getBallCertainty() {
 Point Patch::getCenter() {
     return moments.getMean();
 }
+
 Point Patch::getRobotCenter() {
-	int mean_offset = 1.4*type->config->px_per_cm;
+	int mean_offset = 7.5/3/sqrt(2)*type->config->px_per_cm;
     Point p = moments.getMean();
-    return p;
     double angle = getAngle() - M_PI*0.5;
     p.x+=cos(angle)*mean_offset;
     p.y+=sin(angle)*mean_offset;
