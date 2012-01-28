@@ -58,3 +58,10 @@ void transformPosition(amv_point* pos, amv_transform_info tr) {
     pos->y *= tr.output_scale.y;
 
 }
+
+Point toPoint(amv_image_pos pos) {
+    return Point(pos.x, pos.y);
+}
+Point toPoint(amv_point pos) {
+    return Point(pos.x, pos.y);
+}
