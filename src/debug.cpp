@@ -207,8 +207,6 @@ void debugSecondaryPatches(Image& img, amv_team_info* team, vector<Robot> patche
     for (unsigned int i=0; i<patches.size(); i++) {
         Robot& p = patches[i];
         getSecondaryPatches(patches[i].teamPatch, team, &img);
-        debugLine(p.pos, p.teamPatch->getAngle(), img, 15, Vec3b(255, 255, 255));
-        debugLine(p.pos, p.teamPatch->getAngle() + M_PI, img, 10, Vec3b(0, 0, 0));
     }
 }
 
