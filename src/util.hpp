@@ -26,4 +26,7 @@ int hue_distance(int a, int b);
 bool in_hue(amv_color_info* color, int hue);
 
 void transformPosition(amv_point* pos, amv_transform_info tr);
+
+cv::Point toPoint(amv_image_pos pos);
+cv::Point toPoint(amv_point pos);
 #endif

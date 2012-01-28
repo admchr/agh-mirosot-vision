@@ -9,10 +9,11 @@
 
 
 
-cv::Vec3b median(const Image& img, amv_image_pos pos, int radius);
+WhitePoints getWhitePoints(Image& img, amv_config* config);
+cv::Vec3b median(const Image& img, cv::Point pos, int radius);
 
-cv::Vec3b get_white(std::vector<std::pair<amv_image_pos, cv::Vec3b> > white_points, amv_image_pos pos);
+cv::Vec3b get_white(WhitePoints white_points, cv::Point pos);
 
-void white_balance(Image* img, amv_config* config); 
+void white_balance(Image& img, const WhitePoints& whitePoints);
 
 #endif

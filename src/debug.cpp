@@ -1,5 +1,6 @@
 #include "debug.hpp"
 #include "linearize.hpp"
+#include "util.hpp"
 #include "visionstate.hpp"
 #include <algorithm>
 
@@ -36,29 +37,7 @@ void paintPoint(Image img, Point p, Vec3b color) {
     img(p) = color;
 }
 
-void debugLine(amv_image_pos p, double angle, Image & img, int len, Vec3b color)
-{
-    for(int i = 0;i < len;i++){
-        int x = p.x + cos(angle) * i;
-        int y = p.y + sin(angle) * i;
-        paintPoint(img, Point(x, y), color);
-    }
-}
-void debugLine(amv_point p, double angle, Image & img, int len, Vec3b color) {
-    amv_image_pos pos;
-    pos.x = p.x;
-    pos.y = p.y;
-    debugLine(pos, angle, img, len, color);
-}
-
-void debugLine(Point p, double angle, Image & img, int len, Vec3b color) {
-    amv_image_pos pos;
-    pos.x = p.x;
-    pos.y = p.y;
-    debugLine(pos, angle, img, len, color);
-}
-
-void debugLine(amv_image_pos p1, amv_image_pos p2, Image & img, Vec3b color)
+void drawLine(Image& img, Point p1, Point p2, Vec3b color)
 {
     int dx = p2.x - p1.x;
     int dy = p2.y - p1.y;
@@ -87,16 +66,22 @@ void debugLine(amv_image_pos p1, amv_image_pos p2, Image & img, Vec3b color)
     }
 }
 
+void drawCross(Image& img, Point center, int armLength, Vec3b color) {
+    drawLine(img, center, Point(center.x, center.y + armLength), color);
+    drawLine(img, center, Point(center.x, center.y - armLength), color);
+    drawLine(img, center, Point(center.x + armLength, center.y), color);
+    drawLine(img, center, Point(center.x - armLength, center.y), color);
+}
+
 void debugImageWhite(Image & img, amv_config *config, amv_debug_info* debug)
 {
     if (!debug->debug_balance)
         return;
     Image img_white(img.clone());
     for(int i = 0;i < config->white_points_len;i++) {
-        amv_image_pos pos = config->white_points[i];
+        Point pos = toPoint(config->white_points[i]);
         img_white(pos.y, pos.x) = cv::Vec3b(0, 0, 255);
-        for (int i=0; i<4; i++)
-            debugLine(pos, i*M_PI/2, img_white, 5, Vec3b(0, 0, 255));
+        drawCross(img_white, pos, 5, Vec3b(0, 0, 255));
     }
     copy_to(img_white, debug->debug_balance, config);
 }
@@ -152,41 +137,28 @@ void debugTeam(Image& img, amv_config *config, amv_team_info& info, const amv_te
 
     for (int i=0; i<team.team_len; i++) {
         amv_robot_data robot = team.team[i];
-        amv_image_pos p;
-        p.x = robot.position.x;
-        p.y = robot.position.y;
-        amv_image_pos tmp = p;
+        Point p = toPoint(robot.position);
 
         if (info.home_team) {
             double angle = robot.angle;
-            double front_x = cos(angle)*frame_side;
-            double front_y = sin(angle)*frame_side;
+            Point front(cos(angle)*frame_side, sin(angle)*frame_side);
+            Point right(cos(angle+M_PI*0.5)*frame_side, sin(angle+M_PI*0.5)*frame_side);
 
-            double right_side_x = cos(angle+M_PI*0.5)*frame_side;
-            double right_side_y = sin(angle+M_PI*0.5)*frame_side;
-            debugLine(p, angle, img, 2*frame_side, primary);
+            drawLine(img, p, p + front + front, primary);
 
-            //right
-            tmp.x=p.x+front_x+right_side_x;
-            tmp.y=p.y+front_y+right_side_y;
-            debugLine(tmp, angle+M_PI, img, 2*frame_side, primary);
-            // front
-            tmp.x=p.x+front_x-right_side_x;
-            tmp.y=p.y+front_y-right_side_y;
-            debugLine(tmp, angle+M_PI/2, img, 2*frame_side, primary);
+            Point fr = p + front + right;
+            Point fl = p + front - right;
+            Point br = p - front + right;
+            Point bl = p - front - right;
 
             amv_robot_info secondary = info.robot_info[robot.identity];
-            // left
-            tmp.x=p.x-front_x-right_side_x;
-            tmp.y=p.y-front_y-right_side_y;
-            debugLine(tmp, angle, img, 2*frame_side, instanceColors[secondary.front_color]);
+            drawLine(img, fr, fl, primary);
+            drawLine(img, br, bl, instanceColors[secondary.back_color]);
+            drawLine(img, fl, bl, instanceColors[secondary.front_color]);
+            drawLine(img, fr, br, primary);
 
-            // back
-            tmp.x=p.x-front_x+right_side_x;
-            tmp.y=p.y-front_y+right_side_y;
-            debugLine(tmp, angle+M_PI*3/2, img, 2*frame_side, instanceColors[secondary.back_color]);
         } else {
-            amv_image_pos p1, p2, p3, p4;
+            Point p1, p2, p3, p4;
             p1.x = p.x - frame_side;
             p1.y = p.y - frame_side;
             p2.x = p.x - frame_side;
@@ -195,10 +167,10 @@ void debugTeam(Image& img, amv_config *config, amv_team_info& info, const amv_te
             p3.y = p.y + frame_side;
             p4.x = p.x + frame_side;
             p4.y = p.y - frame_side;
-            debugLine(p1, p2, img, primary);
-            debugLine(p2, p3, img, primary);
-            debugLine(p3, p4, img, primary);
-            debugLine(p4, p1, img, primary);
+            drawLine(img, p1, p2, primary);
+            drawLine(img, p2, p3, primary);
+            drawLine(img, p3, p4, primary);
+            drawLine(img, p4, p1, primary);
         }
     }
 }
@@ -255,21 +227,20 @@ void debugImageResults(Image& img, amv_vision_data* data, amv_config* config, am
     debugTeam(img_robots, config, config->blue, data->blue_team, Vec3b(255, 0, 0));
     debugTeam(img_robots, config, config->yellow, data->yellow_team, Vec3b(0, 255, 255));
 
-    for (int i=0; i<4; i++)
-        debugLine(data->ball_pos, M_PI*0.5*i, img_robots, 10, Vec3b(0, 0, 255));
+    drawCross(img_robots, toPoint(data->ball_pos), 10, Vec3b(0, 0, 255));
 
-    amv_image_pos tl, tr, bl, br;
-    tl = config->transform.field_top_left;
-    br = config->transform.field_bottom_right;
+    Point tl, tr, bl, br;
+    tl = toPoint(config->transform.field_top_left);
+    br = toPoint(config->transform.field_bottom_right);
     tr.x = br.x;
     tr.y = tl.y;
     bl.x = tl.x;
     bl.y = br.y;
 
-    debugLine(tr, tl, img_robots, Vec3b(255, 255, 255));
-    debugLine(tl, bl, img_robots, Vec3b(255, 255, 255));
-    debugLine(bl, br, img_robots, Vec3b(255, 255, 255));
-    debugLine(br, tr, img_robots, Vec3b(255, 255, 255));
+    drawLine(img_robots, tr, tl, Vec3b(255, 255, 255));
+    drawLine(img_robots, tl, bl, Vec3b(255, 255, 255));
+    drawLine(img_robots, bl, br, Vec3b(255, 255, 255));
+    drawLine(img_robots, br, tr, Vec3b(255, 255, 255));
     copy_to(img_robots, debug->debug_results, config);
 
 }

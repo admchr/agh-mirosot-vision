@@ -6,6 +6,8 @@
 #endif
 
 #include <opencv/cv.h>
+
 typedef cv::Mat_<cv::Vec3b> Image;
+typedef std::vector<std::pair<cv::Point, cv::Vec3b> > WhitePoints;
 
 #endif
