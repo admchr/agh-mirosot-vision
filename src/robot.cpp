@@ -9,11 +9,6 @@
 using namespace std;
 using namespace cv;
 
-bool comparePoint(Point p, Point q) {
-    if (p.x != q.x)
-        return p.x < q.x;
-    return p.y < q.y;
-}
 
 vector<double> getSecondaryPatches(Patch* patch, amv_team_info* team, Image* debug) {
     std::set<Point, bool(*)(Point, Point)> visited(comparePoint);

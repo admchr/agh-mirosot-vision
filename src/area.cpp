@@ -259,23 +259,44 @@ double Patch::getRobotAngle() {
 double Patch::getAngle() {
     double angle = moments.getAngle();
 
-	double a = moments.getRegressionSlope();
-	double b = moments.getRegressionPosition();
-    Rect bbox = getBoundingBox();
-    int up = 0;
-    int down = 0;
-    for (int y=bbox.y; y<=bbox.y+bbox.height; y++)
-    	for (int x=bbox.x; x<=bbox.x+bbox.width; x++) {
-    		if (type->map->area_map.get(x, y) == this) {
-    			if (a*x + b > y)
-    				down++;
-    			else
-    				up++;
-    		}
-    	}
 
-    if (down<up)
-    	angle+=M_PI;
+    if (getAngleFitness(angle) > getAngleFitness(angle + M_PI))
+        angle+=M_PI;
 
     return angle;
+}
+
+double Patch::getAngleFitness(double angle, Image* debug) {
+
+    double r = 6.5*type->config->px_per_cm*sqrt(2)/2 - 1;
+    Point2d u0(cos(angle), sin(angle));
+    Point2d v0(cos(angle - M_PI/2), sin(angle - M_PI/2));
+
+    Point p = getCenter();
+
+    int good = 0, all = 0;
+    std::set<Point, bool(*)(Point, Point)> visited(comparePoint);
+    for (double u = -r; u < r; u += 0.5)
+        for (double v = -r; v < r; v += 0.5) {
+            if (u + v > r*2/3 || v - u > r*2/3 || v < -r/3)
+                continue;
+
+            Point q(p.x + u*u0.x + v*v0.x, p.y + u*u0.y + v*v0.y);
+            if (visited.find(q) != visited.end())
+                continue;
+            visited.insert(q);
+
+            if (type->map->area_map.get(q) == this &&
+                    type->map->area_map.get(q.x+1, q.y) == this &&
+                    type->map->area_map.get(q.x-1, q.y) == this &&
+                    type->map->area_map.get(q.x, q.y+1) == this &&
+                    type->map->area_map.get(q.x, q.y-1) == this//*/
+            ) {
+                good++;
+                if (debug) paintPoint(*debug, q, Vec3b(0, 0, 255));
+            }
+            all++;
+        }
+
+    return good*1.0/all;
 }
