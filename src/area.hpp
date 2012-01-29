@@ -101,7 +101,8 @@ public:
     cv::Point getRobotCenter();
     double getRobotAngle();
     cv::Point getCenter();
-	double getAngle();
+    double getAngle();
+    double getAngleFitness(double angle, Image* debug = 0);
 	cv::Rect getBoundingBox();
 };
 #endif

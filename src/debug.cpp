@@ -8,18 +8,6 @@ using namespace cv;
 
 const double DEBUG_DIM = 0.5;
 
-void amv_debug_init(amv_debug_info* debug) {
-    debug->debug_balance = NULL;
-    debug->debug_prescreen = NULL;
-    debug->debug_meanshift = NULL;
-    debug->debug_patches = NULL;
-    debug->debug_robots = NULL;
-    debug->debug_results = NULL;
-
-    debug->full_meanshift_debug = 1;
-    debug->linear_meanshift = 1;
-    debug->multiple_meanshift = 1;
-}
 
 static void copy_to(const Image& mat, unsigned char* buf, amv_config* config) {
     if (buf) {
@@ -178,6 +166,7 @@ void debugTeam(Image& img, amv_config *config, amv_team_info& info, const amv_te
 void debugSecondaryPatches(Image& img, amv_team_info* team, vector<Robot> patches) {
     for (unsigned int i=0; i<patches.size(); i++) {
         Robot& p = patches[i];
+        p.teamPatch->getAngleFitness(p.teamPatch->getAngle(), &img);
         getSecondaryPatches(patches[i].teamPatch, team, &img);
     }
 }

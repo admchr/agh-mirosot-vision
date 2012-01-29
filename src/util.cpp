@@ -59,6 +59,11 @@ void transformPosition(amv_point* pos, amv_transform_info tr) {
 
 }
 
+bool comparePoint(Point p, Point q) {
+    if (p.x != q.x)
+        return p.x < q.x;
+    return p.y < q.y;
+}
 Point toPoint(amv_image_pos pos) {
     return Point(pos.x, pos.y);
 }
