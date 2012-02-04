@@ -133,6 +133,7 @@ int main(int argc, char** argv)
                 img_i--;
             img_i%=image_count;
             img0 = cv::imread(images[img_i]);
+            cout << "loaded: " << images[img_i] <<endl;
         }
     }
 

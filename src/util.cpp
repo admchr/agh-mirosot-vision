@@ -1,5 +1,6 @@
 #include "util.hpp"
 
+#include "hsvconverter.hpp"
 #include <cmath>
 
 using namespace cv;
@@ -38,6 +39,20 @@ bool in_hue(amv_color_info* color, int hue) {
     if (color->hue_min <= color->hue_max)
         return color->hue_min < hue && hue < color->hue_max;
     return color->hue_min < hue || hue < color->hue_max;
+}
+
+Vec3b getMeanColor(amv_color_info c)
+{
+    int mean_vec = c.hue_max - c.hue_min;
+    if(mean_vec < 0)
+        mean_vec += 180;
+
+    int mean = (c.hue_min + mean_vec / 2 + 180) % 180;
+    Vec3b paint = hsvconverter.getBGR(Vec3b(mean, 255, 255));
+    if(c.hue_min == c.hue_max)
+        paint = Vec3b(255, 255, 255);
+
+    return paint;
 }
 
 void transformPosition(amv_point* pos, amv_transform_info tr) {

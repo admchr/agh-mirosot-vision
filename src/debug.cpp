@@ -129,11 +129,6 @@ void debugImagePatches(Image & img, PatchFinder & area, amv_config *config, amv_
 void debugTeam(Image& img, amv_config *config, amv_team_info& info, const amv_team_data& team, Vec3b primary) {
     double frame_side = 7.5*config->px_per_cm/2;
 
-    Vec3b instanceColors[3];
-    instanceColors[2] = Vec3b(0, 0, 255);
-    instanceColors[1] = Vec3b(0, 255, 0);
-    instanceColors[0] = Vec3b(255, 0, 255);
-
 
     for (int i=0; i<team.team_len; i++) {
         amv_robot_data robot = team.team[i];
@@ -153,8 +148,8 @@ void debugTeam(Image& img, amv_config *config, amv_team_info& info, const amv_te
 
             amv_robot_info secondary = info.robot_info[robot.identity];
             drawLine(img, fr, fl, primary);
-            drawLine(img, br, bl, instanceColors[secondary.back_color]);
-            drawLine(img, fl, bl, instanceColors[secondary.front_color]);
+            drawLine(img, br, bl, getMeanColor(info.secondary_colors[secondary.back_color]));
+            drawLine(img, fl, bl, getMeanColor(info.secondary_colors[secondary.front_color]));
             drawLine(img, fr, br, primary);
 
         } else {
@@ -177,7 +172,6 @@ void debugTeam(Image& img, amv_config *config, amv_team_info& info, const amv_te
 
 void debugSecondaryPatches(Image& img, amv_team_info* team, vector<Robot> patches) {
     for (unsigned int i=0; i<patches.size(); i++) {
-        Robot& p = patches[i];
         getSecondaryPatches(patches[i].teamPatch, team, &img);
     }
 }
