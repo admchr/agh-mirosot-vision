@@ -70,7 +70,7 @@ vector<double> getSecondaryPatches(Patch* patch, amv_team_info* team, Image* deb
             if (debug) {
                 amv_color_info c = team->secondary_colors[in_index];
                 Vec3b paint = getMeanColor(c);
-                paintPoint(*debug, q, paint);
+                drawPoint(*debug, q, paint);
             }
 
         }

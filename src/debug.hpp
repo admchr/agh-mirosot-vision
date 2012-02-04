@@ -5,11 +5,15 @@
 #include "defs.hpp"
 #include "area.hpp"
 #include "robot.hpp"
-#include <vector>
 
-void paintPoint(Image img, cv::Point p, cv::Vec3b color);
+#include <vector>
+#include <string>
+
+void drawPoint(Image img, cv::Point p, cv::Vec3b color);
 void drawLine(Image& img, cv::Point p1, cv::Point p2, cv::Vec3b color);
 void drawCross(Image& img, cv::Point center, int armLength, cv::Vec3b color);
+void drawText(Image& img, cv::Point origin, std::string text, cv::Vec3b color);
+void drawBorderText(Image& img, cv::Point origin, std::string text, cv::Vec3b color, cv::Vec3b border);
 
 void debugImageWhite(Image& img, amv_config *config, amv_debug_info* debug);
 void debugImagePrescreen(Image & img, PatchFinder & area, amv_state *state, amv_debug_info* debug);

@@ -9,7 +9,7 @@ API_HEADERS=amv.h
 IMPL_HEADERS=\
     $(API_HEADERS) \
     area.hpp array2d.hpp balance.hpp defs.hpp moments.hpp mshift.hpp hsvconverter.hpp \
-    visionstate.hpp linearize.hpp mask.hpp common.hpp debug.hpp util.hpp robot.hpp vision.hpp
+    visionstate.hpp linearize.hpp mask.hpp common.hpp debug.hpp util.hpp robot.hpp vision.hpp font.hpp
 
 all: $(PROGRAMS)
 
