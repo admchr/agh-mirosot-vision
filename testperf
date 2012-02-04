@@ -1,0 +1,4 @@
+#!/bin/sh
+cd src
+make -j perf &&
+time ./perf ../concept/img/b_all2.png ../concept/config_b.txt 
