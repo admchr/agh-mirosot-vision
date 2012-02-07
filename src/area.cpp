@@ -293,7 +293,7 @@ double Patch::getAngleFitness(double angle, Image* debug) {
                     type->map->area_map.get(q.x, q.y-1) == this//*/
             ) {
                 good++;
-                if (debug) paintPoint(*debug, q, Vec3b(0, 0, 255));
+                if (debug) drawPoint(*debug, q, Vec3b(0, 0, 255));
             }
             all++;
         }
