@@ -194,6 +194,7 @@ void debugTeam(Image& img, amv_config *config, amv_team_info& info, const amv_te
 
 void debugSecondaryPatches(Image& img, amv_team_info* team, vector<Robot> patches) {
     for (unsigned int i=0; i<patches.size(); i++) {
+        Robot& p = patches[i];
         p.teamPatch->getAngleFitness(p.teamPatch->getAngle(), &img);
         getSecondaryPatches(patches[i].teamPatch, team, &img);
     }
