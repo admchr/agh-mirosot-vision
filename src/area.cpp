@@ -14,9 +14,6 @@ using namespace cv;
 using namespace std;
 
 
-
-
-
 void PatchFinder::setImages(amv_state* state, Image img, Image img_hsv) {
     this->state = state;
 	this->img = img;
@@ -260,16 +257,36 @@ double Patch::getAngle() {
     double angle = moments.getAngle();
 
 
-    if (getAngleFitness(angle) > getAngleFitness(angle + M_PI))
+    if (getAngleFitness(angle) < getAngleFitness(angle + M_PI))
         angle+=M_PI;
 
     return angle;
 }
 
 double Patch::getAngleFitness(double angle, Image* debug) {
+    Point2d u0(cos(angle), sin(angle));
+#if 1
+    Point2d p = moments.getMean();
+    Rect bbox = getBoundingBox();
+    int up = 0;
+    int down = 0;
+    for (int y=bbox.y; y<=bbox.y+bbox.height; y++)
+        for (int x=bbox.x; x<=bbox.x+bbox.width; x++) {
+            if (type->map->area_map.get(x, y) == this) {
+                Point2d r(x - p.x, y - p.y);
+                if (r.x*u0.y > r.y*u0.x) {
+                    down++;
+
+                    if (debug) drawPoint(*debug, Point(x, y), Vec3b(0, 0, 255));
+                } else
+                    up++;
+            }
+        }
+
+    return down*1.0/(up + down);
+#else
 
     double r = 6.5*type->config->px_per_cm*sqrt(2)/2 - 1;
-    Point2d u0(cos(angle), sin(angle));
     Point2d v0(cos(angle - M_PI/2), sin(angle - M_PI/2));
 
     Point p = getCenter();
@@ -298,5 +315,6 @@ double Patch::getAngleFitness(double angle, Image* debug) {
             all++;
         }
 
-    return good*1.0/all;
+    return -good*1.0/all;
+#endif
 }
