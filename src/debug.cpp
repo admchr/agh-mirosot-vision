@@ -2,9 +2,13 @@
 #include "linearize.hpp"
 #include "util.hpp"
 #include "visionstate.hpp"
+#include "font.hpp"
 #include <algorithm>
+#include <sstream>
 
 using namespace cv;
+using namespace std;
+
 
 const double DEBUG_DIM = 0.5;
 
@@ -18,7 +22,7 @@ static void copy_to(const Image& mat, unsigned char* buf, amv_config* config) {
     }
 }
 
-void paintPoint(Image img, Point p, Vec3b color) {
+void drawPoint(Image img, Point p, Vec3b color) {
     if(p.x < 0 || p.y < 0 || p.x >= img.cols || p.y >= img.rows)
         return;
 
@@ -38,7 +42,7 @@ void drawLine(Image& img, Point p1, Point p2, Vec3b color)
         for(int i = 0;i < dx;i++){
             int x = p1.x + i;
             int y = p1.y + i*1.0*dy/dx;
-            paintPoint(img, Point(x, y), color);
+            drawPoint(img, Point(x, y), color);
         }
     } else {
         if (p1.y >= p2.y) {
@@ -49,7 +53,7 @@ void drawLine(Image& img, Point p1, Point p2, Vec3b color)
         for(int i = 0;i < dy;i++){
             int x = p1.x + i*1.0*dx/dy;
             int y = p1.y + i;
-            paintPoint(img, Point(x, y), color);
+            drawPoint(img, Point(x, y), color);
         }
     }
 }
@@ -59,6 +63,33 @@ void drawCross(Image& img, Point center, int armLength, Vec3b color) {
     drawLine(img, center, Point(center.x, center.y - armLength), color);
     drawLine(img, center, Point(center.x + armLength, center.y), color);
     drawLine(img, center, Point(center.x - armLength, center.y), color);
+}
+
+void drawChar(Image& img, cv::Point origin, unsigned char character, cv::Vec3b color) {
+    unsigned char *glyph = font_data[character];
+    int size = FONT_SIZE;
+
+    for (int dx = 0; dx < size; dx++)
+        for (int dy = 0; dy < size; dy++) {
+            Point p = origin + Point(dx, dy - size);
+            if ((glyph[dy] >> (size - dx)) & 1)
+                drawPoint(img, p, color);
+        }
+}
+
+void drawText(Image& img, cv::Point origin, std::string text, cv::Vec3b color) {
+    for (unsigned int i=0; i<text.length(); i++) {
+        drawChar(img, origin + Point(i*FONT_SIZE, 0), text[i], color);
+    }
+}
+
+void drawBorderText(Image& img, cv::Point origin, std::string text, cv::Vec3b color, cv::Vec3b border) {
+    drawText(img, origin + Point(1, 0), text, border);
+    drawText(img, origin + Point(0, 1), text, border);
+    drawText(img, origin + Point(-1, 0), text, border);
+    drawText(img, origin + Point(0, -1), text, border);
+
+    drawText(img, origin, text, color);
 }
 
 void debugImageWhite(Image & img, amv_config *config, amv_debug_info* debug)
@@ -117,11 +148,6 @@ void debugImagePatches(Image & img, PatchFinder & area, amv_config *config, amv_
 void debugTeam(Image& img, amv_config *config, amv_team_info& info, const amv_team_data& team, Vec3b primary) {
     double frame_side = 7.5*config->px_per_cm/2;
 
-    Vec3b instanceColors[3];
-    instanceColors[2] = Vec3b(0, 0, 255);
-    instanceColors[1] = Vec3b(0, 255, 0);
-    instanceColors[0] = Vec3b(255, 0, 255);
-
 
     for (int i=0; i<team.team_len; i++) {
         amv_robot_data robot = team.team[i];
@@ -141,10 +167,13 @@ void debugTeam(Image& img, amv_config *config, amv_team_info& info, const amv_te
 
             amv_robot_info secondary = info.robot_info[robot.identity];
             drawLine(img, fr, fl, primary);
-            drawLine(img, br, bl, instanceColors[secondary.back_color]);
-            drawLine(img, fl, bl, instanceColors[secondary.front_color]);
+            drawLine(img, br, bl, getMeanColor(info.secondary_colors[secondary.back_color]));
+            drawLine(img, fl, bl, getMeanColor(info.secondary_colors[secondary.front_color]));
             drawLine(img, fr, br, primary);
 
+            stringstream str;
+            str << robot.identity;
+            drawBorderText(img, p + Point(0, -frame_side*2), str.str(), Vec3b(255, 255, 255), Vec3b(0, 0, 0));
         } else {
             Point p1, p2, p3, p4;
             p1.x = p.x - frame_side;
@@ -165,7 +194,6 @@ void debugTeam(Image& img, amv_config *config, amv_team_info& info, const amv_te
 
 void debugSecondaryPatches(Image& img, amv_team_info* team, vector<Robot> patches) {
     for (unsigned int i=0; i<patches.size(); i++) {
-        Robot& p = patches[i];
         p.teamPatch->getAngleFitness(p.teamPatch->getAngle(), &img);
         getSecondaryPatches(patches[i].teamPatch, team, &img);
     }

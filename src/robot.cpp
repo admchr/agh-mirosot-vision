@@ -64,14 +64,8 @@ vector<double> getSecondaryPatches(Patch* patch, amv_team_info* team, Image* deb
             colors[in_index].add(q);
             if (debug) {
                 amv_color_info c = team->secondary_colors[in_index];
-                int mean_vec = c.hue_max-c.hue_min;
-                if (mean_vec < 0)
-                    mean_vec += 180;
-                int mean = (c.hue_min + mean_vec/2 + 180)%180;
-                Vec3b paint = hsvconverter.getBGR(Vec3b(mean, 255, 255));
-                if (c.hue_min == c.hue_max)
-                    paint = Vec3b(255, 255, 255);
-                paintPoint(*debug, q, paint);
+                Vec3b paint = getMeanColor(c);
+                drawPoint(*debug, q, paint);
             }
 
         }
