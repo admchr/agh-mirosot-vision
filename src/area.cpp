@@ -257,40 +257,49 @@ double Patch::getRobotAngle() {
 double Patch::getAngle() {
     double angle = moments.getAngle();
 
-
     if (getAngleFitness(angle) < getAngleFitness(angle + M_PI))
         angle+=M_PI;
 
     return angle;
 }
 
+/* Tests whether the given angle represents the triangle shape well:
+ *       A
+ *     |\| <- angle
+ *     | |
+ *     | |\
+ *     | o |
+ *     |  / <- triangle
+ *     | /
+ *     |/
+ */
 double Patch::getAngleFitness(double angle, Image* debug) {
     Point2d u0(cos(angle), sin(angle));
     if (DEBUG_ANGLE_METHOD == 0) {
         // pixel count
         Point2d p = moments.getMean();
         Rect bbox = getBoundingBox();
-        int up = 0;
-        int down = 0;
+        int right_of = 0;
+        int left_of = 0;
         for (int y=bbox.y; y<=bbox.y+bbox.height; y++)
             for (int x=bbox.x; x<=bbox.x+bbox.width; x++) {
                 if (type->map->area_map.get(x, y) == this) {
                     Point2d r(x - p.x, y - p.y);
                     if (r.x*u0.y > r.y*u0.x) {
-                        down++;
+                        left_of++;
 
                         if (debug) drawPoint(*debug, Point(x, y), Vec3b(0, 0, 255));
                     } else
-                        up++;
+                        right_of++;
                 }
             }
 
         if (debug) drawPoint(*debug, getCenter(), Vec3b(0, 0, 0));
-        return down*1.0/(up + down);
+        return left_of*1.0/(right_of + left_of);
     } else if (DEBUG_ANGLE_METHOD == 1 || DEBUG_ANGLE_METHOD == 2) {
         // triangle fit
         double r = 6.5*type->config->px_per_cm*sqrt(2)/2 - 1;
-        Point2d v0(cos(angle - M_PI/2), sin(angle - M_PI/2));
+        Point2d v0(cos(angle + M_PI/2), sin(angle + M_PI/2));
 
         Point p = getCenter();
 
@@ -319,8 +328,9 @@ double Patch::getAngleFitness(double angle, Image* debug) {
             }
         if (debug) drawPoint(*debug, getCenter(), Vec3b(0, 0, 0));
         if (DEBUG_ANGLE_METHOD == 2) good *= -1;
-        return -good*1.0/all;
+        return good*1.0/all;
     } else if (DEBUG_ANGLE_METHOD == 3 || DEBUG_ANGLE_METHOD == 4) {
+        // complex image moment
         int n = 3;
         Point2d p = moments.getMean();
         Rect bbox = getBoundingBox();
