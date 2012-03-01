@@ -74,6 +74,11 @@ void transformPosition(amv_point* pos, amv_transform_info tr) {
 
 }
 
+double modulo(double a, double b) {
+    a = a/b;
+    return (a - floor(a))*b;
+}
+
 bool comparePoint(Point p, Point q) {
     if (p.x != q.x)
         return p.x < q.x;

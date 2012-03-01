@@ -9,6 +9,7 @@
 #include <queue>
 #include <utility>
 #include <set>
+#include <complex>
 
 using namespace cv;
 using namespace std;
@@ -265,56 +266,96 @@ double Patch::getAngle() {
 
 double Patch::getAngleFitness(double angle, Image* debug) {
     Point2d u0(cos(angle), sin(angle));
-#if 1
-    Point2d p = moments.getMean();
-    Rect bbox = getBoundingBox();
-    int up = 0;
-    int down = 0;
-    for (int y=bbox.y; y<=bbox.y+bbox.height; y++)
-        for (int x=bbox.x; x<=bbox.x+bbox.width; x++) {
-            if (type->map->area_map.get(x, y) == this) {
-                Point2d r(x - p.x, y - p.y);
-                if (r.x*u0.y > r.y*u0.x) {
-                    down++;
+    if (DEBUG_ANGLE_METHOD == 0) {
+        // pixel count
+        Point2d p = moments.getMean();
+        Rect bbox = getBoundingBox();
+        int up = 0;
+        int down = 0;
+        for (int y=bbox.y; y<=bbox.y+bbox.height; y++)
+            for (int x=bbox.x; x<=bbox.x+bbox.width; x++) {
+                if (type->map->area_map.get(x, y) == this) {
+                    Point2d r(x - p.x, y - p.y);
+                    if (r.x*u0.y > r.y*u0.x) {
+                        down++;
 
-                    if (debug) drawPoint(*debug, Point(x, y), Vec3b(0, 0, 255));
-                } else
-                    up++;
+                        if (debug) drawPoint(*debug, Point(x, y), Vec3b(0, 0, 255));
+                    } else
+                        up++;
+                }
             }
-        }
 
-    return down*1.0/(up + down);
-#else
+        if (debug) drawPoint(*debug, getCenter(), Vec3b(0, 0, 0));
+        return down*1.0/(up + down);
+    } else if (DEBUG_ANGLE_METHOD == 1 || DEBUG_ANGLE_METHOD == 2) {
+        // triangle fit
+        double r = 6.5*type->config->px_per_cm*sqrt(2)/2 - 1;
+        Point2d v0(cos(angle - M_PI/2), sin(angle - M_PI/2));
 
-    double r = 6.5*type->config->px_per_cm*sqrt(2)/2 - 1;
-    Point2d v0(cos(angle - M_PI/2), sin(angle - M_PI/2));
+        Point p = getCenter();
 
-    Point p = getCenter();
+        int good = 0, all = 0;
+        std::set<Point, bool(*)(Point, Point)> visited(comparePoint);
+        for (double u = -r; u < r; u += 0.5)
+            for (double v = -r; v < r; v += 0.5) {
+                if (u + v > r*2/3 || v - u > r*2/3 || v < -r/3)
+                    continue;
 
-    int good = 0, all = 0;
-    std::set<Point, bool(*)(Point, Point)> visited(comparePoint);
-    for (double u = -r; u < r; u += 0.5)
-        for (double v = -r; v < r; v += 0.5) {
-            if (u + v > r*2/3 || v - u > r*2/3 || v < -r/3)
-                continue;
+                Point q(p.x + u*u0.x + v*v0.x, p.y + u*u0.y + v*v0.y);
+                if (visited.find(q) != visited.end())
+                    continue;
+                visited.insert(q);
 
-            Point q(p.x + u*u0.x + v*v0.x, p.y + u*u0.y + v*v0.y);
-            if (visited.find(q) != visited.end())
-                continue;
-            visited.insert(q);
-
-            if (type->map->area_map.get(q) == this &&
-                    type->map->area_map.get(q.x+1, q.y) == this &&
-                    type->map->area_map.get(q.x-1, q.y) == this &&
-                    type->map->area_map.get(q.x, q.y+1) == this &&
-                    type->map->area_map.get(q.x, q.y-1) == this//*/
-            ) {
-                good++;
-                if (debug) drawPoint(*debug, q, Vec3b(0, 0, 255));
+                if (type->map->area_map.get(q) == this &&
+                        type->map->area_map.get(q.x+1, q.y) == this &&
+                        type->map->area_map.get(q.x-1, q.y) == this &&
+                        type->map->area_map.get(q.x, q.y+1) == this &&
+                        type->map->area_map.get(q.x, q.y-1) == this//*/
+                ) {
+                    good++;
+                    if (debug) drawPoint(*debug, q, Vec3b(0, 0, 255));
+                }
+                all++;
             }
-            all++;
-        }
+        if (debug) drawPoint(*debug, getCenter(), Vec3b(0, 0, 0));
+        if (DEBUG_ANGLE_METHOD == 2) good *= -1;
+        return -good*1.0/all;
+    } else if (DEBUG_ANGLE_METHOD == 3 || DEBUG_ANGLE_METHOD == 4) {
+        int n = 3;
+        Point2d p = moments.getMean();
+        Rect bbox = getBoundingBox();
+        complex<double> sum;
+        for (int y=bbox.y; y<=bbox.y+bbox.height; y++)
+            for (int x=bbox.x; x<=bbox.x+bbox.width; x++) {
+                if (type->map->area_map.get(x, y) == this) {
+                    if ((
+                            type->map->area_map.get(x+1, y) == this &&
+                            type->map->area_map.get(x-1, y) == this &&
+                            type->map->area_map.get(x, y+1) == this &&
+                            type->map->area_map.get(x, y-1) == this
+                        ) || DEBUG_ANGLE_METHOD == 3) {
+                        if (debug && DEBUG_ANGLE_METHOD == 4)
+                            drawPoint(*debug, Point(x, y), Vec3b(0, 0, 255));
 
-    return -good*1.0/all;
-#endif
+                        sum += pow(complex<double>(x - p.x, y - p.y), n);
+                    }
+                }
+            }
+        double ang = arg(sum)/n;
+        if (debug) {
+            Vec3b l(0, 0, 255);
+            for (int i = 0; i<n; i++)
+                drawLine(*debug, p, ang + 2*M_PI*i/n, 15, l);
+        }
+        ang = modulo(ang - (angle + M_PI/2), 2*M_PI/n);
+        ang = min(ang, 2*M_PI/n - ang);
+        if (debug) {
+            stringstream ss;
+            ss << "    " << arg(sum)/n << "-" << angle + M_PI/2;
+            ss << "=" << ang;
+            //drawBorderText(*debug, p, ss.str(), Vec3b(255, 255, 255), Vec3b(0, 0, 0));
+            drawLine(*debug, p, angle + M_PI/2, 15, Vec3b(0, 255, 0));
+        }
+        return -ang;
+    } else assert(0);
 }

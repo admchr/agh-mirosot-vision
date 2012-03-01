@@ -135,6 +135,13 @@ int main(int argc, char** argv)
             img0 = cv::imread(images[img_i]);
             cout << "loaded: " << images[img_i] <<endl;
         }
+        int max_debug_angle = 5;
+        if (k == 46) {// "."
+            DEBUG_ANGLE_METHOD = (DEBUG_ANGLE_METHOD + 1)%max_debug_angle;
+        }
+        if (k == 44) {// ","
+            DEBUG_ANGLE_METHOD = (DEBUG_ANGLE_METHOD - 1 + max_debug_angle)%max_debug_angle;
+        }
     }
 
     return 0;
