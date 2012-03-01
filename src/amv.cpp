@@ -108,3 +108,6 @@ void amv_state_free(amv_state* state) {
 amv_vision_data amv_find_teams(unsigned char* image, amv_state* state, amv_debug_info* debug) {
     return findTeams(image, state, debug);
 }
+
+// TODO: remove me
+int DEBUG_ANGLE_METHOD = 0;

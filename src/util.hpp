@@ -27,6 +27,8 @@ bool in_hue(amv_color_info* color, int hue);
 
 void transformPosition(amv_point* pos, amv_transform_info tr);
 
+double modulo(double a, double b);
+
 bool comparePoint(cv::Point p, cv::Point q);
 cv::Vec3b getMeanColor(amv_color_info c);
 cv::Point toPoint(amv_image_pos pos);

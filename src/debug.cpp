@@ -58,6 +58,11 @@ void drawLine(Image& img, Point p1, Point p2, Vec3b color)
     }
 }
 
+void drawLine(Image& img, Point p1, double angle, double length, Vec3b color) {
+    Point p2(p1.x + length*cos(angle),  p1.y + length*sin(angle));
+    return drawLine(img, p1, p2, color);
+}
+
 void drawCross(Image& img, Point center, int armLength, Vec3b color) {
     drawLine(img, center, Point(center.x, center.y + armLength), color);
     drawLine(img, center, Point(center.x, center.y - armLength), color);
