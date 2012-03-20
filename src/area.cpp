@@ -274,6 +274,7 @@ double Patch::getAngle() {
  *     |/
  */
 double Patch::getAngleFitness(double angle, Image* debug) {
+    /** WARNING: the following code may cause eye irritation */
     Point2d u0(cos(angle), sin(angle));
     if (DEBUG_ANGLE_METHOD == 0) {
         // pixel count
@@ -332,9 +333,30 @@ double Patch::getAngleFitness(double angle, Image* debug) {
     } else if (DEBUG_ANGLE_METHOD == 3 || DEBUG_ANGLE_METHOD == 4) {
         // complex image moment
         int n = 3;
-        Point2d p = moments.getMean();
         Rect bbox = getBoundingBox();
-        complex<double> sum;
+
+        Point2d p(0, 0);
+        int count = 0;
+        for (int y=bbox.y; y<=bbox.y+bbox.height; y++)
+            for (int x=bbox.x; x<=bbox.x+bbox.width; x++) {
+                if (type->map->area_map.get(x, y) == this) {
+                    if ((
+                            type->map->area_map.get(x+1, y) == this &&
+                            type->map->area_map.get(x-1, y) == this &&
+                            type->map->area_map.get(x, y+1) == this &&
+                            type->map->area_map.get(x, y-1) == this
+                        ) || DEBUG_ANGLE_METHOD == 3) {
+                        if (debug && DEBUG_ANGLE_METHOD == 4)
+                            drawPoint(*debug, Point(x, y), Vec3b(0, 0, 255));
+                        count++;
+                        p += Point2d(x, y);
+                    }
+                }
+            }
+        p.x /= count;
+        p.y /= count;
+
+        complex<double> sum, sum2;
         for (int y=bbox.y; y<=bbox.y+bbox.height; y++)
             for (int x=bbox.x; x<=bbox.x+bbox.width; x++) {
                 if (type->map->area_map.get(x, y) == this) {
@@ -348,10 +370,16 @@ double Patch::getAngleFitness(double angle, Image* debug) {
                             drawPoint(*debug, Point(x, y), Vec3b(0, 0, 255));
 
                         sum += pow(complex<double>(x - p.x, y - p.y), n);
+                        sum2 += pow(complex<double>(x - p.x, y - p.y), 2);
                     }
                 }
             }
         double ang = arg(sum)/n;
+        double ang2 = arg(sum2)/2;;
+
+        if (cos(ang2 - angle) < 0) {
+            ang2 += M_PI;
+        }
         if (debug) {
             Vec3b l(0, 0, 255);
             for (int i = 0; i<n; i++)
@@ -365,6 +393,7 @@ double Patch::getAngleFitness(double angle, Image* debug) {
             ss << "=" << ang;
             //drawBorderText(*debug, p, ss.str(), Vec3b(255, 255, 255), Vec3b(0, 0, 0));
             drawLine(*debug, p, angle + M_PI/2, 15, Vec3b(0, 255, 0));
+            drawLine(*debug, p, ang2 + M_PI/2, 15, Vec3b(0, 128, 0));
         }
         return -ang;
     } else assert(0);
