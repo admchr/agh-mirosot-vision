@@ -1,5 +1,5 @@
-#ifndef MSHIFT_H 
-#define MSHIFT_H
+#ifndef AMV_MSHIFT_HPP
+#define AMV_MSHIFT_HPP
 
 #include "defs.hpp"
 

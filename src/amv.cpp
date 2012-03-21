@@ -110,4 +110,4 @@ amv_vision_data amv_find_teams(unsigned char* image, amv_state* state, amv_debug
 }
 
 // TODO: remove me
-int DEBUG_ANGLE_METHOD = 0;
+int DEBUG_ANGLE_METHOD = 4;

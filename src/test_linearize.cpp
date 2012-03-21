@@ -26,13 +26,13 @@ BOOST_AUTO_TEST_CASE(test_linearize) {
 	Image img(1, 1);
 
 	img(0, 0) = Vec3b(255, 0, 128);
-	linearize(img);
+	from_sRGB_to_RGB(img);
 	BOOST_CHECK(img(0, 0) == Vec3b(254, 0, 55));
 }
 BOOST_AUTO_TEST_CASE(test_delinearize) {
 	Image img(1, 1);
 
 	img(0, 0) = Vec3b(255, 0, 128);
-	delinearize(img);
+	from_RGB_to_sRGB(img);
 	BOOST_CHECK(img(0, 0) == Vec3b(255, 0, 188));
 }

@@ -48,7 +48,7 @@ Vec3b getMeanColor(amv_color_info c)
         mean_vec += 180;
 
     int mean = (c.hue_min + mean_vec / 2 + 180) % 180;
-    Vec3b paint = hsvconverter.getBGR(Vec3b(mean, 255, 255));
+    Vec3b paint = hsvconverter.fromHSVToBGR(Vec3b(mean, 255, 255));
     if(c.hue_min == c.hue_max)
         paint = Vec3b(255, 255, 255);
 

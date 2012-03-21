@@ -1,5 +1,5 @@
-#ifndef SET_H
-#define SET_H 
+#ifndef AMV_ARRAY2D_HPP
+#define AMV_ARRAY2D_HPP
 
 #include <vector>
 #include <opencv/cv.h>
