@@ -124,6 +124,9 @@ void AMV_EXPORT amv_state_new(struct amv_state* st, struct amv_config* config);
 
 void AMV_EXPORT amv_state_free(struct amv_state* state);
 
+// TODO: remove me
+extern int DEBUG_ANGLE_METHOD;
+
 #ifdef __cplusplus
 }
 #endif

@@ -1,5 +1,5 @@
-#ifndef FONT_H
-#define FONT_H
+#ifndef AMV_FONT_HPP
+#define AMV_FONT_HPP
 
 // this font is in the public domain
 static const int FONT_SIZE = 8;

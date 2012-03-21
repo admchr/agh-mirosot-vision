@@ -1,5 +1,5 @@
-#ifndef ROBOT_H
-#define ROBOT_H
+#ifndef AMV_ROBOT_HPP
+#define AMV_ROBOT_HPP
 
 #include <opencv/cv.h>
 #include "area.hpp"

@@ -11,7 +11,7 @@
 
 #include <sys/time.h>
 
-const int RUNS = 1000;
+const int RUNS = 100;
 
 struct Timer
 {

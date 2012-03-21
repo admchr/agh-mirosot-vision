@@ -48,7 +48,7 @@ Vec3b getMeanColor(amv_color_info c)
         mean_vec += 180;
 
     int mean = (c.hue_min + mean_vec / 2 + 180) % 180;
-    Vec3b paint = hsvconverter.getBGR(Vec3b(mean, 255, 255));
+    Vec3b paint = hsvconverter.fromHSVToBGR(Vec3b(mean, 255, 255));
     if(c.hue_min == c.hue_max)
         paint = Vec3b(255, 255, 255);
 
@@ -74,6 +74,16 @@ void transformPosition(amv_point* pos, amv_transform_info tr) {
 
 }
 
+double modulo(double a, double b) {
+    a = a/b;
+    return (a - floor(a))*b;
+}
+
+bool comparePoint(Point p, Point q) {
+    if (p.x != q.x)
+        return p.x < q.x;
+    return p.y < q.y;
+}
 Point toPoint(amv_image_pos pos) {
     return Point(pos.x, pos.y);
 }

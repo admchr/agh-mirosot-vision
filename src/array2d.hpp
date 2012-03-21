@@ -1,5 +1,5 @@
-#ifndef SET_H
-#define SET_H 
+#ifndef AMV_ARRAY2D_HPP
+#define AMV_ARRAY2D_HPP
 
 #include <vector>
 #include <opencv/cv.h>
@@ -14,6 +14,7 @@ public:
     void resize(cv::Size size);
     void set(int x, int y, T t);
     T get(int x, int y);
+    T get(cv::Point p);
     
     template <typename F>
     void forEach(F& f)  {
@@ -68,6 +69,11 @@ void Array2d<T>::set(int x, int y, T t) {
 template <typename T>
 T Array2d<T>::get(int x, int y) {
     int pos = getPos(x, y);
+    return vec[pos];
+}
+template <typename T>
+T Array2d<T>::get(cv::Point p) {
+    int pos = getPos(p.x, p.y);
     return vec[pos];
 }
 #endif

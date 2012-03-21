@@ -1,5 +1,5 @@
-#ifndef MOMENTS_H
-#define MOMENTS_H
+#ifndef AMV_MOMENTS_HPP
+#define AMV_MOMENTS_HPP
 
 #include <opencv/cv.h>
 #include <vector>

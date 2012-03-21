@@ -10,26 +10,14 @@ using namespace cv;
 using namespace std;
 
 
-const double DEBUG_DIM = 0.5;
+const double DEBUG_DIMMING = 0.5;
 
-void amv_debug_init(amv_debug_info* debug) {
-    debug->debug_balance = NULL;
-    debug->debug_prescreen = NULL;
-    debug->debug_meanshift = NULL;
-    debug->debug_patches = NULL;
-    debug->debug_robots = NULL;
-    debug->debug_results = NULL;
-
-    debug->full_meanshift_debug = 1;
-    debug->linear_meanshift = 1;
-    debug->multiple_meanshift = 1;
-}
-
+/** Copies image data to the buffer */
 static void copy_to(const Image& mat, unsigned char* buf, amv_config* config) {
     if (buf) {
         Image mat2(mat.clone());
         if (config->linearize)
-            delinearize(mat2);
+            from_RGB_to_sRGB(mat2);
         memcpy(buf, mat2.ptr(), 3 * mat2.size().width * mat2.size().height);
     }
 }
@@ -68,6 +56,11 @@ void drawLine(Image& img, Point p1, Point p2, Vec3b color)
             drawPoint(img, Point(x, y), color);
         }
     }
+}
+
+void drawLine(Image& img, Point p1, double angle, double length, Vec3b color) {
+    Point p2(p1.x + length*cos(angle),  p1.y + length*sin(angle));
+    return drawLine(img, p1, p2, color);
 }
 
 void drawCross(Image& img, Point center, int armLength, Vec3b color) {
@@ -122,15 +115,15 @@ void debugImagePrescreen(Image & img, PatchFinder & area, amv_state *state, amv_
     if (!debug->debug_prescreen)
         return;
     Image img_prescreen(img.clone());
-    img_prescreen *= DEBUG_DIM;
+    img_prescreen *= DEBUG_DIMMING;
     for(int x = 0;x < img.size().width;x++)
         for(int y = 0;y < img.size().height;y++){
-            if (hsvconverter.get(img(y, x))[2] < state->config->black_cutoff)
+            if (hsvconverter.fromBGRToHSL(img(y, x))[2] < state->config->black_cutoff)
                 img_prescreen(y, x) = Vec3b(0, 0, 0);
             PatchType *patch = area.precompute_map.get(x, y);
             if(patch)
                 img_prescreen(y, x) = patch->color;
-            if (hsvconverter.get(img(y, x))[2] > state->config->white_cutoff)
+            if (hsvconverter.fromBGRToHSL(img(y, x))[2] > state->config->white_cutoff)
                 img_prescreen(y, x) = Vec3b(255, 255, 255);
         }
 
@@ -142,7 +135,7 @@ void debugImagePatches(Image & img, PatchFinder & area, amv_config *config, amv_
     if (!debug->debug_patches)
         return;
     Image img_patches(img.clone());
-    img_patches *= DEBUG_DIM;
+    img_patches *= DEBUG_DIMMING;
     for(int x = 0;x < img.size().width;x++)
         for(int y = 0;y < img.size().height;y++){
             Patch* area_ind = area.area_map.get(x, y);
@@ -206,6 +199,8 @@ void debugTeam(Image& img, amv_config *config, amv_team_info& info, const amv_te
 
 void debugSecondaryPatches(Image& img, amv_team_info* team, vector<Robot> patches) {
     for (unsigned int i=0; i<patches.size(); i++) {
+        Robot& p = patches[i];
+        p.teamPatch->getAngleFitness(p.teamPatch->getAngle(), &img);
         getSecondaryPatches(patches[i].teamPatch, team, &img);
     }
 }
@@ -216,7 +211,7 @@ void debugImageRobots(Image& img, PatchFinder & area, amv_config* config, amv_de
         return;
     Image img_robots(img.clone());
 
-    img_robots *= DEBUG_DIM;
+    img_robots *= DEBUG_DIMMING;
     for(int x = 0;x < img.size().width;x++)
         for(int y = 0;y < img.size().height;y++){
             Patch* area_ind = area.area_map.get(x, y);

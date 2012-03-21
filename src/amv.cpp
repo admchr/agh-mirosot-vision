@@ -74,6 +74,18 @@ void amv_config_init(amv_config* config) {
     config->transform.output_scale.y = 10;
 }
 
+void amv_debug_init(amv_debug_info* debug) {
+    debug->debug_balance = NULL;
+    debug->debug_prescreen = NULL;
+    debug->debug_meanshift = NULL;
+    debug->debug_patches = NULL;
+    debug->debug_robots = NULL;
+    debug->debug_results = NULL;
+
+    debug->full_meanshift_debug = 1;
+    debug->linear_meanshift = 1;
+    debug->multiple_meanshift = 1;
+}
 
 void amv_state_new(amv_state* state, amv_config* config) {
     vector<Point> poly;
@@ -96,3 +108,6 @@ void amv_state_free(amv_state* state) {
 amv_vision_data amv_find_teams(unsigned char* image, amv_state* state, amv_debug_info* debug) {
     return findTeams(image, state, debug);
 }
+
+// TODO: remove me
+int DEBUG_ANGLE_METHOD = 4;

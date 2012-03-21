@@ -22,7 +22,7 @@ static void get_matrix(Image & mat, unsigned char* buf, amv_config* config) {
     cv::Mat img_tmp(cv::Size(config->image_width, config->image_height), CV_8UC3, buf);
     Image img(img_tmp);
     if (config->linearize)
-    	linearize(img);// 1ms
+    	from_sRGB_to_RGB(img);// 1ms
 
     mat = img;
 }
@@ -59,7 +59,7 @@ amv_vision_data findTeams(unsigned char* image, amv_state* state, amv_debug_info
     debugImageWhite(img, config, debug);
 
     ((VisionState*) state->state)->mask.apply(img);
-    hsvconverter.convert(img, img_hsv);
+    hsvconverter.fromBGRToHSL(img, img_hsv);
     PatchFinder area;
 
     area.setImages(state, img, img_hsv);
