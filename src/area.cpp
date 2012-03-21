@@ -9,12 +9,10 @@
 #include <queue>
 #include <utility>
 #include <set>
+#include <complex>
 
 using namespace cv;
 using namespace std;
-
-
-
 
 
 void PatchFinder::setImages(amv_state* state, Image img, Image img_hsv) {
@@ -38,7 +36,7 @@ void PatchFinder::preparePixel(cv::Point p) {
                 state->config->meanshift_radius, // position radius
                 state->config->meanshift_threshold // value radius
             );
-    img_hsv(p) = hsvconverter.get(img(p));
+    img_hsv(p) = hsvconverter.fromBGRToHSL(img(p));
     meanshifted.set(p.x, p.y, true);
 }
 
@@ -199,7 +197,7 @@ double Patch::getRobotCertainty() {
     double result = 1;
     result *= positive_point_certainty(type->getPatchSize(), moments.getCount());
 
-    Vec3b hsv = hsvconverter.get(getMeanColor());
+    Vec3b hsv = hsvconverter.fromBGRToHSL(getMeanColor());
 
     double color_result = interval_certainty(type->team.hue_min, type->team.hue_max, hsv[0]);
     color_result *= hsv[1]/256.0;
@@ -223,7 +221,7 @@ double Patch::getBallCertainty() {
     double ball_area = ball_radius*ball_radius*M_PI;
     result *= positive_point_certainty(ball_area, moments.getCount());
 
-    Vec3b hsv = hsvconverter.get(getMeanColor());
+    Vec3b hsv = hsvconverter.fromBGRToHSL(getMeanColor());
 
     double color_result = interval_certainty(type->team.hue_min, type->team.hue_max, hsv[0]);
     color_result *= hsv[1]/256.0;
@@ -259,23 +257,144 @@ double Patch::getRobotAngle() {
 double Patch::getAngle() {
     double angle = moments.getAngle();
 
-	double a = moments.getRegressionSlope();
-	double b = moments.getRegressionPosition();
-    Rect bbox = getBoundingBox();
-    int up = 0;
-    int down = 0;
-    for (int y=bbox.y; y<=bbox.y+bbox.height; y++)
-    	for (int x=bbox.x; x<=bbox.x+bbox.width; x++) {
-    		if (type->map->area_map.get(x, y) == this) {
-    			if (a*x + b > y)
-    				down++;
-    			else
-    				up++;
-    		}
-    	}
-
-    if (down<up)
-    	angle+=M_PI;
+    if (getAngleFitness(angle) < getAngleFitness(angle + M_PI))
+        angle+=M_PI;
 
     return angle;
+}
+
+/* Tests whether the given angle represents the triangle shape well:
+ *       A
+ *     |\| <- angle
+ *     | |
+ *     | |\
+ *     | o |
+ *     |  / <- triangle
+ *     | /
+ *     |/
+ */
+double Patch::getAngleFitness(double angle, Image* debug) {
+    /** WARNING: the following code may cause eye irritation */
+    Point2d u0(cos(angle), sin(angle));
+    if (DEBUG_ANGLE_METHOD == 0) {
+        // pixel count
+        Point2d p = moments.getMean();
+        Rect bbox = getBoundingBox();
+        int right_of = 0;
+        int left_of = 0;
+        for (int y=bbox.y; y<=bbox.y+bbox.height; y++)
+            for (int x=bbox.x; x<=bbox.x+bbox.width; x++) {
+                if (type->map->area_map.get(x, y) == this) {
+                    Point2d r(x - p.x, y - p.y);
+                    if (r.x*u0.y > r.y*u0.x) {
+                        left_of++;
+
+                        if (debug) drawPoint(*debug, Point(x, y), Vec3b(0, 0, 255));
+                    } else
+                        right_of++;
+                }
+            }
+
+        if (debug) drawPoint(*debug, getCenter(), Vec3b(0, 0, 0));
+        return left_of*1.0/(right_of + left_of);
+    } else if (DEBUG_ANGLE_METHOD == 1 || DEBUG_ANGLE_METHOD == 2) {
+        // triangle fit
+        double r = 6.5*type->config->px_per_cm*sqrt(2)/2 - 1;
+        Point2d v0(cos(angle + M_PI/2), sin(angle + M_PI/2));
+
+        Point p = getCenter();
+
+        int good = 0, all = 0;
+        std::set<Point, bool(*)(Point, Point)> visited(comparePoint);
+        for (double u = -r; u < r; u += 0.5)
+            for (double v = -r; v < r; v += 0.5) {
+                if (u + v > r*2/3 || v - u > r*2/3 || v < -r/3)
+                    continue;
+
+                Point q(p.x + u*u0.x + v*v0.x, p.y + u*u0.y + v*v0.y);
+                if (visited.find(q) != visited.end())
+                    continue;
+                visited.insert(q);
+
+                if (type->map->area_map.get(q) == this &&
+                        type->map->area_map.get(q.x+1, q.y) == this &&
+                        type->map->area_map.get(q.x-1, q.y) == this &&
+                        type->map->area_map.get(q.x, q.y+1) == this &&
+                        type->map->area_map.get(q.x, q.y-1) == this//*/
+                ) {
+                    good++;
+                    if (debug) drawPoint(*debug, q, Vec3b(0, 0, 255));
+                }
+                all++;
+            }
+        if (debug) drawPoint(*debug, getCenter(), Vec3b(0, 0, 0));
+        if (DEBUG_ANGLE_METHOD == 2) good *= -1;
+        return good*1.0/all;
+    } else if (DEBUG_ANGLE_METHOD == 3 || DEBUG_ANGLE_METHOD == 4) {
+        // complex image moment
+        int n = 3;
+        Rect bbox = getBoundingBox();
+
+        Point2d p(0, 0);
+        int count = 0;
+        for (int y=bbox.y; y<=bbox.y+bbox.height; y++)
+            for (int x=bbox.x; x<=bbox.x+bbox.width; x++) {
+                if (type->map->area_map.get(x, y) == this) {
+                    if ((
+                            type->map->area_map.get(x+1, y) == this &&
+                            type->map->area_map.get(x-1, y) == this &&
+                            type->map->area_map.get(x, y+1) == this &&
+                            type->map->area_map.get(x, y-1) == this
+                        ) || DEBUG_ANGLE_METHOD == 3) {
+                        if (debug && DEBUG_ANGLE_METHOD == 4)
+                            drawPoint(*debug, Point(x, y), Vec3b(0, 0, 255));
+                        count++;
+                        p += Point2d(x, y);
+                    }
+                }
+            }
+        p.x /= count;
+        p.y /= count;
+
+        complex<double> sum, sum2;
+        for (int y=bbox.y; y<=bbox.y+bbox.height; y++)
+            for (int x=bbox.x; x<=bbox.x+bbox.width; x++) {
+                if (type->map->area_map.get(x, y) == this) {
+                    if ((
+                            type->map->area_map.get(x+1, y) == this &&
+                            type->map->area_map.get(x-1, y) == this &&
+                            type->map->area_map.get(x, y+1) == this &&
+                            type->map->area_map.get(x, y-1) == this
+                        ) || DEBUG_ANGLE_METHOD == 3) {
+                        if (debug && DEBUG_ANGLE_METHOD == 4)
+                            drawPoint(*debug, Point(x, y), Vec3b(0, 0, 255));
+
+                        sum += pow(complex<double>(x - p.x, y - p.y), n);
+                        sum2 += pow(complex<double>(x - p.x, y - p.y), 2);
+                    }
+                }
+            }
+        double ang = arg(sum)/n;
+        double ang2 = arg(sum2)/2;;
+
+        if (cos(ang2 - angle) < 0) {
+            ang2 += M_PI;
+        }
+        if (debug) {
+            Vec3b l(0, 0, 255);
+            for (int i = 0; i<n; i++)
+                drawLine(*debug, p, ang + 2*M_PI*i/n, 15, l);
+        }
+        ang = modulo(ang - (angle + M_PI/2), 2*M_PI/n);
+        ang = min(ang, 2*M_PI/n - ang);
+        if (debug) {
+            stringstream ss;
+            ss << "    " << arg(sum)/n << "-" << angle + M_PI/2;
+            ss << "=" << ang;
+            //drawBorderText(*debug, p, ss.str(), Vec3b(255, 255, 255), Vec3b(0, 0, 0));
+            drawLine(*debug, p, angle + M_PI/2, 15, Vec3b(0, 255, 0));
+            drawLine(*debug, p, ang2 + M_PI/2, 15, Vec3b(0, 128, 0));
+        }
+        return -ang;
+    } else assert(0);
 }

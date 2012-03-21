@@ -1,5 +1,5 @@
-#ifndef MASK_H
-#define MASK_H
+#ifndef AMV_MASK_HPP
+#define AMV_MASK_HPP
 
 #include <opencv/cv.h>
 #include <vector>

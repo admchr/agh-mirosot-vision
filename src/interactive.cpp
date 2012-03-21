@@ -11,8 +11,8 @@ using namespace std;
 amv_config config;
 amv_debug_info debug;
 
-int dbg_i;
-int debug_count = 7;
+int debug_image;
+int debug_image_count = 7;
 
 char** images;
 int img_i = 0;
@@ -74,35 +74,35 @@ int main(int argc, char** argv)
         cv::Mat_<cv::Vec3b> img(img0.clone());
         amv_state_new(&state, &config);
 
-        if (dbg_i == 0)
+        if (debug_image == 0)
             dbg_img = img0.clone();
 
-        if (dbg_i == 1)
+        if (debug_image == 1)
             debug.debug_balance = dbg_img.ptr();
         else
             debug.debug_balance = 0;
 
-        if (dbg_i == 2)
+        if (debug_image == 2)
             debug.debug_meanshift = dbg_img.ptr();
         else
             debug.debug_meanshift = 0;
 
-        if (dbg_i == 3)
+        if (debug_image == 3)
             debug.debug_prescreen = dbg_img.ptr();
         else
             debug.debug_prescreen = 0;
 
-        if (dbg_i == 4)
+        if (debug_image == 4)
             debug.debug_patches = dbg_img.ptr();
         else
             debug.debug_patches = 0;
 
-        if (dbg_i == 5)
+        if (debug_image == 5)
             debug.debug_robots = dbg_img.ptr();
         else
             debug.debug_robots = 0;
 
-        if (dbg_i == 6)
+        if (debug_image == 6)
             debug.debug_results = dbg_img.ptr();
         else
             debug.debug_results = 0;
@@ -110,30 +110,37 @@ int main(int argc, char** argv)
         amv_find_teams(img.ptr(), &state, &debug);
 
         cv::imshow(image_window, dbg_img);
-        int k = (signed char)cv::waitKey( 500 );
+        int key = (signed char)cv::waitKey( 500 );
 
-        //cout<<"k="<<k+0<<endl;
-        if( k == 113 || k == 27) {//'q'||ESC
+        //cout<<"key="<<k+0<<endl;
+        if( key == 113 || key == 27) {//'q'||ESC
             break;
         }
-        if ( k == 32) {//' '
-            dbg_i++;
-            dbg_i%=debug_count;
+        if ( key == 32) {//' '
+            debug_image++;
+            debug_image%=debug_image_count;
         }
-        if ( k == 8) {//backspace
-            dbg_i += debug_count;
-            dbg_i--;
-            dbg_i%=debug_count;
+        if ( key == 8) {//backspace
+            debug_image += debug_image_count;
+            debug_image--;
+            debug_image%=debug_image_count;
         }
-        if (k == 91 || k == 93) {// '[' ']'
+        if (key == 91 || key == 93) {// '[' ']'
             img_i+=image_count;
-            if (k==93)
+            if (key==93)
                 img_i++;
             else
                 img_i--;
             img_i%=image_count;
             img0 = cv::imread(images[img_i]);
             cout << "loaded: " << images[img_i] <<endl;
+        }
+        int debug_angle_method_count = 5;
+        if (key == 46) {// "."
+            DEBUG_ANGLE_METHOD = (DEBUG_ANGLE_METHOD + 1)%debug_angle_method_count;
+        }
+        if (key == 44) {// ","
+            DEBUG_ANGLE_METHOD = (DEBUG_ANGLE_METHOD - 1 + debug_angle_method_count)%debug_angle_method_count;
         }
     }
 

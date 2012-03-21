@@ -9,11 +9,6 @@
 using namespace std;
 using namespace cv;
 
-bool comparePoint(Point p, Point q) {
-    if (p.x != q.x)
-        return p.x < q.x;
-    return p.y < q.y;
-}
 
 vector<double> getSecondaryPatches(Patch* patch, amv_team_info* team, Image* debug) {
     std::set<Point, bool(*)(Point, Point)> visited(comparePoint);
@@ -104,7 +99,7 @@ vector<Robot> getTeam(PatchType* patchType, amv_team_info* teami) {
             continue;
         team.push(std::make_pair(-patch->getRobotCertainty(), patch));
 
-        if (team.size() > teami->team_size)
+        if ((int)team.size() > teami->team_size)
             team.pop();
     }
 
@@ -129,8 +124,8 @@ vector<Robot> getTeam(PatchType* patchType, amv_team_info* teami) {
     }
     if (teami->home_team) {
         vector<pair<double, pair<int, int> > > edges;
-        for (int i=0; i<out.size(); i++) {
-            for (int j=0; j<out[i].identityCertainities.size(); j++) {
+        for (unsigned int i=0; i<out.size(); i++) {
+            for (unsigned int j=0; j<out[i].identityCertainities.size(); j++) {
                 double score = out[i].identityCertainities[j];
                 edges.push_back(make_pair(-score, make_pair(i, j)));
             }
@@ -138,7 +133,7 @@ vector<Robot> getTeam(PatchType* patchType, amv_team_info* teami) {
         sort(edges.begin(), edges.end());
 
         vector<bool> identityReservations(teami->team_size, false);
-        for (int i=0; i<edges.size(); i++) {
+        for (unsigned int i=0; i<edges.size(); i++) {
             int robot = edges[i].second.first;
             int identity = edges[i].second.second;
             //cout<<"edge" << robot << "[" << out[robot].pos.x << ", " << out[robot].pos.y <<"] -> "<<identity<<" w "<<-edges[i].first<<endl;
