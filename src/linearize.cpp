@@ -20,7 +20,6 @@ uchar rgb_to_srgb(uchar ch){
     return std::min(255, int(res*256+0.4));
 }
 
-
 static void do_convert(Image& img, bool de) {
 	int tab[256];
 	for(int i=0;i<256;i++) {
@@ -36,10 +35,10 @@ static void do_convert(Image& img, bool de) {
 		}
 }
 
-void linearize(Image& img) {
+void from_sRGB_to_RGB(Image& img) {
 	do_convert(img, false);
 }
 
-void delinearize(Image& img) {
+void from_RGB_to_sRGB(Image& img) {
 	do_convert(img, true);
 }

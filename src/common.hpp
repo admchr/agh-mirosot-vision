@@ -1,8 +1,11 @@
+#ifndef AMV_COMMON_HPP
+#define AMV_COMMON_HPP
 
 #include <fstream>
 #include <iostream>
 #include <cstdlib>
 
+/** For testing purposes. */
 void load_config(amv_config* config, const char* fname) {
     std::ifstream configfile(fname);
     
@@ -29,3 +32,5 @@ void load_config(amv_config* config, const char* fname) {
     }
     config->mask_points = tab_m;
 }
+
+#endif

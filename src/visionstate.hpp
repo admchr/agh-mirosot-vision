@@ -1,5 +1,5 @@
-#ifndef VISIONSTATE_H
-#define VISIONSTATE_H
+#ifndef AMV_VISIONSTATE_HPP
+#define AMV_VISIONSTATE_HPP
 #include "hsvconverter.hpp"
 #include "mask.hpp"
 #include "area.hpp"

@@ -1,5 +1,5 @@
-#ifndef AREA_H
-#define AREA_H
+#ifndef AMV_AREA_HPP
+#define AMV_AREA_HPP
 
 #include "defs.hpp"
 #include "amv.h"
@@ -11,7 +11,6 @@
 
 class Patch;
 class PatchType;
-
 
 
 class PatchFinder {

@@ -36,7 +36,7 @@ void PatchFinder::preparePixel(cv::Point p) {
                 state->config->meanshift_radius, // position radius
                 state->config->meanshift_threshold // value radius
             );
-    img_hsv(p) = hsvconverter.get(img(p));
+    img_hsv(p) = hsvconverter.fromBGRToHSL(img(p));
     meanshifted.set(p.x, p.y, true);
 }
 
@@ -197,7 +197,7 @@ double Patch::getRobotCertainty() {
     double result = 1;
     result *= positive_point_certainty(type->getPatchSize(), moments.getCount());
 
-    Vec3b hsv = hsvconverter.get(getMeanColor());
+    Vec3b hsv = hsvconverter.fromBGRToHSL(getMeanColor());
 
     double color_result = interval_certainty(type->team.hue_min, type->team.hue_max, hsv[0]);
     color_result *= hsv[1]/256.0;
@@ -221,7 +221,7 @@ double Patch::getBallCertainty() {
     double ball_area = ball_radius*ball_radius*M_PI;
     result *= positive_point_certainty(ball_area, moments.getCount());
 
-    Vec3b hsv = hsvconverter.get(getMeanColor());
+    Vec3b hsv = hsvconverter.fromBGRToHSL(getMeanColor());
 
     double color_result = interval_certainty(type->team.hue_min, type->team.hue_max, hsv[0]);
     color_result *= hsv[1]/256.0;

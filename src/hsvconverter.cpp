@@ -5,9 +5,9 @@ using namespace cv;
 
 HSVConverter::HSVConverter() {
     Image tmp(1, 1);
-    for (int r=0;r<256;r++)
-        for (int g=0;g<256;g++)
-            for (int b=0;b<256;b++) {
+    for (int r=0; r<256; r++)
+        for (int g=0; g<256; g++)
+            for (int b=0; b<256; b++) {
                 // it's damn slow
                 // but is done only once
                 Vec3b c(b, g, r);
@@ -19,15 +19,15 @@ HSVConverter::HSVConverter() {
             }
 }
 
-void HSVConverter::convert(Image from, Image to) {
+void HSVConverter::fromBGRToHSL(Image from, Image to) {
     to.create(from.size());
-    for (int y=0;y<from.rows;y++)
-        for (int x=0;x<from.cols;x++) {
-            to(y, x) = get(from(y, x));
+    for (int y=0; y<from.rows; y++)
+        for (int x=0; x<from.cols; x++) {
+            to(y, x) = fromBGRToHSL(from(y, x));
         }
 }
 
-Vec3b HSVConverter::getBGR(Vec3b hsv) {
+Vec3b HSVConverter::fromHSVToBGR(Vec3b hsv) {
     Image tmp(1, 1);
     tmp(0, 0) = hsv;
     cv::cvtColor(tmp, tmp, CV_HSV2BGR);

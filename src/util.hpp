@@ -1,5 +1,5 @@
-#ifndef UTIL_H
-#define UTIL_H
+#ifndef AMV_UTIL_HPP
+#define AMV_UTIL_HPP
 
 #include <opencv/cv.h>
 #include "amv.h"
