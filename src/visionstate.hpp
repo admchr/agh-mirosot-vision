@@ -2,7 +2,7 @@
 #define AMV_VISIONSTATE_HPP
 #include "hsvconverter.hpp"
 #include "mask.hpp"
-#include "area.hpp"
+#include "patch.hpp"
 
 class VisionState {
 public:

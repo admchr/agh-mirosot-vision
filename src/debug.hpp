@@ -3,7 +3,7 @@
 
 #include "amv.h"
 #include "defs.hpp"
-#include "area.hpp"
+#include "patch.hpp"
 #include "robot.hpp"
 
 #include <vector>

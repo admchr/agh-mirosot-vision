@@ -4,11 +4,11 @@ LIBS= -lcv -lcxcore -lhighgui -lm
 TEST_LIBS= -lboost_unit_test_framework $(LIBS)
 
 PROGRAMS= perf perf_gprof driver interactive test_impl test_api
-OBJS= vision.o mshift.o balance.o area.o hsvconverter.o moments.o linearize.o mask.o debug.o util.o robot.o amv.o
+OBJS= vision.o mshift.o balance.o patch.o hsvconverter.o moments.o linearize.o mask.o debug.o util.o robot.o amv.o
 API_HEADERS=amv.h
 IMPL_HEADERS=\
     $(API_HEADERS) \
-    area.hpp array2d.hpp balance.hpp defs.hpp moments.hpp mshift.hpp hsvconverter.hpp \
+    patch.hpp array2d.hpp balance.hpp defs.hpp moments.hpp mshift.hpp hsvconverter.hpp \
     visionstate.hpp linearize.hpp mask.hpp common.hpp debug.hpp util.hpp robot.hpp vision.hpp font.hpp
 
 all: $(PROGRAMS)
