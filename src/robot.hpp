@@ -2,7 +2,7 @@
 #define AMV_ROBOT_HPP
 
 #include <opencv/cv.h>
-#include "area.hpp"
+#include "patch.hpp"
 
 class Patch;
 

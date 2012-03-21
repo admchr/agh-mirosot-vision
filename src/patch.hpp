@@ -1,5 +1,5 @@
-#ifndef AMV_AREA_HPP
-#define AMV_AREA_HPP
+#ifndef AMV_PATCH_HPP
+#define AMV_PATCH_HPP
 
 #include "defs.hpp"
 #include "amv.h"
