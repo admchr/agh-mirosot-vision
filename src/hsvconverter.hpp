@@ -1,5 +1,5 @@
-#ifndef AMV_HSVCONVERTER_H_
-#define AMV_HSVCONVERTER_H_
+#ifndef AMV_HSVCONVERTER_HPP
+#define AMV_HSVCONVERTER_HPP
 
 #include <opencv/cv.h>
 #include "defs.hpp"

@@ -1,5 +1,5 @@
-#ifndef DEBUG_HPP
-#define DEBUG_HPP
+#ifndef AMV_DEBUG_HPP
+#define AMV_DEBUG_HPP
 
 #include "amv.h"
 #include "defs.hpp"

@@ -1,5 +1,5 @@
-#ifndef AMV_BALANCE_H
-#define AMV_BALANCE_H
+#ifndef AMV_BALANCE_HPP
+#define AMV_BALANCE_HPP
 
 #include "defs.hpp"
 #include "amv.h"
