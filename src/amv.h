@@ -74,6 +74,8 @@ struct AMV_EXPORT amv_config {
     int white_is_yellow;
     int minimum_saturation;
     int white_cutoff;
+
+    int angle_determination_method;
 };
 
 struct AMV_EXPORT amv_debug_info {

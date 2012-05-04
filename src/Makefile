@@ -1,6 +1,6 @@
 
 CXXFLAGS= -g -Wall -Wextra -Wunreachable-code -O2
-LIBS= -lcv -lcxcore -lhighgui -lm
+LIBS= `pkg-config --libs opencv` -lm
 TEST_LIBS= -lboost_unit_test_framework $(LIBS)
 
 PROGRAMS= perf perf_gprof driver interactive test_impl test_api
