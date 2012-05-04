@@ -105,6 +105,7 @@ void amv_state_free(amv_state* state) {
         delete vs;
 }
 
+/** Main image recognition routine. Extracts robots from image. */
 amv_vision_data amv_find_teams(unsigned char* image, amv_state* state, amv_debug_info* debug) {
     return findTeams(image, state, debug);
 }
