@@ -30,15 +30,6 @@ HSVConverter::HSVConverter() {
                 }
                 c[1] = sat;
                 c[2] = (r + g + b)/3;
-                /*
-                // it's damn slow
-                // but is done only once
-                Vec3b c(b, g, r);
-                tmp(0, 0) = c;
-                cv::cvtColor(tmp, tmp, CV_BGR2HSV);
-                c = tmp(0, 0);
-                c[2] = (r+g+b)/3;
-                */
                 table[(b<<16)|(g<<8)|(r)] = c;
 
             }
