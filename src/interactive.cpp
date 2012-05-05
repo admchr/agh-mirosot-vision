@@ -135,12 +135,11 @@ int main(int argc, char** argv)
             img0 = cv::imread(images[img_i]);
             cout << "loaded: " << images[img_i] <<endl;
         }
-        int debug_angle_method_count = 5;
         if (key == 46) {// "."
-            DEBUG_ANGLE_METHOD = (DEBUG_ANGLE_METHOD + 1)%debug_angle_method_count;
+            config.angle_method = (config.angle_method + 1)%AMV_MAX_ANGLE_METHOD;
         }
         if (key == 44) {// ","
-            DEBUG_ANGLE_METHOD = (DEBUG_ANGLE_METHOD - 1 + debug_angle_method_count)%debug_angle_method_count;
+            config.angle_method = (config.angle_method - 1 + AMV_MAX_ANGLE_METHOD)%AMV_MAX_ANGLE_METHOD;
         }
     }
 

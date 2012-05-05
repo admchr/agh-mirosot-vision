@@ -13,6 +13,7 @@ extern "C" {
 
 #define AMV_MAX_ROBOTS 256
 #define AMV_MAX_SECONDARY_COLORS 3
+#define AMV_MAX_ANGLE_METHOD 3
 
 struct AMV_EXPORT amv_image_pos {
     int x;
@@ -75,7 +76,7 @@ struct AMV_EXPORT amv_config {
     int minimum_saturation;
     int white_cutoff;
 
-    int angle_determination_method;
+    int angle_method;
 };
 
 struct AMV_EXPORT amv_debug_info {
@@ -119,15 +120,14 @@ struct amv_vision_data AMV_EXPORT
         struct amv_debug_info* debug
     );
 
+void AMV_EXPORT amv_vertical_flip(unsigned char* image, int width, int height);
 
 void AMV_EXPORT amv_config_init(struct amv_config* config);
-void AMV_EXPORT amv_debug_init(struct amv_debug_info*);
-void AMV_EXPORT amv_state_new(struct amv_state* st, struct amv_config* config);
+void AMV_EXPORT amv_debug_init(struct amv_debug_info* debug);
 
+void AMV_EXPORT amv_state_new(struct amv_state* st, struct amv_config* config);
 void AMV_EXPORT amv_state_free(struct amv_state* state);
 
-// TODO: remove me
-extern int DEBUG_ANGLE_METHOD;
 
 #ifdef __cplusplus
 }
