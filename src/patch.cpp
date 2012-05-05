@@ -257,7 +257,7 @@ double Patch::getRobotAngle() {
 double Patch::getAngle() {
     double angle = moments.getAngle();
 
-    if (getAngleFitness(angle) < getAngleFitness(angle + M_PI))
+    if (getAngleFitness(angle, type->config->angle_method) < getAngleFitness(angle + M_PI, type->config->angle_method))
         angle+=M_PI;
 
     return angle;
@@ -273,7 +273,7 @@ double Patch::getAngle() {
  *     | /
  *     |/
  */
-double Patch::getAngleFitness(double angle, Image* debug) {
+double Patch::getAngleFitness(double angle, int DEBUG_ANGLE_METHOD, Image* debug) {
     /** WARNING: the following code may cause eye irritation */
     Point2d u0(cos(angle), sin(angle));
     if (DEBUG_ANGLE_METHOD == 0) {

@@ -33,4 +33,7 @@ bool comparePoint(cv::Point p, cv::Point q);
 cv::Vec3b getMeanColor(amv_color_info c);
 cv::Point toPoint(amv_image_pos pos);
 cv::Point toPoint(amv_point pos);
+
+
+void flipVertically(unsigned char* image, int width, int height);
 #endif

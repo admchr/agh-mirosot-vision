@@ -3,6 +3,7 @@
 #include "vision.hpp"
 #include "defs.hpp"
 #include "visionstate.hpp"
+#include "util.hpp"
 #include <vector>
 
 using namespace std;
@@ -72,6 +73,8 @@ void amv_config_init(amv_config* config) {
     config->transform.field_bottom_right.y = 400;
     config->transform.output_scale.x = 10;
     config->transform.output_scale.y = 10;
+
+    config->angle_method = 4;
 }
 
 void amv_debug_init(amv_debug_info* debug) {
@@ -105,10 +108,12 @@ void amv_state_free(amv_state* state) {
         delete vs;
 }
 
+void AMV_EXPORT amv_vertical_flip(unsigned char* image, int width, int height) {
+    flipVertically(image, width, height);
+}
+
 /** Main image recognition routine. Extracts robots from image. */
 amv_vision_data amv_find_teams(unsigned char* image, amv_state* state, amv_debug_info* debug) {
     return findTeams(image, state, debug);
 }
 
-// TODO: remove me
-int DEBUG_ANGLE_METHOD = 4;

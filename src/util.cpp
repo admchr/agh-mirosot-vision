@@ -90,3 +90,20 @@ Point toPoint(amv_image_pos pos) {
 Point toPoint(amv_point pos) {
     return Point(pos.x, pos.y);
 }
+
+void flipVertically(unsigned char* image, int width, int height) {
+    int row_width = 3*width;
+    unsigned char* tmp = (unsigned char*)malloc(row_width);
+
+    unsigned char* first = image;
+    unsigned char* second = image + row_width*(height-1);
+    while (first < second) {
+        memcpy(tmp, first, row_width);
+        memcpy(first, second, row_width);
+        memcpy(second, tmp, row_width);
+        first += row_width;
+        second -= row_width;
+    }
+
+    free(tmp);
+}
