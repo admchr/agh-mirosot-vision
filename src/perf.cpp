@@ -34,7 +34,7 @@ struct Timer
 };
 int main(int argc, char**argv) {
     if (argc != 3) {
-        std::cerr<<"usage: ./"<<argv[0]<<" image config"<<std::endl;
+        std::cerr<<"usage: "<<argv[0]<<" image config"<<std::endl;
         return 1;
     }
     cv::Mat_<cv::Vec3b> img0 = cv::imread(std::string(argv[1]));

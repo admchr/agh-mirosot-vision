@@ -50,7 +50,6 @@ void ImageMask::init(vector<Point> poly, Size dimensions) {
 }
 
 void ImageMask::apply(Image& img) {
-
 	for (int y=0; y<img.rows; y++)
 		for (int x=0; x<img.cols; x++) {
 			if (mask.get(x, y))
