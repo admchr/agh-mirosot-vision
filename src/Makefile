@@ -25,7 +25,7 @@ perf: perf.o  $(OBJS)
 perf_gprof: perf.o $(OBJS)
 	g++ -pg $^ -o $@ $(LIBS)
 
-test_impl: test_impl.o test_array2d.o test_mshift.o test_linearize.o test_mask.o test_moments.o $(OBJS)
+test_impl: test_impl.o test_array2d.o test_mshift.o test_linearize.o test_mask.o test_moments.o test_hsv.o $(OBJS)
 	g++ $^ -o $@ $(TEST_LIBS) 
 
 test_api: test_api.o $(OBJS) $(API_HEADERS)
