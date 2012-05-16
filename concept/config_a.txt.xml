@@ -2,15 +2,121 @@
 <amv_config>
 
   <algorithm_parameters>
-    <white_points/>
-    <mask_points/>
+    <white_points>
+      <point>
+        <x>122</x>
+        <y>77</y>
+      </point>
+      <point>
+        <x>575</x>
+        <y>70</y>
+      </point>
+      <point>
+        <x>595</x>
+        <y>219</y>
+      </point>
+      <point>
+        <x>600</x>
+        <y>315</y>
+      </point>
+      <point>
+        <x>593</x>
+        <y>473</y>
+      </point>
+      <point>
+        <x>347</x>
+        <y>476</y>
+      </point>
+      <point>
+        <x>102</x>
+        <y>465</y>
+      </point>
+      <point>
+        <x>104</x>
+        <y>321</y>
+      </point>
+      <point>
+        <x>107</x>
+        <y>225</y>
+      </point>
+      <point>
+        <x>342</x>
+        <y>74</y>
+      </point>
+    </white_points>
+    <mask_points>
+      <point>
+        <x>106</x>
+        <y>98</y>
+      </point>
+      <point>
+        <x>131</x>
+        <y>78</y>
+      </point>
+      <point>
+        <x>565</x>
+        <y>71</y>
+      </point>
+      <point>
+        <x>590</x>
+        <y>94</y>
+      </point>
+      <point>
+        <x>595</x>
+        <y>214</y>
+      </point>
+      <point>
+        <x>630</x>
+        <y>214</y>
+      </point>
+      <point>
+        <x>633</x>
+        <y>320</y>
+      </point>
+      <point>
+        <x>600</x>
+        <y>320</y>
+      </point>
+      <point>
+        <x>604</x>
+        <y>455</y>
+      </point>
+      <point>
+        <x>581</x>
+        <y>477</y>
+      </point>
+      <point>
+        <x>123</x>
+        <y>484</y>
+      </point>
+      <point>
+        <x>101</x>
+        <y>459</y>
+      </point>
+      <point>
+        <x>104</x>
+        <y>327</y>
+      </point>
+      <point>
+        <x>70</x>
+        <y>326</y>
+      </point>
+      <point>
+        <x>73</x>
+        <y>221</y>
+      </point>
+      <point>
+        <x>105</x>
+        <y>220</y>
+      </point>
+    </mask_points>
     <px_per_cm>2.133333</px_per_cm>
     <meanshift_radius>0</meanshift_radius>
     <meanshift_threshold>36</meanshift_threshold>
     <same_color_distance>250</same_color_distance>
-    <black_cutoff>60</black_cutoff>
-    <white_cutoff>125</white_cutoff>
-    <minimum_saturation>100</minimum_saturation>
+    <black_cutoff>33</black_cutoff>
+    <white_cutoff>255</white_cutoff>
+    <minimum_saturation>47</minimum_saturation>
     <coordinate_transformation>
       <scale>
         <point>
@@ -20,12 +126,12 @@
       </scale>
       <play_field_boundary>
         <point>
-          <x>103</x>
-          <y>4</y>
+          <x>40</x>
+          <y>80</y>
         </point>
         <point>
-          <x>600</x>
-          <y>400</y>
+          <x>535</x>
+          <y>475</y>
         </point>
       </play_field_boundary>
     </coordinate_transformation>

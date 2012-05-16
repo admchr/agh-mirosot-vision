@@ -1,10 +1,10 @@
 
 CXXFLAGS= -g -Wall -Wextra -Wunreachable-code -O2
-LIBS= `pkg-config --libs opencv` -lm
+LIBS= `pkg-config --libs opencv xerces-c` -lm
 TEST_LIBS= -lboost_unit_test_framework $(LIBS)
 
 PROGRAMS= perf perf_gprof driver interactive video test_impl test_api
-OBJS= vision.o mshift.o balance.o patch.o hsvconverter.o moments.o linearize.o mask.o debug.o util.o robot.o amv.o
+OBJS= vision.o mshift.o balance.o patch.o hsvconverter.o moments.o linearize.o mask.o debug.o util.o robot.o amv.o xmlconfig.o
 API_HEADERS=amv.h
 IMPL_HEADERS=\
     $(API_HEADERS) \
@@ -38,6 +38,7 @@ $(OBJS): $(IMPL_HEADERS)
 driver.o: common.hpp $(API_HEADERS)
 perf.o: common.hpp $(API_HEADERS)
 interactive.o: common.hpp $(API_HEADERS)
+video.o: common.hpp $(API_HEADERS)
 
 test_impl.o: test_impl.cpp $(API_HEADERS)
 test_array2d.o: test_array2d.cpp array2d.hpp

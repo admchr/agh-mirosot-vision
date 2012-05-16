@@ -59,15 +59,16 @@ int main(int argc, char**argv) {
 
     amv_config config;
     amv_config_init(&config);
-    load_config(&config, argv[1]);
+    load_amv_config(argv[1], &config);
 
     amv_debug_info debug;
     amv_debug_init(&debug);
 
-
+config.black_cutoff = 40;
+//config.angle_method = 0;
     config.image_width = cap.get(CV_CAP_PROP_FRAME_WIDTH);
     config.image_height = cap.get(CV_CAP_PROP_FRAME_HEIGHT);
-
+    int n = 0;
     amv_state state;
     amv_state_new(&state, &config);
     namedWindow("res",1);
@@ -80,6 +81,8 @@ int main(int argc, char**argv) {
         amv_find_teams(frame.ptr(), &state, &debug);
         imshow("res", debug_out);
         if (waitKey(30) >= 0) break;
+        n++;
     }
+    cout << n << " frames shown" << endl;
     return 0;
 }
