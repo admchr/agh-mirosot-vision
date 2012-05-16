@@ -7,6 +7,7 @@
 #include "common.hpp"
 
 using namespace std;
+using namespace cv;
 
 amv_config config;
 amv_debug_info debug;
@@ -16,15 +17,37 @@ int debug_image_count = 7;
 
 char** images;
 int img_i = 0;
+bool img_video = false;
 int image_count;
 cv::Mat_<cv::Vec3b> img0;
+VideoCapture cap;
+void retrieve_image();
+void retrieve_frame() {
+    if (img_video) {
+        cap >> img0;
+        if (img0.ptr() == 0) {
+            retrieve_image();
+        }
+    } else {
+        // noop
+    }
+}
 
-
+void retrieve_image() {
+    try {
+        img0 = imread(images[img_i]);
+        img_video = false;
+    } catch (cv::Exception e) {
+        cap.open(images[img_i]);
+        img_video = true;
+        retrieve_frame();
+    }
+}
 int main(int argc, char** argv)
 {
     images = argv + 2;
     image_count = argc - 2;
-    img0 = cv::imread(images[img_i]);
+    retrieve_image();
     const char* trackbar_window = "Controls";
     const char* trackbar_window2 = "Controls2";
     const char* image_window = "Image";
@@ -34,7 +57,7 @@ int main(int argc, char** argv)
     cv::namedWindow( image_window, CV_WINDOW_NORMAL );
 
     amv_config_init(&config);
-    load_config(&config, argv[1]);
+    load_amv_config(argv[1], &config);
     config.image_width = img0.cols;
     config.image_height = img0.rows;
 
@@ -71,6 +94,7 @@ int main(int argc, char** argv)
             config.blue.secondary_colors[i] = config.yellow.secondary_colors[i];
         }
         amv_state state;
+        retrieve_frame();
         cv::Mat_<cv::Vec3b> img(img0.clone());
         amv_state_new(&state, &config);
 
@@ -110,9 +134,9 @@ int main(int argc, char** argv)
         amv_find_teams(img.ptr(), &state, &debug);
 
         cv::imshow(image_window, dbg_img);
-        int key = (signed char)cv::waitKey( 500 );
+        int key = (signed char)cv::waitKey( 30 );
 
-        //cout<<"key="<<k+0<<endl;
+        //cout<<"key="<<key+0<<endl;
         if( key == 113 || key == 27) {//'q'||ESC
             break;
         }
@@ -132,7 +156,7 @@ int main(int argc, char** argv)
             else
                 img_i--;
             img_i%=image_count;
-            img0 = cv::imread(images[img_i]);
+            retrieve_image();
             cout << "loaded: " << images[img_i] <<endl;
         }
         if (key == 46) {// "."
@@ -141,7 +165,9 @@ int main(int argc, char** argv)
         if (key == 44) {// ","
             config.angle_method = (config.angle_method - 1 + AMV_MAX_ANGLE_METHOD)%AMV_MAX_ANGLE_METHOD;
         }
+        if (key == 115) {
+            save_amv_config(argv[1], &config);
+        }
     }
-
     return 0;
 }

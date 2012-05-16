@@ -13,7 +13,7 @@ extern "C" {
 
 #define AMV_MAX_ROBOTS 256
 #define AMV_MAX_SECONDARY_COLORS 3
-#define AMV_MAX_ANGLE_METHOD 3
+#define AMV_MAX_ANGLE_METHOD 5
 
 struct AMV_EXPORT amv_image_pos {
     int x;
@@ -128,6 +128,9 @@ void AMV_EXPORT amv_debug_init(struct amv_debug_info* debug);
 void AMV_EXPORT amv_state_new(struct amv_state* st, struct amv_config* config);
 void AMV_EXPORT amv_state_free(struct amv_state* state);
 
+
+void AMV_EXPORT load_amv_config(const char* xmlFile, struct amv_config* config);
+int AMV_EXPORT save_amv_config(const char* xmlFile, struct amv_config* config);
 
 #ifdef __cplusplus
 }
